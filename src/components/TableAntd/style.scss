@@ -1,0 +1,73 @@
+// @use "../../assets/styles/" as *;
+
+.table_container {
+  .table_content {
+    .ant-table-container {
+      .ant-table-content {
+        .ant-table-thead {
+          .ant-table-cell {
+            background-color: #704264;
+            color: #dbafa0;
+            font-weight: 700;
+            text-align: center;
+            border: 1px solid #49243e;
+            border-bottom: none;
+            border-right: none;
+            &:last-child {
+              border-right: 1px solid #49243e;
+            }
+          }
+        }
+        .ant-table-tbody {
+          .ant-table-row {
+            .ant-table-cell {
+              word-wrap: break-word;
+              word-break: break-word;
+              border: 1px solid #49243e;
+              border-bottom: none;
+              border-right: none;
+              &:last-child {
+                border-right: 1px solid #49243e;
+              }
+              ul,
+              ol {
+                padding: 0px 16px;
+              }
+            }
+            .overFlowText {
+              height: 100px;
+              overflow-y: auto;
+              text-align: start;
+              display: flex;
+              align-items: center;
+            }
+            &:last-child {
+              .ant-table-cell {
+                border-bottom: 1px solid #49243e;
+              }
+            }
+          }
+          .ant-table-placeholder {
+            .ant-table-cell {
+              border: 1px solid #49243e;
+            }
+          }
+        }
+      }
+    }
+  }
+  .table_pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    .ant-pagination {
+      .ant-pagination-item-active {
+        border-color: #dbafa0;
+        a {
+          color: #dbafa0;
+        }
+      }
+    }
+  }
+}
