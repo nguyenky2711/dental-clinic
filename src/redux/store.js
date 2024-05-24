@@ -1,5 +1,7 @@
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import authSlice from "./slice/authSlice";
+import patientSlice from "./slice/patientSlice";
+import treatmentSlice from "./slice/treatmentSlice";
 // import productSlice from './slice/productSlice';
 // import cartSlice from './slice/cartSlice';
 // import orderSlice from './slice/orderSlice';
@@ -23,7 +25,10 @@ const persistConfig = {
 }
 
 const rootReducer = combineReducers({
-    auth: authSlice
+    auth: authSlice,
+    treatment: treatmentSlice,
+    patient: patientSlice,
+
     // auth: authSlice,
     // product: productSlice,
     // cart: cartSlice,

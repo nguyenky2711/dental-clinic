@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-// import { loginThunk } from "../action/auth";
+import { loginThunk } from "../action/auth";
 
 const authSlice = createSlice({
     name: 'auth',
@@ -18,14 +18,14 @@ const authSlice = createSlice({
         },
     },
     extraReducers: (builder) => {
-        // builder.addCase(
-        //     loginThunk.fulfilled,
-        //     (state, { payload }) => {
-        //         if (payload) {
-        //             state.login.currentUser = payload;
-        //         }
-        //     }
-        // );
+        builder.addCase(
+            loginThunk.fulfilled,
+            (state, { payload }) => {
+                if (payload) {
+                    state.login.currentUser = payload;
+                }
+            }
+        );
     },
 })
 export const {

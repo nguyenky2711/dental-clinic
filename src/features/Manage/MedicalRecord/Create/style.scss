@@ -1,0 +1,253 @@
+// @use "../../../../../assets/styles" as *;
+
+.courseForm-container {
+  background-color: #fff;
+  border-radius: 5px;
+  padding: 10px 20px;
+  border: 1px solid #dbafa0;
+  .ant-form-item-with-help {
+    // margin-bottom: 70px;
+  }
+  .ant-form-item-row {
+    display: flex;
+    flex-direction: column;
+    .ant-form-item-label {
+      text-align: left;
+      label {
+        font-weight: 700;
+      }
+    }
+  }
+  .ant-form-item-control {
+    flex: 1;
+  }
+  .ant-select-in-form-item {
+    &:hover {
+      .ant-select-selector {
+        border-color: #dbafa0 !important;
+      }
+    }
+  }
+  .ant-input-number-in-form-item {
+    &:hover {
+      border-color: #dbafa0 !important;
+    }
+  }
+  .ant-btn {
+    &:hover {
+      color: #dbafa0 !important;
+    }
+  }
+  .ant-form-item-margin-offset {
+    margin-bottom: -24px !important;
+  }
+  .course_item {
+    &.role {
+      // margin-top: 40px;
+    }
+    &.requireInfor {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      // margin-top: 40px;
+      // margin-bottom: 20px;
+      .totalHours {
+        flex-basis: 35%;
+        .ant-input-number-in-form-item {
+          width: 100%;
+        }
+      }
+
+      .startDates {
+        flex-basis: 60%;
+      }
+    }
+  }
+  .course_item_container {
+    gap: 10px;
+    align-items: center !important;
+    // padding-bottom: 20px;
+    .ant-form-item-has-error {
+      // margin-bottom: 80px;
+    }
+
+    .method {
+      width: 170px;
+    }
+    .fee {
+      width: 250px;
+      .ant-input-number-in-form-item {
+        width: 100%;
+      }
+    }
+  }
+  .buttonGroup {
+    display: flex;
+    justify-content: end;
+    margin-bottom: 10px;
+    gap: 20px;
+    .cancelBtn {
+      button {
+        // border: 1px solid #7d7d7d;
+        color: #7d7d7d;
+      }
+    }
+    .submitBtn {
+      button {
+        // border: 1px solid #dbafa0;
+        color: #dbafa0;
+        &:hover {
+          color: white !important;
+          background-color: #dbafa0;
+        }
+      }
+    }
+    .checkBtn {
+      span {
+        font-style: italic;
+        color: #dbafa0;
+        font-weight: bolder;
+        font-style: italic;
+        text-decoration: underline;
+      }
+    }
+  }
+  .calendars {
+    // margin-top: 45px;
+    // margin-bottom: 25px;
+    .ant-table-wrapper {
+      .ant-table-container {
+        .ant-table-content {
+          .ant-table-thead {
+            .ant-table-cell {
+              background-color: #49243e;
+              color: #dbafa0;
+              font-weight: 700;
+              text-align: center;
+              border: 1px solid #dbafa0;
+              border-bottom: none;
+              border-right: none;
+              &:last-child {
+                border-right: 1px solid #dbafa0;
+              }
+            }
+          }
+          .ant-table-tbody {
+            .ant-table-row {
+              .ant-table-cell {
+                border: 1px solid #dbafa0;
+                border-bottom: none;
+                border-right: none;
+                padding: 0px;
+                &:last-child {
+                  border-right: 1px solid #dbafa0;
+                }
+                ul,
+                ol {
+                  padding: 0px 16px;
+                }
+              }
+              &:last-child {
+                .ant-table-cell {
+                  border-bottom: 1px solid #dbafa0;
+                }
+              }
+            }
+            .ant-table-placeholder {
+              .ant-table-cell {
+                border: 1px solid #dbafa0;
+              }
+            }
+          }
+        }
+      }
+    }
+    .ant-picker {
+      margin-top: 0px;
+      border: none;
+      &:hover {
+        border: none !important;
+      }
+      .ant-picker-suffix {
+        cursor: pointer;
+        color: #dbafa0;
+      }
+    }
+    .calendarTableAction_item {
+      height: 45px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      svg {
+        color: #dbafa0;
+      }
+      &.noChange {
+        background: rgba(0, 0, 0, 0.04);
+        cursor: not-allowed;
+        svg {
+          color: rgba(0, 0, 0, 0.04);
+        }
+      }
+    }
+  }
+  .courseContent_container {
+    display: flex;
+    justify-content: space-between;
+
+    .leftSide_container {
+      width: 30%;
+    }
+    .rightSide_container {
+      flex-basis: 65%;
+      .ant-space {
+        margin-top: 0px;
+      }
+    }
+  }
+  .ant-form-item-explain-error {
+    font-size: 13px;
+  }
+  .ant-form-item-required {
+    &::before {
+      right: 1px;
+      top: 3px;
+      font-size: 11px !important;
+      position: absolute;
+    }
+    &::after {
+      right: -8px;
+    }
+  }
+  .ant-checkbox-wrapper {
+    &:hover {
+      .ant-checkbox-inner {
+        border-color: #dbafa0;
+      }
+    }
+  }
+}
+.rightSide_container {
+  .treament_item {
+    display: flex;
+    justify-content: space-between;
+    .ant-space-item {
+      &:first-child {
+        width: 60%;
+        .treatment_infor {
+          display: flex;
+          .treatment {
+            width: 75%;
+            margin-right: 30px;
+          }
+          .ant-input-number {
+            width: 100%;
+          }
+        }
+      }
+      &:nth-child(2) {
+        width: 40%;
+      }
+    }
+  }
+}

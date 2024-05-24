@@ -2,9 +2,7 @@
   // padding: 15px 50px;
   // display: flex;
   // justify-content: center;
-  // align-items: center;
-  // height: 100%;
-  .login_container {
+  .register_container {
     width: 35%;
     margin: 0px auto;
     box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
@@ -12,15 +10,16 @@
     border-radius: 10px;
     align-items: center;
     background-color: #fff;
-    padding: 30px 40px;
+    padding: 30px 50px;
     margin-top: 100px;
-    .login-header {
+
+    .register-header {
       font-weight: 700;
       font-size: 22px;
       text-align: center;
       margin-bottom: 35px;
     }
-    .form_login {
+    .form_register {
       display: flex;
       justify-content: center;
 
@@ -29,7 +28,7 @@
         flex-direction: column;
         gap: 10px;
         .ant-input-affix-wrapper {
-          width: 400px;
+          width: 300px;
         }
         button {
           width: 100%;
@@ -42,9 +41,15 @@
         }
       }
     }
+    .student_item {
+      .ant-picker {
+        width: 300px;
+      }
+    }
     .ant-form-item-row {
       display: flex;
       flex-direction: column;
+
       .ant-form-item-label {
         text-align: left;
         font-weight: 700;

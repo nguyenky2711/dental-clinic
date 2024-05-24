@@ -17,52 +17,31 @@ import {
   Select,
 } from "antd";
 import messages from "../../../config/messageCode/messages";
+import { loginThunk } from "../../../redux/action/auth";
 const LoginPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [form] = Form.useForm();
 
   const onFinish = (data) => {
-    let formData = new FormData();
-    formData.append("email", data.email);
-    formData.append("password", data.password);
-    // dispatch(loginThunk(formData)).then((res) => {
-    //   console.log(res);
-    //   if (res?.payload?.code == "ERR_BAD_REQUEST") {
-    //     const message = JSON.parse(
-    //       res?.payload?.request?.responseText
-    //     )?.message;
-    //     if (message == messages.EMAIL_PASSWORD_INVALID) {
-    //       toast.error("Hãy kiểm tra lại tài khoản hoặc mật khẩu", {
-    //         position: "top-right",
-    //         autoClose: 3000,
-    //         style: { color: "red", backgroundColor: "#DEF2ED" },
-    //       });
-    //     } else if (message == messages.YOUR_ACCOUNT_LOCKED) {
-    //       toast.error(
-    //         "Tài khoản của bạn đã bị khoá. Hãy liên hệ quản trị viên để mở lại",
-    //         {
-    //           position: "top-right",
-    //           autoClose: 3000,
-    //           style: { color: "red", backgroundColor: "#DEF2ED" },
-    //         }
-    //       );
-    //     } else if (message == messages.ACCOUNT_NOT_CONFIRMED) {
-    //       toast.error(
-    //         "Tài khoản của bạn chưa được xác thực. Hãy kiểm tra mail của bạn",
-    //         {
-    //           position: "top-right",
-    //           autoClose: 3000,
-    //           style: { color: "red", backgroundColor: "#DEF2ED" },
-    //         }
-    //       );
-    //     }
-    //   } else {
-    //     res?.payload?.data?.userDTO?.role != "admin"
-    //       ? navigate("/")
-    //       : navigate("/manage/product");
-    //   }
-    // });
+    // console.log(data);
+
+    dispatch(loginThunk(data)).then((res) => {
+      if (res?.payload?.email == data.email && res?.payload?.token) {
+        toast.success("Đăng nhập thành công", {
+          position: "top-right",
+          autoClose: 3000,
+          style: { color: "green", backgroundColor: "#D7F1FD" },
+        });
+        navigate("/manage/patient");
+      } else {
+        toast.error("Hãy kiểm tra lại tài khoản hoặc mật khẩu", {
+          position: "top-right",
+          autoClose: 3000,
+          style: { color: "red", backgroundColor: "#DEF2ED" },
+        });
+      }
+    });
   };
   return (
     <div className="container">
@@ -122,10 +101,10 @@ const LoginPage = () => {
                   required: true,
                   message: "Vui lòng nhập mật khẩu!",
                 },
-                {
-                  pattern: new RegExp(/^(?=.*[A-Z])(?=.*[0-9]).*$/),
-                  message: "Vui lòng nhập ít nhất 1 chữ in hoa và 1 chữ số",
-                },
+                // {
+                //   pattern: new RegExp(/^(?=.*[A-Z])(?=.*[0-9]).*$/),
+                //   message: "Vui lòng nhập ít nhất 1 chữ in hoa và 1 chữ số",
+                // },
                 {
                   validator: (_, value) => {
                     if (value) {

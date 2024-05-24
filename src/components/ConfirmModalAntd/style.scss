@@ -1,0 +1,62 @@
+// @use "../../../assets/styles/" as *;
+
+.modal_container {
+}
+.modal_information {
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  .ant-modal-content {
+    height: 100%;
+    padding: 40px 40px 35px 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    .ant-modal-body {
+      .modal_header {
+        h4 {
+          font-weight: 700;
+          font-size: 22px;
+          text-align: center;
+        }
+      }
+      .modal_title {
+        p {
+          font-weight: 300;
+          font-size: 18px;
+          text-align: center;
+        }
+      }
+      .modal_content {
+        p {
+          font-weight: 500;
+          font-size: 20px;
+          text-align: center;
+        }
+      }
+    }
+  }
+  .ant-modal-footer {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    .ant-btn-default {
+      padding: 0px 32px;
+      height: 40px;
+      border-color: #dbafa0;
+      &:hover {
+        border-color: #dbafa0;
+        color: #dbafa0;
+      }
+    }
+    .ant-btn-primary {
+      padding: 0px 44px;
+      height: 40px;
+      background-color: #dbafa0;
+      &:hover {
+        background-color: #dbafa0;
+      }
+    }
+  }
+}
