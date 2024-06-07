@@ -2,6 +2,7 @@ import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import authSlice from "./slice/authSlice";
 import patientSlice from "./slice/patientSlice";
 import treatmentSlice from "./slice/treatmentSlice";
+import staffSlice from "./slice/staffSlice";
 // import productSlice from './slice/productSlice';
 // import cartSlice from './slice/cartSlice';
 // import orderSlice from './slice/orderSlice';
@@ -28,6 +29,7 @@ const rootReducer = combineReducers({
     auth: authSlice,
     treatment: treatmentSlice,
     patient: patientSlice,
+    staff: staffSlice,
 
     // auth: authSlice,
     // product: productSlice,

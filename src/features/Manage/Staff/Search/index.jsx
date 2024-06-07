@@ -98,7 +98,15 @@ const StaffinforSearch = ({ handleSubmit, handleChange }) => {
               Tìm kiếm
             </Button>
           </Form.Item>
-
+          <Form.Item className="employee-searchForm-btn">
+            <Button
+              type="primary"
+              htmlType="button"
+              onClick={() => navigate(`/manage/staff/create`)}
+            >
+              Thêm nhân viên
+            </Button>
+          </Form.Item>
           <Form.Item
             className={`employee-searchForm-filterBtn ${
               activeFilter ? "active" : ""

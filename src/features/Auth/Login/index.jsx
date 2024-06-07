@@ -26,22 +26,31 @@ const LoginPage = () => {
   const onFinish = (data) => {
     // console.log(data);
 
-    dispatch(loginThunk(data)).then((res) => {
-      if (res?.payload?.email == data.email && res?.payload?.token) {
-        toast.success("Đăng nhập thành công", {
-          position: "top-right",
-          autoClose: 3000,
-          style: { color: "green", backgroundColor: "#D7F1FD" },
-        });
-        navigate("/manage/patient");
-      } else {
-        toast.error("Hãy kiểm tra lại tài khoản hoặc mật khẩu", {
-          position: "top-right",
-          autoClose: 3000,
-          style: { color: "red", backgroundColor: "#DEF2ED" },
-        });
-      }
-    });
+    dispatch(loginThunk(data))
+      .then((res) => {
+        console.log(res);
+        if (
+          res?.payload?.token &&
+          (res?.payload?.role == "Role_Admin" ||
+            res?.payload?.role == "Role_Staff")
+        ) {
+          toast.success("Đăng nhập thành công", {
+            position: "top-right",
+            autoClose: 3000,
+            style: { color: "green", backgroundColor: "#D7F1FD" },
+          });
+          navigate("/manage/patient");
+        } else {
+          toast.error("Hãy kiểm tra lại tài khoản hoặc mật khẩu", {
+            position: "top-right",
+            autoClose: 3000,
+            style: { color: "red", backgroundColor: "#DEF2ED" },
+          });
+        }
+      })
+      .finally(() => {
+        // navigate("/manage/patient");
+      });
   };
   return (
     <div className="container">
@@ -56,34 +65,34 @@ const LoginPage = () => {
           >
             <Form.Item
               className="staff_item email"
-              label="Email"
-              name="email"
+              label="Tên đăng nhập (Số điện thoại)"
+              name="userName"
               rules={[
                 {
                   required: true,
-                  message: "Vui lòng nhập địa chỉ email",
+                  message: "Vui lòng nhập tên đăng nhập",
                 },
-                {
-                  type: "email",
-                  message: "Địa chỉ email không hợp lệ",
-                },
-                {
-                  validator: (_, value) => {
-                    if (value && value.length <= 256 && value.trim() != "") {
-                      return Promise.resolve();
-                    } else {
-                      if (value && value.length > 256) {
-                        return Promise.reject("Vui lòng nhập tối đa 256 ký tự");
-                      }
-                      if (!value || value == "") {
-                        return Promise.reject();
-                      }
-                      if (value.trim() == "") {
-                        return Promise.reject("Vui lòng nhập email");
-                      }
-                    }
-                  },
-                },
+                // {
+                //   type: "email",
+                //   message: "Địa chỉ email không hợp lệ",
+                // },
+                // {
+                //   validator: (_, value) => {
+                //     if (value && value.length <= 256 && value.trim() != "") {
+                //       return Promise.resolve();
+                //     } else {
+                //       if (value && value.length > 256) {
+                //         return Promise.reject("Vui lòng nhập tối đa 256 ký tự");
+                //       }
+                //       if (!value || value == "") {
+                //         return Promise.reject();
+                //       }
+                //       if (value.trim() == "") {
+                //         return Promise.reject("Vui lòng nhập email");
+                //       }
+                //     }
+                //   },
+                // },
               ]}
             >
               <Input placeholder="Nhập email" />

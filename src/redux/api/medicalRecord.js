@@ -18,6 +18,22 @@ const medicalRecord = {
             data
         );
     },
+    addProcedureForRecord: (data) => {
+        const { recordId, ...restData } = data;
+        const url = `/api/procedure/record/${recordId}`;
+        return internshipTransport.post(
+            url,
+            restData
+        );
+    },
+    deleteProcedureById: (data) => {
+        const url = `/api/procedure/${data.procedureId}`;
+
+        return internshipTransport.delete(
+            url,
+            data
+        );
+    },
     create: (data) => {
         const url = `/api/record`;
 

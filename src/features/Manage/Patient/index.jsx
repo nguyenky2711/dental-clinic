@@ -4,21 +4,25 @@ import TableAntdCustom from "../../../components/TableAntd";
 import PatientInforSearch from "./Search";
 import { useDispatch } from "react-redux";
 import { filterPatientThunk } from "../../../redux/action/patient";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 
 function PatientPage() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [patients, setPatients] = useState([]);
+  const [totalPages, setTotalPages] = useState();
+  const [totalItems, setTotalItems] = useState();
   const [params, setParams] = useState({
     keyword: null,
-    pageNumber: null,
-    pageSize: null,
+    pageNumber: 0,
+    pageSize: 10,
   });
   const columnsPatient = [
     {
       title: "Họ và tên",
       key: "name",
-      width: "20%",
+      width: "15%",
       render: (text) => {
         console.log(text);
         return text.name;
@@ -27,20 +31,32 @@ function PatientPage() {
     {
       title: "Ngày sinh",
       key: "birthday",
+      align: "center",
       width: "10%",
       render: (text) => {
         return text.birthday;
       },
     },
     {
-      title: "Thông tin liên lạc",
+      title: "Số điện thoại",
       key: "phone",
       align: "center",
-      width: "20%",
+      width: "10%",
       render: (text) => {
         return (
           <>
             <p>SĐT: {text.phoneNumber}</p>
+          </>
+        );
+      },
+    },
+    {
+      title: "Địa chỉ",
+      key: "address",
+      width: "20%",
+      render: (text) => {
+        return (
+          <>
             <p>Địa chỉ: {text.address}</p>
           </>
         );
@@ -63,7 +79,16 @@ function PatientPage() {
       title: "",
       align: "center",
       width: "5%",
-      render: (_, record) => {},
+      render: (_, record) => {
+        return (
+          <>
+            <EditOutlined
+              onClick={() => navigate(`/manage/patient/${record.id}`)}
+            />
+            <DeleteOutlined />
+          </>
+        );
+      },
     },
   ];
 
@@ -71,22 +96,25 @@ function PatientPage() {
     dispatch(filterPatientThunk(params)).then((res) => {
       const temp = res?.payload;
       if (temp) {
+        setTotalItems(temp?.totalItems);
+        setTotalPages(temp?.totalPages);
+
         setPatients(temp.contents);
       }
     });
   }, [params]);
-  console.log(patients);
-  const handleTablePageChange = (page, additionalData) => {
-    // let temp = sendData;
-    // temp.no = page;
-    // setCurrentPage(page);
-    // setSendData(temp);
-    // dispatch(filterUserThunk(temp)).then((res) => {});
+
+  const handleTablePageChange = (page) => {
+    if (page) {
+      setParams({
+        ...params,
+        pageNumber: page - 1,
+      });
+    }
   };
 
   const handleSearchChange = (values) => {};
   const handleSubmitSearch = (values) => {
-    console.log(values);
     if (values.keyword) {
       setParams({ ...params, keyword: values.keyword });
     } else {
@@ -103,17 +131,21 @@ function PatientPage() {
         />
       </div>
       <div className="staffinfor-tableWrapper">
-        <TableAntdCustom
-          list={patients != [] ? patients : null}
-          totalItems={10}
-          totalPages={1}
-          pageSize={5}
-          no={0}
-          columns={columnsPatient}
-          onChange={handleTablePageChange}
-          className={"staffinfor-table"}
-          emptyText="Hiện chưa có bệnh nhân nào"
-        ></TableAntdCustom>
+        {patients ? (
+          <TableAntdCustom
+            list={patients != [] ? patients : null}
+            totalItems={totalItems}
+            totalPages={totalPages}
+            pageSize={params.pageSize}
+            no={params.pageNumber + 1}
+            columns={columnsPatient}
+            onChange={handleTablePageChange}
+            className={"staffinfor-table"}
+            emptyText="Hiện chưa có bệnh nhân nào"
+          ></TableAntdCustom>
+        ) : (
+          <></>
+        )}
       </div>
     </div>
   );

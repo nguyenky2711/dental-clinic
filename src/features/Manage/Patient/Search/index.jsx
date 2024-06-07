@@ -57,7 +57,7 @@ const PatientInforSearch = ({ handleSubmit, handleChange }) => {
               Thêm thông tin bệnh nhân
             </Button>
           </Form.Item>
-          <Form.Item className="treatment-searchForm-btn">
+          {/* <Form.Item className="treatment-searchForm-btn">
             <Button
               type="primary"
               htmlType="button"
@@ -65,7 +65,7 @@ const PatientInforSearch = ({ handleSubmit, handleChange }) => {
             >
               Thêm bệnh án
             </Button>
-          </Form.Item>
+          </Form.Item> */}
 
           {/* <Form.Item
             className={`treatment-searchForm-filterBtn ${

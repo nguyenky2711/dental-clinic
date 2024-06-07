@@ -1,9 +1,31 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./style.scss";
 import TableAntdCustom from "../../../components/TableAntd";
 import StaffinforSearch from "./Search";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
+import { filterStaffThunk } from "../../../redux/action/staff";
+import { useDispatch } from "react-redux";
 
 function StaffPage() {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const [staffs, setStaffs] = useState();
+  const [params, setParams] = useState({
+    keyword: null,
+    pageNumber: null,
+    pageSize: null,
+    positionId: null,
+  });
+
+  useEffect(() => {
+    dispatch(filterStaffThunk(params)).then((res) => {
+      const temp = res?.payload;
+      if (temp) {
+        setStaffs(temp.contents);
+      }
+    });
+  }, [params]);
   const handleTablePageChange = (page, additionalData) => {
     // let temp = sendData;
     // temp.no = page;
@@ -14,55 +36,45 @@ function StaffPage() {
   const columnsStaff = [
     {
       title: "Họ và tên",
-      dataIndex: "node",
       key: "name",
       width: "20%",
-      render: (text) => {
-        // text.tokenActive
-      },
-    },
-    {
-      title: "Email",
-      dataIndex: "node",
-      key: "email",
-      width: "15%",
-      render: (text) => {},
+      render: (text) => text.name,
     },
     {
       title: "Số điện thoại",
-      dataIndex: "node",
-      key: "phone",
+      key: "userName",
       align: "center",
-      width: "12%",
-      render: (text) => {
-        // return text.phoneNumber;
-      },
+      width: "10%",
+      render: (text) => text.phoneNumber,
     },
     {
-      title: "Vai trò",
-      dataIndex: "node",
+      title: "Trình độ chuyên môn",
       key: "role",
       align: "center",
       width: "10%",
-      render: (text) => {
-        // return text.role.name.split("_")[1];
-      },
+      render: (text) => text.professionalQualification,
     },
     {
-      title: "Loại nhân viên",
-      dataIndex: "node",
+      title: "Vị trí",
       key: "role",
       align: "center",
       width: "10%",
-      render: (text) => {
-        // return text.levelEmployee;
-      },
+      render: (text) => text.positionDTO.name,
     },
     {
-      title: "Hành động",
+      title: "",
       align: "center",
       width: "10%",
-      render: (_, record) => {},
+      render: (_, record) => {
+        return (
+          <>
+            <EditOutlined
+              onClick={() => navigate(`/manage/staff/${record.id}`)}
+            />
+            <DeleteOutlined />
+          </>
+        );
+      },
     },
   ];
   const handleSearchChange = (values) => {};
@@ -77,17 +89,21 @@ function StaffPage() {
         />
       </div>
       <div className="staffinfor-tableWrapper">
-        <TableAntdCustom
-          list={null}
-          totalItems={10}
-          totalPages={1}
-          pageSize={5}
-          no={0}
-          columns={columnsStaff}
-          onChange={handleTablePageChange}
-          className={"staffinfor-table"}
-          emptyText="Hiện chưa có nhân viên nào"
-        ></TableAntdCustom>
+        {staffs ? (
+          <TableAntdCustom
+            list={staffs}
+            totalItems={10}
+            totalPages={1}
+            pageSize={5}
+            no={0}
+            columns={columnsStaff}
+            onChange={handleTablePageChange}
+            className={"staffinfor-table"}
+            emptyText="Hiện chưa có nhân viên nào"
+          ></TableAntdCustom>
+        ) : (
+          <></>
+        )}
       </div>
     </div>
   );

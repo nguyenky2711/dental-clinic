@@ -1,14 +1,14 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import patient from '../api/patient';
+import staff from '../api/staff';
 const {
     create,
     filter,
     update,
-} = patient;
+} = staff;
 
 
-export const filterPatientThunk = createAsyncThunk(
-    'patient/filterPatient',
+export const filterStaffThunk = createAsyncThunk(
+    'staff/filterStaff',
     async (data) => {
         try {
             const res = await filter(data);
@@ -19,8 +19,8 @@ export const filterPatientThunk = createAsyncThunk(
     }
 );
 
-export const createPatientThunk = createAsyncThunk(
-    'patient/createPatient',
+export const createStaffThunk = createAsyncThunk(
+    'staff/createStaff',
     async (data) => {
         try {
             const res = await create(data);
@@ -30,8 +30,8 @@ export const createPatientThunk = createAsyncThunk(
         }
     }
 );
-export const updatePatientThunk = createAsyncThunk(
-    'patient/updatePatient',
+export const updateStaffThunk = createAsyncThunk(
+    'staff/updateStaff',
     async (data) => {
         try {
             const res = await update(data);

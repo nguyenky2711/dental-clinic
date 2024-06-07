@@ -2,12 +2,17 @@ import React, { useEffect, useState } from "react";
 import "./style.scss";
 import TableAntdCustom from "../../../components/TableAntd";
 import { useDispatch } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { getRecordByPatientIdThunk } from "../../../redux/action/medicalRecord";
+import MedicalRecordInforSearch from "./Search";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 
 function MedicalRecordPage() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { patientId } = useParams();
   const [records, setRecords] = useState();
+
   const columnsMedicalRecord = [
     {
       title: "Ngày khám",
@@ -36,13 +41,26 @@ function MedicalRecordPage() {
     },
 
     {
-      title: "Hành động",
+      title: "",
       align: "center",
       width: "10%",
-      render: (_, record) => {},
+      render: (_, record) => {
+        return (
+          <>
+            <EditOutlined
+              onClick={() =>
+                navigate(
+                  `/manage/patient/${patientId}/medical-record/${record.id}`
+                )
+              }
+            />
+            <DeleteOutlined />
+          </>
+        );
+      },
     },
   ];
-  const { patientId } = useParams();
+
   useEffect(() => {
     dispatch(getRecordByPatientIdThunk(patientId)).then((res) => {
       console.log(res);
@@ -63,6 +81,10 @@ function MedicalRecordPage() {
     <div>
       <div className="staffPage-header">
         <h1>Sổ bệnh án</h1>
+        <MedicalRecordInforSearch
+          handleSearchChange={null}
+          handleSubmitSearch={null}
+        />
       </div>
       <div className="staffinfor-tableWrapper">
         <TableAntdCustom

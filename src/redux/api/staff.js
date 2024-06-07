@@ -1,16 +1,19 @@
 import { internshipTransport } from "../../config/http/transport";
 
-const patient = {
+const staff = {
 
     filter: (data) => {
-        let url = `/api/patient/filter`;
+        let url = `/api/staff/filter`;
         let params = [];
 
         // Kiểm tra từng tham số và thêm vào mảng params nếu có giá trị
         if (data.keyword) {
             params.push(`keyword=${encodeURIComponent(data.keyword)}`);
         }
-        if (data.pageNumber >= 0) {
+        if (data.positionId) {
+            params.push(`positionId=${data.positionId}`);
+        }
+        if (data.pageNumber) {
             params.push(`pageNumber=${data.pageNumber}`);
         }
         if (data.pageSize) {
@@ -26,7 +29,7 @@ const patient = {
     },
 
     create: (data) => {
-        const url = `/api/patient`;
+        const url = `/api/staff`;
 
         return internshipTransport.post(
             url,
@@ -34,15 +37,14 @@ const patient = {
         );
     },
     update: (data) => {
-        const { patientId, ...restData } = data
-        console.log(data)
-        const url = `/api/patient/${data.patientId}`;
+        const { staffId, ...restData } = data
+        const url = `/api/staff/${staffId}`;
 
         return internshipTransport.put(
             url,
-            restData.patientDTO
+            restData.staffDTO
         );
     },
 };
 
-export default patient;
+export default staff;

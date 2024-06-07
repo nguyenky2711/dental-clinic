@@ -1,0 +1,12 @@
+.schedule-cell {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  background-color: white;
+  &.selected {
+    background-color: #1890ff;
+  } /* Chỉ định con trỏ khi di chuột qua ô */
+}
