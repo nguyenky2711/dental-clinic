@@ -3,6 +3,7 @@ import staff from '../api/staff';
 const {
     create,
     filter,
+    filterForPatient,
     update,
 } = staff;
 
@@ -12,6 +13,17 @@ export const filterStaffThunk = createAsyncThunk(
     async (data) => {
         try {
             const res = await filter(data);
+            return res;
+        } catch (error) {
+            return error;
+        }
+    }
+);
+export const filterStaffForPatientThunk = createAsyncThunk(
+    'staff/filterForPatient',
+    async (data) => {
+        try {
+            const res = await filterForPatient(data);
             return res;
         } catch (error) {
             return error;

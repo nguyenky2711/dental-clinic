@@ -3,6 +3,9 @@ import axios from 'axios';
 const httpHandler = (baseURL) => {
   const axiosHttp = axios.create({
     baseURL,
+    headers: {
+      'Content-Type': 'application/json',
+    },
   });
 
   axiosHttp.interceptors.request.use(

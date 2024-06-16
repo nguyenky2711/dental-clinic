@@ -103,13 +103,16 @@ const ScheduleTable = () => {
         morning: Array(7).fill(false),
         afternoon: Array(7).fill(false),
       };
+      console.log(res);
       res?.payload?.map((item) => {
-        const findDate = moment(item?.date, "YYYY-MM-DD").format("DD/MM/YYYY");
+        const findDate = moment(item?.workingDTO?.date, "YYYY-MM-DD").format(
+          "DD/MM/YYYY"
+        );
         const index = dates?.indexOf(findDate);
-        if (item.periodId == 1) {
+        if (item.workingDTO.periodId == 1) {
           newCheckedStates.morning[index] = true;
         }
-        if (item.periodId == 2) {
+        if (item.workingDTO.periodId == 2) {
           newCheckedStates.afternoon[index] = true;
         }
       });

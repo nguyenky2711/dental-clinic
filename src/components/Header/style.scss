@@ -1,0 +1,91 @@
+// style.scss
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #333;
+  color: white;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.header-middle {
+  display: flex;
+}
+
+.header-middle a,
+.dropdown-toggle {
+  color: white;
+  text-decoration: none;
+  margin-right: 20px;
+  padding: 10px;
+  transition: all 0.3s ease;
+}
+
+.header-middle a:hover,
+.dropdown-toggle:hover,
+.dropdown-menu a:hover {
+  background-color: #555;
+}
+
+.dropdown {
+  position: relative;
+  margin-right: 20px;
+}
+
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: #333;
+  min-width: 160px;
+  z-index: 1;
+}
+
+.dropdown:hover .dropdown-menu {
+  display: block;
+}
+
+.dropdown-menu a {
+  display: block;
+  padding: 10px;
+  color: white;
+  text-decoration: none;
+}
+
+.header-right .logout-button {
+  padding: 10px 20px;
+  background-color: #dc3545;
+  border: none;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.header-right .logout-button:hover {
+  background-color: #c82333;
+}
+
+.header-middle a.active,
+.dropdown-toggle.active,
+.dropdown-menu a.active {
+  background-color: #555;
+}
+
+.header-middle a {
+  &.active {
+    background-color: #555;
+  }
+}
+
+.dropdown-menu a {
+  &.active {
+    background-color: #555;
+  }
+}

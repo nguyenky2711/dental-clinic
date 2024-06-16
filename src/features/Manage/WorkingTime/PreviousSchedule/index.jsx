@@ -26,7 +26,7 @@ const PreviousSchedules = () => {
       for (let i = 0; i < 7; i++) {
         const date = startOfWeek.clone().add(i, "days").format("DD/MM/YYYY");
         const tempResult = res?.payload?.filter(
-          (item) => moment(item.date).format("DD/MM/YYYY") == date
+          (item) => moment(item.workingDTO.date).format("DD/MM/YYYY") == date
         );
         let tempObj = {
           date,
@@ -34,10 +34,10 @@ const PreviousSchedules = () => {
           afternoon: false,
         };
         tempResult.map((item) => {
-          if (item.periodId == 1) {
+          if (item.workingDTO.periodId == 1) {
             tempObj.morning = true;
           }
-          if (item.periodId == 2) {
+          if (item.workingDTO.periodId == 2) {
             tempObj.afternoon = true;
           }
         });

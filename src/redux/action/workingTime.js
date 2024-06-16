@@ -4,6 +4,7 @@ const {
     create,
     showForStaffByWeek,
     deleteWorkingTime,
+    showForClient,
 } = workingTime;
 
 
@@ -34,6 +35,17 @@ export const deleteWorkingTimeThunk = createAsyncThunk(
     async (data) => {
         try {
             const res = await deleteWorkingTime(data);
+            return res;
+        } catch (error) {
+            return error;
+        }
+    }
+);
+export const showForClientThunk = createAsyncThunk(
+    'workingTime/showForClient',
+    async (data) => {
+        try {
+            const res = await showForClient(data);
             return res;
         } catch (error) {
             return error;

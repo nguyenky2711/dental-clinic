@@ -1,8 +1,7 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
-// import { loginThunk } from "../../../store/action/auth";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./style.scss";
@@ -18,7 +17,9 @@ import {
 } from "antd";
 import messages from "../../../config/messageCode/messages";
 import { loginThunk } from "../../../redux/action/auth";
+import { AuthContext } from "../../../provider/AuthContext";
 const LoginPage = () => {
+  const { login } = useContext(AuthContext);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [form] = Form.useForm();
@@ -29,22 +30,18 @@ const LoginPage = () => {
     dispatch(loginThunk(data))
       .then((res) => {
         console.log(res);
-        if (
-          res?.payload?.token &&
-          (res?.payload?.role == "Role_Admin" ||
-            res?.payload?.role == "Role_Staff")
-        ) {
-          toast.success("Đăng nhập thành công", {
-            position: "top-right",
-            autoClose: 3000,
-            style: { color: "green", backgroundColor: "#D7F1FD" },
-          });
-          navigate("/manage/patient");
-        } else {
+        if (res?.payload?.message == "Request failed with status code 403") {
           toast.error("Hãy kiểm tra lại tài khoản hoặc mật khẩu", {
             position: "top-right",
             autoClose: 3000,
             style: { color: "red", backgroundColor: "#DEF2ED" },
+          });
+        } else {
+          login(res?.payload);
+          toast.success("Đăng nhập thành công", {
+            position: "top-right",
+            autoClose: 3000,
+            style: { color: "green", backgroundColor: "#D7F1FD" },
           });
         }
       })

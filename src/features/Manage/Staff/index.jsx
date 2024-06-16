@@ -59,7 +59,8 @@ function StaffPage() {
       key: "role",
       align: "center",
       width: "10%",
-      render: (text) => text.positionDTO.name,
+      render: (text) =>
+        text.positionDTO.name === "dentist" ? "Bác sĩ" : "Lễ tân",
     },
     {
       title: "",

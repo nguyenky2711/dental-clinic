@@ -1,6 +1,6 @@
 import logo from './logo.svg';
 import './App.css';
-import { Route, Routes } from 'react-router-dom';
+import { Route, Router, Routes } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 
 import LoginPage from './features/Auth/Login';
@@ -14,40 +14,154 @@ import MedicalRecordPage from './features/Manage/MedicalRecord';
 import StaffFormPage from './features/Manage/Staff/Form';
 import ScheduleTable from './features/Manage/WorkingTime/ScheduleTable';
 import PreviousSchedules from './features/Manage/WorkingTime/PreviousSchedule';
+import { useEffect, useState } from 'react';
+import StaffRoute from './router/StaffRouter';
+import ClientRoute from './router/ClientRouter';
+import { AuthProvider } from './provider/AuthContext';
+import Header from './components/Header/Header';
+import AppointmentPage from './features/Client/Appointment';
+import ActiveMailPage from './features/Auth/ActiveMail';
+import AppointmentManagePage from './features/Manage/Appointment';
 
 
 function App() {
   return (
-    <div className="App">
+    <AuthProvider>
 
-      {/* <Header></Header> */}
-      <Routes>
-        {/* <Route path='/' Component={HomePage} /> */}
+      <div className="App">
 
+        <Header />
+        <Routes>
+          {/* <Route path='/' Component={HomePage} /> */}
+          <Route path='/login' Component={LoginPage} />
+          <Route path='/appointment'
+            element={
+              <ClientRoute >
+                <AppointmentPage />
+              </ClientRoute>
+            } />
+          <Route path='/active/mail'
+            element={
+              <ClientRoute >
+                <ActiveMailPage />
+              </ClientRoute>
+            } />
+          <Route path='/manage/staff'
+            element={
+              <StaffRoute >
+                <StaffPage />
+              </StaffRoute>
+            } />
 
+          <Route
+            path="/manage/staff/create"
+            element={
+              <StaffRoute  >
+                <StaffFormPage />
+              </StaffRoute>
+            }
+          />
+          <Route
+            path="/manage/staff/:staffId"
+            element={
+              <StaffRoute  >
+                <StaffFormPage />
+              </StaffRoute>
+            }
+          />
+          <Route
+            path="/manage/treatment"
+            element={
+              <StaffRoute  >
+                <TreatmentPage />
+              </StaffRoute>
+            }
+          />
+          <Route
+            path="/manage/patient"
+            element={
+              <StaffRoute  >
+                <PatientPage />
+              </StaffRoute>
+            }
+          />
+          <Route
+            path="/manage/patient/create"
+            element={
+              <StaffRoute  >
+                <CreatePatientPage />
+              </StaffRoute>
+            }
+          />
+          <Route
+            path="/manage/patient/:patientId"
+            element={
+              <StaffRoute  >
+                <CreatePatientPage />
+              </StaffRoute>
+            }
+          />
+          <Route
+            path="/manage/patient/:patientId/medical-record"
+            element={
+              <StaffRoute  >
+                <MedicalRecordPage />
+              </StaffRoute>
+            }
+          />
+          <Route
+            path="/manage/patient/:patientId/medical-record/create"
+            element={
+              <StaffRoute  >
+                <MedicalRecordFormPage />
+              </StaffRoute>
+            }
+          />
+          <Route
+            path="/manage/patient/:patientId/medical-record/:recordId"
+            element={
+              <StaffRoute  >
+                <MedicalRecordFormPage />
+              </StaffRoute>
+            }
+          />
+          <Route
+            path="/manage/working-time"
+            element={
+              <StaffRoute  >
+                <ScheduleTable />
+              </StaffRoute>
+            }
+          />
+          <Route
+            path="/manage/working-time/past"
+            element={
+              <StaffRoute  >
+                <PreviousSchedules />
+              </StaffRoute>
+            }
+          />
+          <Route
+            path="/manage/appointment"
+            element={
+              <StaffRoute  >
+                <AppointmentManagePage />
+              </StaffRoute>
+            }
+          />
 
-        <Route path='/login' Component={LoginPage} />
-        <Route path='/signup' Component={SignUpPage} />
-        <Route path='/manage/staff' Component={StaffPage} />
-        <Route path='/manage/staff/create' Component={StaffFormPage} />
-        <Route path='/manage/staff/:staffId' Component={StaffFormPage} />
-        <Route path='/manage/treatment' Component={TreatmentPage} />
-        <Route path='/manage/patient' Component={PatientPage} />
-        <Route path='/manage/patient/:patientId' Component={CreatePatientPage} />
-        <Route path='/manage/patient/create' Component={CreatePatientPage} />
-        <Route path='/manage/patient/:patientId/medical-record' Component={MedicalRecordPage} />
-        <Route path='/manage/patient/:patientId/medical-record/create' Component={MedicalRecordFormPage} />
-        <Route path='/manage/patient/:patientId/medical-record/:recordId' Component={MedicalRecordFormPage} />
-        <Route path='/manage/working-time' Component={ScheduleTable} />
-        <Route path='/manage/working-time/past' Component={PreviousSchedules} />
-        {/* <Route path='/update/password' Component={ChangePasswordPage} /> */}
-        {/* <Route path='/resetPassword/reset/:resetToken' Component={ResetPasswordPage} /> */}
-        {/* <Route path='/resetPassword/request' Component={ResetPasswordPage} /> */}
-      </Routes>
-      {/* <Footer></Footer> */}
-      <ToastContainer />
-    </div>
+          <Route path='/signup' Component={SignUpPage} />
+
+        </Routes>
+        {/* <Footer></Footer> */}
+        <ToastContainer />
+      </div>
+    </AuthProvider>
   );
 }
 
 export default App;
+
+// App.js
+
+

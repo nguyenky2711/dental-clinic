@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import "./style.scss";
 import TableAntdCustom from "../../../components/TableAntd";
 import PatientInforSearch from "./Search";
@@ -6,6 +6,7 @@ import { useDispatch } from "react-redux";
 import { filterPatientThunk } from "../../../redux/action/patient";
 import { NavLink, useNavigate } from "react-router-dom";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { AuthContext } from "../../../provider/AuthContext";
 
 function PatientPage() {
   const dispatch = useDispatch();
@@ -13,6 +14,7 @@ function PatientPage() {
   const [patients, setPatients] = useState([]);
   const [totalPages, setTotalPages] = useState();
   const [totalItems, setTotalItems] = useState();
+  const { token, role, logout } = useContext(AuthContext);
   const [params, setParams] = useState({
     keyword: null,
     pageNumber: 0,
@@ -102,7 +104,7 @@ function PatientPage() {
         setPatients(temp.contents);
       }
     });
-  }, [params]);
+  }, [params, token, role]);
 
   const handleTablePageChange = (page) => {
     if (page) {

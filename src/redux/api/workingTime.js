@@ -18,6 +18,29 @@ const workingTime = {
             data
         );
     },
+    showForClient: (data) => {
+        console.log(data)
+        let url = `/api/working`;
+        let params = [];
+
+        // Kiểm tra từng tham số và thêm vào mảng params nếu có giá trị
+        if (data.keyword) {
+            params.push(`keyword=${encodeURIComponent(data.keyword)}`);
+        }
+        if (data.periodId) {
+            params.push(`periodId=${data.periodId}`);
+        }
+        if (data.date) {
+            params.push(`date=${data.date}`);
+        }
+
+        // Nếu có tham số nào, nối chúng vào URL
+        if (params.length > 0) {
+            url += '?' + params.join('&');
+        }
+
+        return internshipTransport.get(url, data);
+    },
     deleteWorkingTime: (data) => {
         const url = `/api/working/${data.date}/${data.periodId}`;
         return internshipTransport.delete(
