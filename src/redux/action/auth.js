@@ -4,6 +4,7 @@ const {
     login,
     confirmWithOTP,
     sendActiveMail,
+    changePasssword,
 } = auth;
 
 
@@ -12,6 +13,17 @@ export const loginThunk = createAsyncThunk(
     async (data) => {
         try {
             const res = await login(data);
+            return res;
+        } catch (error) {
+            return error;
+        }
+    }
+);
+export const changePassswordThunk = createAsyncThunk(
+    'auth/changePasssword',
+    async (data) => {
+        try {
+            const res = await changePasssword(data);
             return res;
         } catch (error) {
             return error;

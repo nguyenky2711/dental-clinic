@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
@@ -15,19 +15,20 @@ import {
   InputNumber,
   Select,
 } from "antd";
+import { changePassswordThunk } from "../../../../redux/action/auth";
+import { AuthProvider } from "../../../../provider/AuthContext";
 const ChangePasswordPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [form] = Form.useForm();
 
   const onFinish = (data) => {
-    let dataSend = new FormData();
-    dataSend.append("newPassword", data.newPassword);
-    dataSend.append("oldPassword", data.oldPassword);
-    dispatch(changePasswordThunk(dataSend)).then((res) => {
+    const { confirm, ...restData } = data;
+    dispatch(changePassswordThunk(restData)).then((res) => {
       console.log(res);
       if (
-        res?.payload?.response?.data?.message == "Current password is incorrect"
+        res?.payload?.response?.data?.message ==
+        "ACCESS DENIED - NOT ENOUGH PERMISSION"
       ) {
         toast.error("Mật khẩu cũ không đúng", {
           position: "top-right",
@@ -40,7 +41,7 @@ const ChangePasswordPage = () => {
           autoClose: 3000,
           style: { color: "green", backgroundColor: "#DEF2ED" },
         });
-        navigate("/");
+        navigate(-1);
       }
     });
   };
@@ -67,10 +68,6 @@ const ChangePasswordPage = () => {
                 {
                   required: true,
                   message: "Vui lòng nhập mật khẩu!",
-                },
-                {
-                  pattern: new RegExp(/^(?=.*[A-Z])(?=.*[0-9]).*$/),
-                  message: "Vui lòng nhập ít nhất 1 chữ in hoa và 1 chữ số",
                 },
                 {
                   validator: (_, value) => {
@@ -104,10 +101,6 @@ const ChangePasswordPage = () => {
                 {
                   required: true,
                   message: "Vui lòng nhập mật khẩu!",
-                },
-                {
-                  pattern: new RegExp(/^(?=.*[A-Z])(?=.*[0-9]).*$/),
-                  message: "Vui lòng nhập ít nhất 1 chữ in hoa và 1 chữ số",
                 },
                 {
                   validator: (_, value) => {

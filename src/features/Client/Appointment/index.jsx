@@ -57,12 +57,11 @@ const AppointmentPage = () => {
       tempAppointmentList = tempAppointmentList.map((item) => {
         return {
           value: item.id,
-          label: `Ngày: ${item.workingDTO.date} - Buổi: ${
+          label: `Ngày: ${item.workingDTO.date} -  ${
             item.workingDTO.periodId == 1 ? "Buổi sáng" : "Buổi chiều"
-          }`,
+          } - Số người đã đặt lịch: ${item.countPatientScheduled}`,
         };
       });
-      console.log(tempAppointmentList);
       setAppointmentOptions(tempAppointmentList);
     });
   }, [paramsAppointment]);
@@ -130,7 +129,7 @@ const AppointmentPage = () => {
               ]}
             >
               <AutoComplete
-                style={{ width: "300px" }}
+                style={{ width: "400px" }}
                 options={staffOptions}
                 onSearch={handleSearch} // Gọi hàm tìm kiếm debounce
                 onSelect={handleSelect}

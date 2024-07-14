@@ -30,7 +30,10 @@ const LoginPage = () => {
     dispatch(loginThunk(data))
       .then((res) => {
         console.log(res);
-        if (res?.payload?.message == "Request failed with status code 403") {
+        if (
+          res?.payload?.message == "Request failed with status code 403" ||
+          res?.payload?.message == "Request failed with status code 404"
+        ) {
           toast.error("Hãy kiểm tra lại tài khoản hoặc mật khẩu", {
             position: "top-right",
             autoClose: 3000,

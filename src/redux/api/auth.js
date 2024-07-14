@@ -27,6 +27,14 @@ const auth = {
             data
         );
     },
+    changePasssword: (data) => {
+        const url = `/api/user/change-password`;
+
+        return internshipTransport.put(
+            url,
+            data
+        );
+    },
 };
 
 export default auth;

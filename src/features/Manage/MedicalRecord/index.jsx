@@ -266,7 +266,7 @@ function MedicalRecordPage() {
         open={modal.visible}
         header={modal.title}
         title={modal.content}
-        onOk={() => handleOk}
+        onOk={handleOk}
         onCancel={handleCancel}
       />
       {/* <ReusableModal

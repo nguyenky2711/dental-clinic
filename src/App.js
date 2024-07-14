@@ -23,6 +23,7 @@ import AppointmentPage from './features/Client/Appointment';
 import ActiveMailPage from './features/Auth/ActiveMail';
 import AppointmentManagePage from './features/Manage/Appointment';
 import VisitPage from './features/Manage/Visit';
+import ChangePasswordPage from './features/Auth/Update/Password';
 
 
 function App() {
@@ -168,6 +169,7 @@ function App() {
           />
 
           <Route path='/signup' Component={SignUpPage} />
+          <Route path='/change-password' Component={ChangePasswordPage} />
 
         </Routes>
         {/* <Footer></Footer> */}

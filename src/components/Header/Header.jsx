@@ -1,17 +1,23 @@
-// Header.js
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import "./style.scss";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../provider/AuthContext";
+import { Menu, Dropdown, Button } from "antd";
+import {
+  DownOutlined,
+  UserOutlined,
+  LogoutOutlined,
+  KeyOutlined,
+} from "@ant-design/icons";
 
 const Header = () => {
   const { role, logout } = useContext(AuthContext);
   const location = useLocation();
+  const navigate = useNavigate();
 
   const handleLogout = () => {
     logout(); // Gọi hàm logout từ AuthContext khi người dùng click vào nút đăng xuất
   };
-
   const isActive = (path) => {
     if (
       path === "/manage/working-time" ||
@@ -21,6 +27,21 @@ const Header = () => {
     }
     return location.pathname.startsWith(path);
   };
+
+  const menu = (
+    <Menu>
+      <Menu.Item
+        key="1"
+        icon={<KeyOutlined />}
+        onClick={() => navigate(`change-password`)}
+      >
+        Đổi mật khẩu
+      </Menu.Item>
+      <Menu.Item key="2" icon={<LogoutOutlined />} onClick={handleLogout}>
+        Đăng xuất
+      </Menu.Item>
+    </Menu>
+  );
 
   return (
     <header className="header">
@@ -75,9 +96,11 @@ const Header = () => {
       </div>
       <div className="header-right">
         {role && (
-          <button onClick={handleLogout} className="logout-button">
-            Đăng xuất
-          </button>
+          <Dropdown overlay={menu} trigger={["click"]}>
+            <Button icon={<UserOutlined />}>
+              <DownOutlined />
+            </Button>
+          </Dropdown>
         )}
       </div>
     </header>

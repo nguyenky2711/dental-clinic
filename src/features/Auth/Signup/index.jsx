@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 // import { registerThunk } from "../../../store/action/auth";
@@ -16,7 +16,10 @@ import {
   Select,
 } from "antd";
 import messages from "../../../config/messageCode/messages";
+import { AuthProvider } from "../../../provider/AuthContext";
 const SignUpPage = () => {
+  const x = useContext(AuthProvider);
+  console.log(x);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [form] = Form.useForm();
