@@ -14,6 +14,9 @@ import {
 } from "../../../redux/action/appoitment";
 import { Tag } from "antd";
 import { toast } from "react-toastify";
+import AppointmentInforSearch from "./Search";
+import { debounce } from "lodash";
+import { getStaffByTokenThunk } from "../../../redux/action/staff";
 
 function AppointmentManagePage() {
   const dispatch = useDispatch();
@@ -22,10 +25,10 @@ function AppointmentManagePage() {
   const [active, setActive] = useState(false);
   const [totalPages, setTotalPages] = useState();
   const [totalItems, setTotalItems] = useState();
-  const { token, role, logout } = useContext(AuthContext);
+  const { token, role, logout, position } = useContext(AuthContext);
   const [params, setParams] = useState({
     isConfirm: null,
-    staffId: 0,
+    staffId: null,
   });
   const columnsAppoitment = [
     {
@@ -33,7 +36,6 @@ function AppointmentManagePage() {
       key: "name",
       width: "30%",
       render: (text) => {
-        console.log(text);
         return (
           <>
             <p>Họ và tên : {text.patientDTO.name}</p>
@@ -103,7 +105,6 @@ function AppointmentManagePage() {
   useEffect(() => {
     dispatch(filterAppointmentThunk(params)).then((res) => {
       const temp = res?.payload;
-      console.log(temp);
       if (temp) {
         setAppointments(temp);
         setActive(false);
@@ -145,7 +146,9 @@ function AppointmentManagePage() {
     }
   };
 
-  const handleSearchChange = (values) => {};
+  const handleSearchChange = debounce((values) => {
+    setParams(values);
+  }, 300);
   const handleSubmitSearch = (values) => {
     if (values.keyword) {
       setParams({ ...params, keyword: values.keyword });
@@ -157,10 +160,10 @@ function AppointmentManagePage() {
     <div>
       <div className="staffPage-header">
         <h1>Danh sách lịch đặt khám</h1>
-        {/* <PatientInforSearch
+        <AppointmentInforSearch
           handleChange={handleSearchChange}
           handleSubmit={handleSubmitSearch}
-        /> */}
+        />
       </div>
       <div className="staffinfor-tableWrapper">
         {appointment ? (

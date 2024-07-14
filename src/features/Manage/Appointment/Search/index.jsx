@@ -1,5 +1,14 @@
-import { Select, Input, Form, DatePicker, Dropdown, Space, Button } from "antd";
-import React, { useState, useEffect } from "react";
+import {
+  Select,
+  Input,
+  Form,
+  DatePicker,
+  Dropdown,
+  Space,
+  Button,
+  AutoComplete,
+} from "antd";
+import React, { useState, useEffect, useContext } from "react";
 import {
   SearchOutlined,
   BarsOutlined,
@@ -7,17 +16,67 @@ import {
 } from "@ant-design/icons";
 
 import { useNavigate } from "react-router-dom";
-// import { getAllRolesThunk } from "src/redux/action/userManager";
 import { useDispatch } from "react-redux";
 import "./styles.scss";
 import moment from "moment";
-const PatientInforSearch = ({ handleSubmit, handleChange }) => {
+import {
+  filterStaffThunk,
+  getStaffByTokenThunk,
+} from "../../../../redux/action/staff";
+import { debounce } from "lodash";
+import { AuthContext } from "../../../../provider/AuthContext";
+const AppointmentInforSearch = ({ handleSubmit, handleChange }) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const [form] = Form.useForm();
   const [activeFilter, setActiveFilter] = useState(false);
-  const onReset = () => {
-    form.resetFields(["status", "date", "role", "level"]);
-  };
+  const [dentistOptions, setDentistOptions] = useState([]);
+  const { token, role, logout, position } = useContext(AuthContext);
+
+  const [paramsDentist, setParamsDentist] = useState({
+    positionId: 1,
+    keyword: null,
+  });
+
+  const [searchObj, setSearchObj] = useState({
+    isConfirm: null,
+    staffId: null,
+  });
+
+  useEffect(() => {
+    if (position === "dentist") {
+      dispatch(getStaffByTokenThunk()).then((res) => {
+        if (res) {
+          setSearchObj((prevVal) => ({
+            ...prevVal,
+            staffId: res?.payload?.id,
+          }));
+        }
+      });
+    } else {
+      dispatch(filterStaffThunk(paramsDentist)).then((res) => {
+        const tempList = res?.payload?.contents.map((item) => {
+          return {
+            id: item.id,
+            value: item.name,
+            label: item.name,
+          };
+        });
+        setDentistOptions(tempList);
+      });
+    }
+  }, [paramsDentist, role]);
+  useEffect(() => {
+    handleChange(searchObj);
+  }, [searchObj]);
+
+  const handleSearch = debounce((value) => {
+    setParamsDentist((prevParams) => ({
+      ...prevParams,
+      keyword: value ? value.toLowerCase() : null,
+    }));
+  }, 300); // Thời gian debounce là 300ms
+
   const onFinish = (values) => {
     const sendData = {
       keyword:
@@ -37,10 +96,59 @@ const PatientInforSearch = ({ handleSubmit, handleChange }) => {
         form={form}
       >
         <div className="keyWord_search-container">
-          <Form.Item name="name" className="treatment-searchForm-input">
-            <Input
-              prefix={<SearchOutlined className="site-form-item-icon" />}
-              placeholder="Tìm kiếm theo tên"
+          {position !== "dentist" && (
+            <Form.Item className="staff_item name" name="staffId">
+              <AutoComplete
+                style={{ width: "300px" }}
+                options={dentistOptions}
+                onSearch={handleSearch} // Gọi hàm tìm kiếm debounce
+                onSelect={(val) => {
+                  if (val) {
+                    const dentistInf = dentistOptions.find(
+                      (item) => item.value == val
+                    );
+
+                    setSearchObj((preVal) => ({
+                      ...preVal,
+                      staffId: dentistInf?.id ?? null,
+                    }));
+                  } else {
+                  }
+                }}
+                onChange={(val) => {
+                  if (!val) {
+                    setSearchObj((preVal) => ({
+                      ...preVal,
+                      staffId: null,
+                    }));
+                  }
+                }}
+                allowClear
+                placeholder="Nhập tên"
+              />
+            </Form.Item>
+          )}
+
+          <Form.Item name="isConfirm" className="treatment-searchForm-input">
+            <Select
+              placeholder="Chọn trạng thái"
+              options={[
+                {
+                  value: true,
+                  label: "Đã duyệt",
+                },
+                {
+                  value: false,
+                  label: "Chưa duyệt",
+                },
+              ]}
+              onChange={(val) =>
+                setSearchObj((preVal) => ({
+                  ...preVal,
+                  isConfirm: val ?? null,
+                }))
+              }
+              allowClear
             />
           </Form.Item>
           <Form.Item className="treatment-searchForm-btn">
@@ -54,7 +162,7 @@ const PatientInforSearch = ({ handleSubmit, handleChange }) => {
               htmlType="button"
               onClick={() => navigate("/manage/patient/create")}
             >
-              Thêm thông tin bệnh nhân
+              Thêm thông tin lịch khám
             </Button>
           </Form.Item>
           {/* <Form.Item className="treatment-searchForm-btn">
@@ -218,4 +326,4 @@ const PatientInforSearch = ({ handleSubmit, handleChange }) => {
   );
 };
 
-export default PatientInforSearch;
+export default AppointmentInforSearch;

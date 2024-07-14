@@ -5,8 +5,7 @@ import { Link, useLocation } from "react-router-dom";
 import { AuthContext } from "../../provider/AuthContext";
 
 const Header = () => {
-  const { role, logout, position } = useContext(AuthContext);
-  console.log(position);
+  const { role, logout } = useContext(AuthContext);
   const location = useLocation();
 
   const handleLogout = () => {
@@ -14,7 +13,13 @@ const Header = () => {
   };
 
   const isActive = (path) => {
-    return location.pathname === path;
+    if (
+      path === "/manage/working-time" ||
+      path === "/manage/working-time/past"
+    ) {
+      return location.pathname === path;
+    }
+    return location.pathname.startsWith(path);
   };
 
   return (
@@ -59,16 +64,12 @@ const Header = () => {
             >
               Lịch làm việc những tuần trước
             </Link>
-            {position === "receptionist" && (
-              <>
-                <Link
-                  to="/manage/appointment"
-                  className={isActive("/manage/appointment") ? "active" : ""}
-                >
-                  Quản lý lịch đặt khám
-                </Link>
-              </>
-            )}
+            <Link
+              to="/manage/appointment"
+              className={isActive("/manage/appointment") ? "active" : ""}
+            >
+              Quản lý lịch đặt khám
+            </Link>
           </>
         )}
       </div>

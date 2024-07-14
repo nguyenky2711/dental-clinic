@@ -31,6 +31,7 @@ const StaffRoute = ({ children, requiredRoles = ['Role_Admin', 'Role_Staff'], re
 
         initializeAuth();
     }, [loggedIn]);
+    console.log(role)
 
     useEffect(() => {
         // Kiểm tra xem đã khởi tạo role và token từ localStorage

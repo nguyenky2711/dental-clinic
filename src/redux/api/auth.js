@@ -12,7 +12,7 @@ const auth = {
     },
     sendActiveMail: (data) => {
         console.log(data)
-        const url = `/api/patient/mail/send`;
+        const url = `/api/user/mail/send`;
 
         return internshipTransport.post(
             url,
@@ -20,7 +20,7 @@ const auth = {
         );
     },
     confirmWithOTP: (data) => {
-        const url = `/api/patient/mail/active`;
+        const url = `/api/user/mail/active`;
 
         return internshipTransport.put(
             url,

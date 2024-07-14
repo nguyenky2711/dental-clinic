@@ -5,9 +5,9 @@ import { useNavigate } from 'react-router-dom';
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-    const [token, setToken] = useState(null);
-    const [role, setRole] = useState(null);
-    const [position, setPosition] = useState(null);
+    const [token, setToken] = useState(localStorage.getItem('authToken'));
+    const [role, setRole] = useState(localStorage.getItem('authRole'));
+    const [position, setPosition] = useState(localStorage.getItem('authPosition'));
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -15,7 +15,6 @@ export const AuthProvider = ({ children }) => {
         if (savedData) {
             const parsedData = JSON.parse(savedData);
             const authData = JSON.parse(parsedData.auth);
-            console.log(authData)
             const parsedToken = authData?.login?.currentUser?.token;
             const role = authData?.login?.currentUser?.role;
             const position = authData?.login?.currentUser?.position;
@@ -32,30 +31,34 @@ export const AuthProvider = ({ children }) => {
         }
     }, []);
 
-
     const login = (loginData) => {
-        const { role, token, position, email } = loginData; // Assuming loginData has role information
-        console.log(loginData)
+        const { role, token, position, email } = loginData;
         if (role === 'Role_Admin' || role === 'Role_Staff') {
             // Lưu token vào localStorage
             localStorage.setItem('authToken', token);
-            setRole(role)
-            setToken(token)
-            setPosition(position)
+            localStorage.setItem('authRole', role);
+            localStorage.setItem('authPosition', position);
+            setRole(role);
+            setToken(token);
+            setPosition(position);
             setTimeout(() => {
-                navigate('/manage/patient');
+                if (role === 'Role_Staff' && position === 'dentist') {
+                    navigate('/manage/appointment');
+                } else {
+                    navigate('/manage/patient');
+                }
             }, 1000);
         } else if (role === 'Role_Patient') {
-            setRole(role)
-            setToken(token)
-
+            setRole(role);
+            setToken(token);
             // Lưu token vào localStorage
             localStorage.setItem('authToken', token);
+            localStorage.setItem('authRole', role);
+            localStorage.setItem('authPosition', position);
             if (email) {
                 setTimeout(() => {
                     navigate('/appointment');
                 }, 1000);
-
             } else {
                 setTimeout(() => {
                     navigate('/active/mail');
@@ -69,6 +72,10 @@ export const AuthProvider = ({ children }) => {
     const logout = () => {
         setToken(null);
         setRole(null);
+        setPosition(null);
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('authRole');
+        localStorage.removeItem('authPosition');
         localStorage.removeItem('persist:root');
         navigate('/login');
     };

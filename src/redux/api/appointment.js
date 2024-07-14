@@ -9,10 +9,10 @@ const appointment = {
 
         // Kiểm tra từng tham số và thêm vào mảng params nếu có giá trị
 
-        if (data.isConfirm) {
+        if (data.isConfirm !== null) {
             params.push(`isConfirm=${data.isConfirm}`);
         }
-        if (data.staffId) {
+        if (data.staffId !== null) {
             params.push(`staffId=${data.staffId}`);
         }
 

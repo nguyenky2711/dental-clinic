@@ -51,6 +51,9 @@ const AppointmentPage = () => {
       let tempAppointmentList = res?.payload?.filter(
         (item) => new Date(item.workingDTO.date) > new Date()
       );
+      tempAppointmentList.sort(
+        (a, b) => new Date(a.workingDTO.date) - new Date(b.workingDTO.date)
+      );
       tempAppointmentList = tempAppointmentList.map((item) => {
         return {
           value: item.id,

@@ -8,7 +8,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { AuthContext } from "../../../provider/AuthContext";
 
-function PatientPage() {
+const PatientPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [patients, setPatients] = useState([]);
@@ -26,7 +26,6 @@ function PatientPage() {
       key: "name",
       width: "15%",
       render: (text) => {
-        console.log(text);
         return text.name;
       },
     },
@@ -71,9 +70,16 @@ function PatientPage() {
       width: "10%",
       render: (_, record) => {
         return (
-          <NavLink to={`/manage/patient/${record.id}/medical-record`}>
-            Xem bệnh án{" "}
-          </NavLink>
+          <div className="action">
+            <div
+              className="action-item"
+              onClick={() =>
+                navigate(`/manage/patient/${record.id}/medical-record`)
+              }
+            >
+              Xem bệnh án
+            </div>
+          </div>
         );
       },
     },
@@ -151,6 +157,6 @@ function PatientPage() {
       </div>
     </div>
   );
-}
+};
 
 export default PatientPage;

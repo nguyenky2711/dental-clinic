@@ -49,6 +49,14 @@ const staff = {
 
         return internshipTransport.get(url, data);
     },
+    getStaffByToken: (data) => {
+        const url = `/api/staff/token`;
+
+        return internshipTransport.get(
+            url,
+            data
+        );
+    },
     create: (data) => {
         const url = `/api/staff`;
 

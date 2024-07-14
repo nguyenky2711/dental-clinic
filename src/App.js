@@ -22,6 +22,7 @@ import Header from './components/Header/Header';
 import AppointmentPage from './features/Client/Appointment';
 import ActiveMailPage from './features/Auth/ActiveMail';
 import AppointmentManagePage from './features/Manage/Appointment';
+import VisitPage from './features/Manage/Visit';
 
 
 function App() {
@@ -110,6 +111,14 @@ function App() {
             }
           />
           <Route
+            path="/manage/patient/:patientId/medical-record/:recordId/visit"
+            element={
+              <StaffRoute  >
+                <VisitPage />
+              </StaffRoute>
+            }
+          />
+          <Route
             path="/manage/patient/:patientId/medical-record/create"
             element={
               <StaffRoute  >
@@ -118,7 +127,15 @@ function App() {
             }
           />
           <Route
-            path="/manage/patient/:patientId/medical-record/:recordId"
+            path="/manage/patient/:patientId/medical-record/:recordId/visit/create"
+            element={
+              <StaffRoute  >
+                <MedicalRecordFormPage />
+              </StaffRoute>
+            }
+          />
+          <Route
+            path="/manage/patient/:patientId/medical-record/:recordId/visit/:visitId"
             element={
               <StaffRoute  >
                 <MedicalRecordFormPage />

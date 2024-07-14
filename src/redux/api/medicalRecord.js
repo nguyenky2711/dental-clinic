@@ -10,7 +10,88 @@ const medicalRecord = {
             data
         );
     },
-    getProceduredByRecorId: (data) => {
+
+    create: (data) => {
+        const url = `/api/record`;
+
+        return internshipTransport.post(
+            url,
+            data
+        );
+    },
+    deleteRecord: (data) => {
+        const { recordId, ...restData } = data
+        const url = `/api/record/${recordId}`;
+
+        return internshipTransport.delete(
+            url,
+            data
+        );
+    },
+    doneRecord: (data) => {
+        const { recordId, ...restData } = data
+        const url = `/api/record/done/${recordId}`;
+
+        return internshipTransport.put(
+            url,
+            data
+        );
+    },
+    reopenRecord: (data) => {
+        const { recordId, ...restData } = data
+        const url = `/api/record/reopen/${recordId}`;
+
+        return internshipTransport.put(
+            url,
+            data
+        );
+    },
+    //Objective - visit
+    getVisitByRecordId: (data) => {
+        const url = `/api/objective/record/${data.recordId}`;
+
+        return internshipTransport.get(
+            url,
+            data
+        );
+    },
+    deleteVisitById: (data) => {
+        const url = `/api/objective/${data.visitId}`;
+
+        return internshipTransport.delete(
+            url,
+            data
+        );
+    },
+    addVisitForRecord: (data) => {
+        const { recordId, records, ...restData } = data;
+        // console.log(restData)
+        const url = `/api/objective/record/${recordId}`;
+        return internshipTransport.post(
+            url,
+            records
+        );
+    },
+    // procedure
+    getProceduredByVisitdId: (data) => {
+        const { visitId, ...restData } = data
+        const url = `/api/procedure/objective/${visitId}`;
+
+        return internshipTransport.get(
+            url,
+            restData
+        );
+    },
+    addProceduredByVisitdId: (data) => {
+        const { visitId, records, ...restData } = data
+        const url = `/api/procedure/objective/${visitId}`;
+
+        return internshipTransport.post(
+            url,
+            records
+        );
+    },
+    getProceduredByRecordId: (data) => {
         const url = `/api/procedure/record/${data.recordId}`;
 
         return internshipTransport.get(
@@ -30,14 +111,6 @@ const medicalRecord = {
         const url = `/api/procedure/${data.procedureId}`;
 
         return internshipTransport.delete(
-            url,
-            data
-        );
-    },
-    create: (data) => {
-        const url = `/api/record`;
-
-        return internshipTransport.post(
             url,
             data
         );

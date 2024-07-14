@@ -5,6 +5,7 @@ const {
     filter,
     filterForPatient,
     update,
+    getStaffByToken,
 } = staff;
 
 
@@ -47,6 +48,17 @@ export const updateStaffThunk = createAsyncThunk(
     async (data) => {
         try {
             const res = await update(data);
+            return res;
+        } catch (error) {
+            return error;
+        }
+    }
+);
+export const getStaffByTokenThunk = createAsyncThunk(
+    'staff/getStaffByToken',
+    async (data) => {
+        try {
+            const res = await getStaffByToken(data);
             return res;
         } catch (error) {
             return error;
