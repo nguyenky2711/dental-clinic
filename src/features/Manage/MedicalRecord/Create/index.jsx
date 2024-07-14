@@ -54,7 +54,7 @@ const MedicalRecordFormPage = () => {
     visitId &&
       dispatch(getProceduredByVisitIdThunk({ visitId: visitId })).then(
         (res) => {
-          const result = res?.payload?.map((item) => {
+          const result = res?.payload?.procedureShowDTOS?.map((item) => {
             return {
               id: item.id,
               treatmentId: item.treatmentDTO.id,
@@ -64,11 +64,8 @@ const MedicalRecordFormPage = () => {
           });
 
           form.setFieldsValue({ procedureCreationDTOS: result });
-          form.setFieldValue(
-            "diagnosis",
-            res?.payload?.recordShowDTO?.diagnosis
-          );
-          form.setFieldValue("note", res?.payload?.recordShowDTO?.diagnosis);
+          form.setFieldValue("diagnosis", res?.payload?.diagnosis);
+          form.setFieldValue("note", res?.payload?.note);
         }
       );
   }, [visitId]);
