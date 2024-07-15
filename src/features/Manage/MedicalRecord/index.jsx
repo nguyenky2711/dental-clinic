@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import "./style.scss";
 import TableAntdCustom from "../../../components/TableAntd";
 import { useDispatch } from "react-redux";
@@ -21,12 +21,14 @@ import { Tag } from "antd";
 import ReusableModal from "../../../components/ReuseModalAntd";
 import { toast } from "react-toastify";
 import ConfirmModalAntd from "../../../components/ConfirmModalAntd";
+import { AuthContext } from "../../../provider/AuthContext";
 
 function MedicalRecordPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { patientId } = useParams();
   const [records, setRecords] = useState();
+  const { token, role, logout } = useContext(AuthContext);
 
   const columnsMedicalRecord = [
     {

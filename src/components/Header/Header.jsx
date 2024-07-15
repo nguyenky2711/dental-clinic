@@ -11,29 +11,46 @@ import {
 } from "@ant-design/icons";
 
 const Header = () => {
-  const { role, logout } = useContext(AuthContext);
+  const { role, logout, userName } = useContext(AuthContext);
   const location = useLocation();
   const navigate = useNavigate();
 
   const handleLogout = () => {
     logout(); // Gọi hàm logout từ AuthContext khi người dùng click vào nút đăng xuất
   };
+
   const isActive = (path) => {
-    if (
-      path === "/manage/working-time" ||
-      path === "/manage/working-time/past"
-    ) {
-      return location.pathname === path;
-    }
-    return location.pathname.startsWith(path);
+    return location.pathname === path;
   };
 
   const menu = (
     <Menu>
+      <Menu.Item key="0" disabled>
+        <span>Xin chào {userName}</span>
+      </Menu.Item>
+      {role === "Role_Patient" && (
+        <>
+          <Menu.Item
+            key="3"
+            className={isActive("/appointment") ? "active-menu-item" : ""}
+            onClick={() => navigate("/appointment")}
+          >
+            Lịch khám
+          </Menu.Item>
+          <Menu.Item
+            key="4"
+            className={isActive("/medical-record") ? "active-menu-item" : ""}
+            onClick={() => navigate("/medical-record")}
+          >
+            Bệnh án
+          </Menu.Item>
+        </>
+      )}
       <Menu.Item
         key="1"
         icon={<KeyOutlined />}
-        onClick={() => navigate(`change-password`)}
+        className={isActive("/change-password") ? "active-menu-item" : ""}
+        onClick={() => navigate("/change-password")}
       >
         Đổi mật khẩu
       </Menu.Item>

@@ -7,6 +7,7 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
     const [token, setToken] = useState(localStorage.getItem('authToken'));
     const [role, setRole] = useState(localStorage.getItem('authRole'));
+    const [userName, setUserName] = useState(localStorage.getItem('userName'));
     const [position, setPosition] = useState(localStorage.getItem('authPosition'));
     const navigate = useNavigate();
 
@@ -18,6 +19,7 @@ export const AuthProvider = ({ children }) => {
             const parsedToken = authData?.login?.currentUser?.token;
             const role = authData?.login?.currentUser?.role;
             const position = authData?.login?.currentUser?.position;
+            const userName = authData?.login?.currentUser?.userName;
             if (parsedToken) {
                 setToken(parsedToken);
             }
@@ -28,14 +30,18 @@ export const AuthProvider = ({ children }) => {
             if (position) {
                 setPosition(position);
             }
+            if (userName) {
+                setUserName(userName);
+            }
         }
     }, []);
 
     const login = (loginData) => {
-        const { role, token, position, email } = loginData;
+        const { role, token, position, email, userName } = loginData;
         if (role === 'Role_Admin' || role === 'Role_Staff') {
             // Lưu token vào localStorage
             localStorage.setItem('authToken', token);
+            localStorage.setItem('userName', userName);
             localStorage.setItem('authRole', role);
             localStorage.setItem('authPosition', position);
             setRole(role);
@@ -51,13 +57,16 @@ export const AuthProvider = ({ children }) => {
         } else if (role === 'Role_Patient') {
             setRole(role);
             setToken(token);
+
             // Lưu token vào localStorage
+            localStorage.setItem('userName', userName);
             localStorage.setItem('authToken', token);
             localStorage.setItem('authRole', role);
             localStorage.setItem('authPosition', position);
             if (email) {
                 setTimeout(() => {
-                    navigate('/appointment');
+                    // navigate('/appointment');
+                    navigate('/medical-record');
                 }, 1000);
             } else {
                 setTimeout(() => {
@@ -75,13 +84,14 @@ export const AuthProvider = ({ children }) => {
         setPosition(null);
         localStorage.removeItem('authToken');
         localStorage.removeItem('authRole');
+        localStorage.removeItem('userName');
         localStorage.removeItem('authPosition');
         localStorage.removeItem('persist:root');
         navigate('/login');
     };
 
     return (
-        <AuthContext.Provider value={{ token, role, position, login, logout }}>
+        <AuthContext.Provider value={{ token, role, position, login, logout, userName }}>
             {children}
         </AuthContext.Provider>
     );

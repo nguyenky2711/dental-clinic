@@ -160,7 +160,7 @@ const AppointmentInforSearch = ({ handleSubmit, handleChange }) => {
             <Button
               type="primary"
               htmlType="button"
-              onClick={() => navigate("/manage/patient/create")}
+              onClick={() => navigate("/manage/appointment/create")}
             >
               Thêm thông tin lịch khám
             </Button>

@@ -42,6 +42,12 @@ function App() {
                 <AppointmentPage />
               </ClientRoute>
             } />
+          <Route path='/medical-record'
+            element={
+              <ClientRoute >
+                <MedicalRecordPage />
+              </ClientRoute>
+            } />
           <Route path='/active/mail'
             element={
               <ClientRoute >
@@ -167,9 +173,17 @@ function App() {
               </StaffRoute>
             }
           />
+          <Route
+            path="/manage/appointment/create"
+            element={
+              <StaffRoute  >
+                <AppointmentPage />
+              </StaffRoute>
+            }
+          />
 
-          <Route path='/signup' Component={SignUpPage} />
-          <Route path='/change-password' Component={ChangePasswordPage} />
+          <Route path='/signup' element={SignUpPage} />
+          <Route path='/change-password' element={ChangePasswordPage} />
 
         </Routes>
         {/* <Footer></Footer> */}
