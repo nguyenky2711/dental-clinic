@@ -7,6 +7,7 @@ import {
   deleteMedicalRecordThunk,
   doneRecordThunk,
   getRecordByPatientIdThunk,
+  getRecordByTokenThunk,
   reopenRecordThunk,
 } from "../../../redux/action/medicalRecord";
 import MedicalRecordInforSearch from "./Search";
@@ -79,38 +80,44 @@ function MedicalRecordPage() {
             <div
               className="action-item"
               onClick={() =>
-                navigate(
-                  `/manage/patient/${patientId}/medical-record/${record.id}/visit`
-                )
+                role !== "Role_Patient"
+                  ? navigate(
+                      `/manage/patient/${patientId}/medical-record/${record.id}/visit`
+                    )
+                  : navigate(`/medical-record/${record.id}/visit`)
               }
             >
               <EditOutlined />
               <p>Xem chi tiết</p>
             </div>
-            {record.status === "Ongoing" ? (
-              <div
-                className="action-item"
-                onClick={() => showModal("put", record)}
-              >
-                <CheckOutlined />
-                Hoàn thành
-              </div>
-            ) : (
-              <div
-                className="action-item"
-                onClick={() => showModal("put", record)}
-              >
-                <RedoOutlined />
-                Mở lại
-              </div>
+            {role !== "Role_Patient" && (
+              <>
+                {record.status === "Ongoing" ? (
+                  <div
+                    className="action-item"
+                    onClick={() => showModal("put", record)}
+                  >
+                    <CheckOutlined />
+                    Hoàn thành
+                  </div>
+                ) : (
+                  <div
+                    className="action-item"
+                    onClick={() => showModal("put", record)}
+                  >
+                    <RedoOutlined />
+                    Mở lại
+                  </div>
+                )}
+                <div
+                  className="action-item"
+                  onClick={() => showModal("delete", record)}
+                >
+                  <DeleteOutlined />
+                  Xoá bệnh án
+                </div>
+              </>
             )}
-            <div
-              className="action-item"
-              onClick={() => showModal("delete", record)}
-            >
-              <DeleteOutlined />
-              Xoá bệnh án
-            </div>
           </div>
         );
       },
@@ -228,9 +235,13 @@ function MedicalRecordPage() {
     }));
   };
   useEffect(() => {
-    dispatch(getRecordByPatientIdThunk(patientId)).then((res) => {
-      setRecords(res?.payload);
-    });
+    role === "Role_Patient"
+      ? dispatch(getRecordByTokenThunk()).then((res) => {
+          setRecords(res?.payload);
+        })
+      : dispatch(getRecordByPatientIdThunk(patientId)).then((res) => {
+          setRecords(res?.payload);
+        });
   }, [modal]);
 
   const handleTablePageChange = (page, additionalData) => {
@@ -246,10 +257,12 @@ function MedicalRecordPage() {
     <div>
       <div className="staffPage-header">
         <h1>Sổ bệnh án</h1>
-        <MedicalRecordInforSearch
-          handleSearchChange={null}
-          handleSubmitSearch={null}
-        />
+        {role !== "Role_Patient" && (
+          <MedicalRecordInforSearch
+            handleSearchChange={null}
+            handleSubmitSearch={null}
+          />
+        )}
       </div>
       <div className="staffinfor-tableWrapper">
         <TableAntdCustom

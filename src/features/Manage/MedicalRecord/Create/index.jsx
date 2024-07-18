@@ -9,7 +9,7 @@ import {
   Space,
 } from "antd";
 import { toast } from "react-toastify";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import moment from "moment";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -26,10 +26,13 @@ import {
   getProceduredByRecorIdThunk,
   getProceduredByVisitIdThunk,
 } from "../../../../redux/action/medicalRecord";
+import { AuthContext } from "../../../../provider/AuthContext";
 // import ConfirmModalAntd from "src/component/shared/ConfirmModalAntd";
 const MedicalRecordFormPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { token, role, logout } = useContext(AuthContext);
+
   const [params, setParams] = useState({
     serviceId: null,
     keyword: null,
@@ -236,16 +239,22 @@ const MedicalRecordFormPage = () => {
             style={recordId ? {} : { width: "900px", margin: "0px auto" }}
           >
             <div className="patient_name">
-              <Form.Item
-                className="patient_item name"
-                label="Họ tên bệnh nhân"
-                name="patientId"
-                rules={[
-                  { required: true, message: "Vui lòng nhập họ tên bệnh nhân" },
-                ]}
-              >
-                <Input readOnly />
-              </Form.Item>
+              {role !== "Role_Patient" && (
+                <Form.Item
+                  className="patient_item name"
+                  label="Họ tên bệnh nhân"
+                  name="patientId"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Vui lòng nhập họ tên bệnh nhân",
+                    },
+                  ]}
+                >
+                  <Input readOnly />
+                </Form.Item>
+              )}
+
               <Form.Item
                 className="patient_item diagnosis"
                 label={recordId ? "Chẩn đoán chi tiết" : "Chẩn đoán sơ bộ"}
@@ -274,7 +283,7 @@ const MedicalRecordFormPage = () => {
                   },
                 ]}
               >
-                <Input />
+                <Input readOnly={role === "Role_Patient"} />
               </Form.Item>
               <Form.Item
                 className="patient_item note"
@@ -282,7 +291,7 @@ const MedicalRecordFormPage = () => {
                 name="note"
                 rules={[{ required: false, message: "Vui lòng nhập ghi chú" }]}
               >
-                <Input />
+                <Input readOnly={role === "Role_Patient"} />
               </Form.Item>
             </div>
           </div>
@@ -367,6 +376,7 @@ const MedicalRecordFormPage = () => {
                                     allowClear
                                     // onChange={(value) => handleSelectMethod(value)}
                                     options={treatments}
+                                    disabled={role === "Role_Patient"}
                                   ></Select>
                                 </Form.Item>
                                 <Form.Item
@@ -405,6 +415,7 @@ const MedicalRecordFormPage = () => {
                                   ]}
                                 >
                                   <InputNumber
+                                    readOnly={role === "Role_Patient"}
                                     onKeyDown={(event) => {
                                       if (
                                         !(
@@ -433,37 +444,41 @@ const MedicalRecordFormPage = () => {
                                     },
                                   ]}
                                 >
-                                  <Input />
+                                  <Input readOnly={role === "Role_Patient"} />
                                 </Form.Item>
                               </div>
 
                               {index >= 0 && (
                                 <DeleteOutlined
                                   onClick={() => {
-                                    visitId
-                                      ? handleRemove(id, field.name)
-                                      : remove(field.name);
+                                    if (role !== "Role_Patient") {
+                                      visitId
+                                        ? handleRemove(id, field.name)
+                                        : remove(field.name);
+                                    }
                                   }}
                                 />
                               )}
                             </Space>
                           );
                         })}
-                      <Form.Item
-                        style={{
-                          margin: "50px auto",
-                          width: "180px",
-                        }}
-                      >
-                        <Button
-                          type="dashed"
-                          onClick={() => add()} // Make sure 'add' is a valid function
-                          block
-                          icon={<PlusOutlined />}
+                      {role !== "Role_Patient" && (
+                        <Form.Item
+                          style={{
+                            margin: "50px auto",
+                            width: "180px",
+                          }}
                         >
-                          Thêm phương thức
-                        </Button>
-                      </Form.Item>
+                          <Button
+                            type="dashed"
+                            onClick={() => add()} // Make sure 'add' is a valid function
+                            block
+                            icon={<PlusOutlined />}
+                          >
+                            Thêm phương thức
+                          </Button>
+                        </Form.Item>
+                      )}
                     </>
                   );
                 }}
@@ -482,9 +497,13 @@ const MedicalRecordFormPage = () => {
             <Button
               type="button"
               onClick={() =>
-                navigate(
-                  `/manage/patient/${patientId}/medical-record/${recordId}/visit`
-                )
+                role !== "Role_Patient"
+                  ? recordId
+                    ? navigate(
+                        `/manage/patient/${patientId}/medical-record/${recordId}/visit`
+                      )
+                    : navigate(`/manage/patient/${patientId}/medical-record`)
+                  : navigate(`/medical-record/${recordId}/visit`)
               }
             >
               Huỷ

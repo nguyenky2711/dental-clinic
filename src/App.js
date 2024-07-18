@@ -119,6 +119,14 @@ function App() {
             }
           />
           <Route
+            path="/medical-record/:recordId/visit"
+            element={
+              <ClientRoute  >
+                <VisitPage />
+              </ClientRoute>
+            }
+          />
+          <Route
             path="/manage/patient/:patientId/medical-record/create"
             element={
               <StaffRoute  >
@@ -134,12 +142,21 @@ function App() {
               </StaffRoute>
             }
           />
+
           <Route
             path="/manage/patient/:patientId/medical-record/:recordId/visit/:visitId"
             element={
               <StaffRoute  >
                 <MedicalRecordFormPage />
               </StaffRoute>
+            }
+          />
+          <Route
+            path="/medical-record/:recordId/visit/:visitId"
+            element={
+              <ClientRoute  >
+                <MedicalRecordFormPage />
+              </ClientRoute>
             }
           />
           <Route

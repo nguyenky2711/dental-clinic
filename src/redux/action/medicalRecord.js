@@ -6,6 +6,7 @@ const {
     create,
     deleteRecord,
     getRecordByPatientId,
+    getRecordByToken,
     addProcedureForRecord,
     addProceduredByVisitdId,
     deleteProcedureById,
@@ -45,6 +46,17 @@ export const getRecordByPatientIdThunk = createAsyncThunk(
     async (data) => {
         try {
             const res = await getRecordByPatientId(data);
+            return res;
+        } catch (error) {
+            return error;
+        }
+    }
+);
+export const getRecordByTokenThunk = createAsyncThunk(
+    'medicalRecord/getRecordByToken',
+    async (data) => {
+        try {
+            const res = await getRecordByToken(data);
             return res;
         } catch (error) {
             return error;

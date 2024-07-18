@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import "./style.scss";
 import TableAntdCustom from "../../../components/TableAntd";
 import { useDispatch } from "react-redux";
@@ -19,12 +19,14 @@ import { Tag } from "antd";
 import ReusableModal from "../../../components/ReuseModalAntd";
 import VisitInforSearch from "./Search";
 import ConfirmModalAntd from "../../../components/ConfirmModalAntd";
+import { AuthContext } from "../../../provider/AuthContext";
 
 const VisitPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { patientId, recordId } = useParams();
   const [records, setRecords] = useState();
+  const { token, role, logout } = useContext(AuthContext);
 
   const columnsMedicalRecord = [
     {
@@ -70,22 +72,25 @@ const VisitPage = () => {
             <div
               className="action-item"
               onClick={() =>
-                navigate(
-                  `/manage/patient/${patientId}/medical-record/${recordId}/visit/${record.id}`
-                )
+                role !== "Role_Patient"
+                  ? navigate(
+                      `/manage/patient/${patientId}/medical-record/${recordId}/visit/${record.id}`
+                    )
+                  : navigate(`/medical-record/${recordId}/visit/${record.id}`)
               }
             >
               <EditOutlined />
               <p>Xem chi tiết</p>
             </div>
-
-            <div
-              className="action-item"
-              onClick={() => showModal("delete", record)}
-            >
-              <DeleteOutlined />
-              Xoá lần khám
-            </div>
+            {role !== "Role_Patient" && (
+              <div
+                className="action-item"
+                onClick={() => showModal("delete", record)}
+              >
+                <DeleteOutlined />
+                Xoá lần khám
+              </div>
+            )}
           </div>
         );
       },
@@ -148,7 +153,12 @@ const VisitPage = () => {
     <div>
       <div className="staffPage-header">
         <h1>Chi tiết các lần khám</h1>
-        <VisitInforSearch handleSearchChange={null} handleSubmitSearch={null} />
+        {role !== "Role_Patient" && (
+          <VisitInforSearch
+            handleSearchChange={null}
+            handleSubmitSearch={null}
+          />
+        )}
       </div>
       <div className="staffinfor-tableWrapper">
         <TableAntdCustom

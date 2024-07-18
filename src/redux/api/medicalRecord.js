@@ -10,6 +10,14 @@ const medicalRecord = {
             data
         );
     },
+    getRecordByToken: (data) => {
+        const url = `/api/record/token`;
+
+        return internshipTransport.get(
+            url,
+            data
+        );
+    },
 
     create: (data) => {
         const url = `/api/record`;
