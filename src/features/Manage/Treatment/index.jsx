@@ -55,7 +55,7 @@ const TreatmentPage = () => {
       align: "center",
       width: "15%",
       render: (text) => {
-        return text.cost.toLocaleString() + "VND";
+        return text.cost.toLocaleString() + "VND/ " + text.unit;
       },
     },
     {
