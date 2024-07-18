@@ -187,9 +187,11 @@ const MedicalRecordFormPage = () => {
               style: { color: "$color-default", backgroundColor: "#DEF2ED" },
             }
           );
-          navigate(
-            `/manage/patient/${patientId}/medical-record/${recordId}/visit`
-          );
+          recordId
+            ? navigate(
+                `/manage/patient/${patientId}/medical-record/${recordId}/visit`
+              )
+            : navigate(`/manage/patient/${patientId}/medical-record`);
         } else {
           toast.error(
             recordId

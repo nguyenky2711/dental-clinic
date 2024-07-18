@@ -77,14 +77,7 @@ function App() {
               </StaffRoute>
             }
           />
-          <Route
-            path="/manage/treatment"
-            element={
-              <StaffRoute  >
-                <TreatmentPage />
-              </StaffRoute>
-            }
-          />
+
           <Route
             path="/manage/patient"
             element={
@@ -182,9 +175,13 @@ function App() {
             }
           />
 
-          <Route path='/signup' element={SignUpPage} />
-          <Route path='/change-password' element={ChangePasswordPage} />
 
+          <Route path='/signup' element={<SignUpPage />} />
+          <Route path='/change-password' element={<ChangePasswordPage />} />
+          <Route
+            path="/treatment"
+            element={<TreatmentPage />}
+          />
         </Routes>
         {/* <Footer></Footer> */}
         <ToastContainer />

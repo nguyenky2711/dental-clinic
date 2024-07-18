@@ -1,0 +1,15 @@
+.header-treatment {
+  text-align: left;
+  padding-left: 30px;
+  padding: 8px;
+  transition: 0.3s;
+  p {
+    padding: 0;
+    padding-left: 30px;
+    margin: 0;
+  }
+  &:hover {
+    border-radius: 6px;
+    background-color: #7042644f;
+  }
+}

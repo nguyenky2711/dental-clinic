@@ -18,9 +18,14 @@ const Header = () => {
   const handleLogout = () => {
     logout(); // Gọi hàm logout từ AuthContext khi người dùng click vào nút đăng xuất
   };
-
   const isActive = (path) => {
-    return location.pathname === path;
+    if (path === "/manage/working-time/past") {
+      return location.pathname === path;
+    }
+    if (path === "/manage/working-time") {
+      return location.pathname === path;
+    }
+    return location.pathname.startsWith(path);
   };
 
   const menu = (
@@ -110,6 +115,12 @@ const Header = () => {
             </Link>
           </>
         )}
+        <Link
+          to="/treatment"
+          className={isActive("/treatment") ? "active" : ""}
+        >
+          Điều trị- Dịch vụ
+        </Link>
       </div>
       <div className="header-right">
         {role && (

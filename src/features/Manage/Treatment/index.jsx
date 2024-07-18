@@ -1,96 +1,104 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./style.scss";
 import TableAntdCustom from "../../../components/TableAntd";
 import TreatmentInforSearch from "./Search";
+import { useDispatch } from "react-redux";
+import {
+  filterTreatmentsThunk,
+  getServicesMedicalThunk,
+} from "../../../redux/action/treatment";
 
-function TreatmentPage() {
-  const handleTablePageChange = (page, additionalData) => {
-    // let temp = sendData;
-    // temp.no = page;
-    // setCurrentPage(page);
-    // setSendData(temp);
-    // dispatch(filterUserThunk(temp)).then((res) => {});
+const groupByServiceDTO = (items) => {
+  return items.reduce((result, item) => {
+    const serviceName = item.serviceDTO.name;
+    if (!result[serviceName]) {
+      result[serviceName] = [];
+    }
+    result[serviceName].push(item);
+    return result;
+  }, {});
+};
+
+const TreatmentPage = () => {
+  const dispatch = useDispatch();
+  const [paramsTreatment, setParamsTreatment] = useState({
+    keyword: null,
+    serviceId: null,
+    sortOrder: null,
+  });
+  const [treatmentData, setTreatmentData] = useState();
+  const [openGroups, setOpenGroups] = useState({});
+
+  const handleToggle = (key) => {
+    setOpenGroups((prevState) => ({
+      ...prevState,
+      [key]: !prevState[key],
+    }));
   };
+  useEffect(() => {
+    dispatch(filterTreatmentsThunk(paramsTreatment)).then((res) =>
+      setTreatmentData(groupByServiceDTO(res.payload))
+    );
+  }, [paramsTreatment]);
+  const handleTablePageChange = (page, additionalData) => {};
   const columnsTreament = [
     {
       title: "Tên phương thức",
-      dataIndex: "node",
       key: "name",
       width: "20%",
       render: (text) => {
-        // text.tokenActive
+        return text.name;
       },
     },
     {
-      title: "Email",
-      dataIndex: "node",
-      key: "email",
+      title: "Giá tiền",
+      align: "center",
       width: "15%",
-      render: (text) => {},
+      render: (text) => {
+        return text.cost.toLocaleString() + "VND";
+      },
     },
     {
-      title: "Số điện thoại",
-      dataIndex: "node",
-      key: "phone",
+      title: "Ghi chú",
       align: "center",
       width: "12%",
       render: (text) => {
-        // return text.phoneNumber;
+        return text.note;
       },
-    },
-    {
-      title: "Vai trò",
-      dataIndex: "node",
-      key: "role",
-      align: "center",
-      width: "10%",
-      render: (text) => {
-        // return text.role.name.split("_")[1];
-      },
-    },
-    {
-      title: "Loại nhân viên",
-      dataIndex: "node",
-      key: "role",
-      align: "center",
-      width: "10%",
-      render: (text) => {
-        // return text.levelEmployee;
-      },
-    },
-    {
-      title: "Hành động",
-      align: "center",
-      width: "10%",
-      render: (_, record) => {},
     },
   ];
-  const handleSearchChange = (values) => {};
-  const handleSubmitSearch = (values) => {};
   return (
     <div>
       <div className="staffPage-header">
         <h1>Danh sách phương thức điều trị</h1>
-        <TreatmentInforSearch
-          handleChange={handleSearchChange}
-          handleSubmit={handleSubmitSearch}
-        />
       </div>
-      <div className="staffinfor-tableWrapper">
-        <TableAntdCustom
-          list={null}
-          totalItems={10}
-          totalPages={1}
-          pageSize={5}
-          no={0}
-          columns={columnsTreament}
-          onChange={handleTablePageChange}
-          className={"staffinfor-table"}
-          emptyText="Hiện chưa có phương thức điều trị nào"
-        ></TableAntdCustom>
-      </div>
+      {treatmentData &&
+        Object.keys(treatmentData).map((key) => {
+          return (
+            <div key={key}>
+              <h2
+                className="header-treatment"
+                onClick={() => handleToggle(key)}
+                style={{ cursor: "pointer" }}
+              >
+                <p>{key}</p>
+              </h2>
+              {openGroups[key] && (
+                <TableAntdCustom
+                  list={treatmentData[key]}
+                  pagination={false}
+                  columns={columnsTreament}
+                  onChange={handleTablePageChange}
+                  className={"staffinfor-table"}
+                  emptyText="Hiện chưa có phương thức điều trị nào"
+                ></TableAntdCustom>
+              )}
+            </div>
+          );
+        })}
+      <div className="staffinfor-tableWrapper"></div>
     </div>
   );
-}
+};
 
 export default TreatmentPage;
