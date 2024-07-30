@@ -22,54 +22,72 @@ import {
 
 const { Option } = Select;
 
-// Hàm để lấy ngày bắt đầu và kết thúc của tuần trong một tháng
+const getStartOfWeek = (year, week) => {
+  return moment().year(year).week(week).startOf("isoWeek").format("YYYY-MM-DD");
+};
+
 const getWeeksInMonth = (year, month) => {
-  // Thay đổi tháng từ 1-indexed (1 = January) sang 0-indexed (0 = January)
-  month -= 1;
-
-  // Tạo đối tượng Date cho ngày đầu tháng
-  const startOfMonth = new Date(year, month, 1);
-  const endOfMonth = new Date(year, month + 1, 0); // Ngày cuối tháng
-
+  // Tạo mảng lưu các tuần
   const weeks = [];
-  let current = new Date(startOfMonth);
+  // Lấy ngày đầu tháng và ngày cuối tháng
+  const startOfMonth = moment()
+    .year(year)
+    .month(month - 1)
+    .startOf("month");
+  const endOfMonth = moment()
+    .year(year)
+    .month(month - 1)
+    .endOf("month");
 
-  // Đảm bảo tuần bắt đầu từ Chủ Nhật
-  while (current.getDay() !== 0) {
-    current.setDate(current.getDate() - 1);
-  }
+  // Xác định tuần đầu tiên và tuần cuối cùng trong tháng
+  let current = startOfMonth.clone().startOf("isoWeek");
+  const end = endOfMonth.clone().endOf("isoWeek");
 
-  // Lặp qua từng tuần trong tháng
-  while (current <= endOfMonth) {
-    const weekStart = new Date(current);
-    const weekEnd = new Date(current);
-    weekEnd.setDate(weekStart.getDate() + 6);
-
-    if (weekEnd > endOfMonth) {
-      weekEnd.setDate(endOfMonth.getDate());
+  while (current <= end) {
+    if (
+      current.isSameOrAfter(startOfMonth) &&
+      current.isSameOrBefore(endOfMonth)
+    ) {
+      weeks.push({
+        week: current.isoWeek(),
+        start: current.format("YYYY-MM-DD"),
+        end: current.clone().endOf("isoWeek").format("YYYY-MM-DD"),
+      });
     }
-
-    weeks.push({
-      week: Math.ceil((weekStart.getDate() - 1 + weekStart.getDay()) / 7),
-      start: weekStart.toISOString().split("T")[0],
-      end: weekEnd.toISOString().split("T")[0],
-    });
-
-    // Tiến đến tuần tiếp theo
-    current.setDate(current.getDate() + 7);
+    current.add(1, "week");
   }
 
   return weeks;
 };
 
-// Ví dụ sử dụng hàm
-const year = 2024;
-const month = 7; // Tháng 7
+const currentYear = new Date().getFullYear();
 
-const weeksInMonth = getWeeksInMonth(year, month);
+const addMissingWeeks = (currentData, weeks) => {
+  const updatedData = [...currentData];
+  const existingWeeks = new Set(currentData.map((item) => item.week));
 
-console.log(weeksInMonth);
+  weeks.forEach((week) => {
+    if (!existingWeeks.has(week.week)) {
+      updatedData.push({
+        totalAmountRemaining: 0,
+        totalRevenue: 0,
+        week: week.week,
+        startDate: week.start,
+      });
+    }
+  });
 
+  updatedData.forEach((item) => {
+    if (!item.startDate) {
+      const weekData = weeks.find((w) => w.week === item.week);
+      if (weekData) {
+        item.startDate = weekData.startDate;
+      }
+    }
+  });
+  updatedData.sort((a, b) => a.week - b.week);
+  return updatedData;
+};
 const IncomePage = () => {
   const dispatch = useDispatch();
   const [timeFrame, setTimeFrame] = useState("month"); // Default to month
@@ -79,25 +97,25 @@ const IncomePage = () => {
 
   const currentYear = new Date().getFullYear();
   // Function to get weeks of a given month
-  const getWeeksInMonth = (date) => {
-    const startOfMonth = moment(date).startOf("month");
-    const endOfMonth = moment(date).endOf("month");
-    const weeks = [];
-    let current = startOfMonth.clone();
+  // const getWeeksInMonth = (date) => {
+  //   const startOfMonth = moment(date).startOf("month");
+  //   const endOfMonth = moment(date).endOf("month");
+  //   const weeks = [];
+  //   let current = startOfMonth.clone();
 
-    while (current.isBefore(endOfMonth)) {
-      const startOfWeek = current.clone().startOf("isoWeek");
-      const endOfWeek = current.clone().endOf("isoWeek");
-      weeks.push({
-        week: startOfWeek.isoWeek(),
-        start: startOfWeek.format("YYYY-MM-DD"),
-        end: endOfWeek.format("YYYY-MM-DD"),
-      });
-      current.add(1, "week");
-    }
+  //   while (current.isBefore(endOfMonth)) {
+  //     const startOfWeek = current.clone().startOf("isoWeek");
+  //     const endOfWeek = current.clone().endOf("isoWeek");
+  //     weeks.push({
+  //       week: startOfWeek.isoWeek(),
+  //       start: startOfWeek.format("YYYY-MM-DD"),
+  //       end: endOfWeek.format("YYYY-MM-DD"),
+  //     });
+  //     current.add(1, "week");
+  //   }
 
-    return weeks;
-  };
+  //   return weeks;
+  // };
 
   const showRevenueResult = () => {
     if (timeFrame === "week") {
@@ -116,7 +134,18 @@ const IncomePage = () => {
           year: currentYear,
         })
       ).then((res) => {
-        // console.log(res); --> need change here
+        console.log(res);
+        const weekInSelectedMonth = getWeeksInMonth(
+          currentYear,
+          dayjs(selectedMonth).month() + 1
+        );
+        const completeRevenueData = addMissingWeeks(
+          res?.payload?.revenues,
+          weekInSelectedMonth
+        );
+
+        console.log(completeRevenueData);
+        setFilteredData(completeRevenueData);
       });
     }
   };
@@ -262,12 +291,16 @@ const IncomePage = () => {
       <ResponsiveContainer width="100%" height={400}>
         <LineChart data={filteredData}>
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="date" />
+          <XAxis dataKey="startDate" />
           <YAxis />
           <Tooltip />
           <Legend />
-          <Line type="monotone" dataKey="amountPaid" stroke="#8884d8" />
-          <Line type="monotone" dataKey="remaining" stroke="#82ca9d" />
+          <Line type="monotone" dataKey="totalRevenue" stroke="#8884d8" />
+          <Line
+            type="monotone"
+            dataKey="totalAmountRemaining"
+            stroke="#82ca9d"
+          />
         </LineChart>
       </ResponsiveContainer>
     </div>
