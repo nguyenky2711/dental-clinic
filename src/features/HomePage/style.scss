@@ -1,0 +1,284 @@
+.home-page {
+  font-family: Arial, sans-serif;
+  padding: 20px;
+  background-color: #f9f9f9;
+}
+
+.hero-section {
+  position: relative;
+  width: 100%;
+  height: 50vh; /* Chiều cao toàn bộ viewport hoặc điều chỉnh theo nhu cầu */
+  overflow: hidden; /* Đảm bảo phần tử không bị tràn */
+  color: #fff; /* Màu chữ trắng hoặc màu khác tùy thuộc vào hình nền */
+  text-align: center; /* Căn giữa văn bản */
+}
+
+.hero-bg-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: auto; /* Chiều cao tự động giữ tỷ lệ khung hình */
+  max-height: 100%; /* Đảm bảo hình ảnh không vượt quá chiều cao của phần tử */
+  object-fit: fill; /* Giữ nguyên tỷ lệ khung hình của hình ảnh */
+  z-index: 1; /* Đặt hình ảnh nằm dưới nội dung */
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1; /* Đặt nội dung nằm trên hình ảnh nền */
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Căn giữa nội dung theo chiều dọc */
+  align-items: center; /* Căn giữa nội dung theo chiều ngang */
+  height: 100%; /* Chiều cao đầy đủ của phần tử */
+  padding: 0 20px; /* Padding cho nội dung */
+}
+
+.hero-section h1 {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+}
+
+.hero-section p {
+  font-size: 1.25rem;
+  margin-bottom: 20px;
+}
+
+.hero-section button {
+  border: none;
+  background-color: #49243e;
+  opacity: 0.8;
+  transition: 0.3s;
+  cursor: pointer;
+  color: white;
+  padding: 10px 20px;
+  font-size: 1rem;
+  border-radius: 8px;
+  &:hover {
+    opacity: 1;
+  }
+}
+
+.features-section {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  margin: 20px 0;
+}
+
+.feature h2 {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+}
+
+.feature p {
+  font-size: 1rem;
+}
+
+.cta-section {
+  text-align: center;
+  padding: 40px 20px;
+  background-color: #e9ecef;
+  border-radius: 8px;
+}
+
+.cta-section h2 {
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.cta-section p {
+  font-size: 1.25rem;
+  margin-bottom: 20px;
+}
+
+.cta-section button {
+  padding: 10px 20px;
+  font-size: 1rem;
+  color: #fff;
+  background-color: #28a745;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.cta-section button:hover {
+  background-color: #218838;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .features-section {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .feature {
+    max-width: 90%;
+  }
+
+  .hero-section h1 {
+    font-size: 2rem;
+  }
+
+  .hero-section p {
+    font-size: 1rem;
+  }
+
+  .cta-section h2 {
+    font-size: 1.5rem;
+  }
+
+  .cta-section p {
+    font-size: 1rem;
+  }
+}
+
+.features-section {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  margin: 20px 0;
+}
+
+.feature h2 {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+}
+
+.feature p {
+  font-size: 1rem;
+}
+
+.features-section-cover {
+  h1 {
+    text-align: left;
+    color: #49243e;
+  }
+  button {
+    border: none;
+    background-color: #49243e;
+    opacity: 0.8;
+    transition: 0.3s;
+    cursor: pointer;
+    color: white;
+    padding: 10px 20px;
+    font-size: 1rem;
+    border-radius: 8px;
+    &:hover {
+      opacity: 1;
+    }
+  }
+}
+.features-section {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  padding: 20px;
+}
+
+.feature {
+  width: 350px;
+  display: flex;
+  align-items: center;
+  margin: 0px auto;
+  //   border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 10px;
+  //   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.icon {
+  height: 80px;
+  width: 80px;
+  //   flex: 0 0 80px; /* Chiều rộng của vùng chứa biểu tượng */
+  margin-right: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px,
+    rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+  border-radius: 50%;
+}
+
+.icon img {
+  max-width: 80%;
+  max-height: 80%;
+}
+
+.content {
+  text-align: left;
+  margin-left: 15px;
+}
+
+.content h3 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+  color: #49243e;
+}
+
+.content p {
+  margin: 0;
+  margin-top: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #49243e;
+}
+
+/* BackgroundWithIcons.css */
+.background-container-ft {
+  background-color: #49243e;
+  color: white;
+  margin-top: 30px;
+  padding: 30px 120px;
+  border-radius: 12px;
+
+  .ft-header {
+    display: flex;
+    justify-content: space-between;
+    .name {
+      display: flex;
+      width: 60%;
+      img {
+        border-radius: 12px;
+        width: 200px;
+        height: 100px;
+      }
+      .content {
+        margin-left: 20px;
+      }
+    }
+    .infor {
+      width: 20%;
+      h1 {
+        text-align: left;
+      }
+      .infor-icon {
+        display: flex;
+        justify-content: space-between;
+        .icon-cover {
+          padding: 8px;
+          border-radius: 100%;
+          background-color: white;
+          svg {
+            color: #49243e;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+          }
+        }
+      }
+    }
+  }
+  .ft-content {
+    margin-top: 40px;
+    text-align: left;
+    p {
+      padding-bottom: 10px;
+      font-weight: 600;
+    }
+  }
+}

@@ -40,16 +40,15 @@ const StaffFormPage = () => {
         staffResult.professionalQualification
       );
       form.setFieldValue("userName", staffResult.phoneNumber);
+      form.setFieldValue("positionId", staffResult.positionDTO.id);
     }
   }, [staffResult]);
-  console.log(staffResult);
   const onFinish = (data) => {
-    console.log(data);
     const staffDTO = {
       name: data.name,
       professionalQualification: data.professionalQualification,
     };
-    const positionId = 1;
+    const positionId = data.positionId;
     const loginDTO = {
       userName: data.userName,
       password: "123456",
@@ -67,11 +66,9 @@ const StaffFormPage = () => {
         positionId,
       };
     }
-
     dispatch(
       staffResult ? updateStaffThunk(sendData) : createStaffThunk(sendData)
     ).then((res) => {
-      console.log(res);
       if (res?.payload?.message === "successfully") {
         toast.success(
           staffResult
@@ -237,7 +234,22 @@ const StaffFormPage = () => {
                 readOnly={staffResult ? true : false}
               />
             </Form.Item>
-
+            <Form.Item
+              className="staff_item phone"
+              label="Vị trí"
+              name="positionId"
+              rules={[
+                {
+                  required: true,
+                  message: "Vui lòng chọn vị trí",
+                },
+              ]}
+            >
+              <Select>
+                <Select.Option value={1}>Nha sĩ</Select.Option>
+                <Select.Option value={2}>Lễ tân</Select.Option>
+              </Select>
+            </Form.Item>
             <Form.Item className="submitBtn">
               <Button type="submit" htmlType="submit">
                 {staffResult ? "Cập nhật" : "Thêm"}

@@ -1,5 +1,6 @@
 import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import {
+  AutoComplete,
   Button,
   Checkbox,
   Form,
@@ -27,6 +28,7 @@ import {
   getProceduredByVisitIdThunk,
 } from "../../../../redux/action/medicalRecord";
 import { AuthContext } from "../../../../provider/AuthContext";
+import { debounce } from "lodash";
 // import ConfirmModalAntd from "src/component/shared/ConfirmModalAntd";
 const MedicalRecordFormPage = () => {
   const dispatch = useDispatch();
@@ -39,7 +41,7 @@ const MedicalRecordFormPage = () => {
     sortOrder: null,
   });
   const [sendData, setSendData] = useState();
-  const [treatments, setTreatments] = useState();
+  let [treatments, setTreatments] = useState();
   const [canRemove, setCanRemove] = useState(false);
   const [form] = Form.useForm();
   const { patientId, recordId, visitId } = useParams();
@@ -75,11 +77,13 @@ const MedicalRecordFormPage = () => {
 
   useEffect(() => {
     dispatch(filterTreatmentsThunk(params)).then((res) => {
+      console.log(res);
       setTreatments(
         res?.payload?.map((item) => {
           return {
-            value: item?.id,
+            id: item?.id,
             label: item?.name + " - " + item?.serviceDTO?.name,
+            value: item?.id,
           };
         })
       );
@@ -105,27 +109,15 @@ const MedicalRecordFormPage = () => {
     }
     setModal((prevVal) => ({ ...prevVal, open: false }));
   };
-  // const handleRemove = (id) => {
-  //   if (id) {
-  //     dispatch(deleteProcedureByIdThunk({ procedureId: id })).then((res) => {
-  //       console.log(res);
-  //       if (res?.payload?.message === "successfully") {
-  //         toast.success("Xoá liệu trình thành công", {
-  //           position: "top-right",
-  //           autoClose: 3000,
-  //           style: { color: "green", backgroundColor: "#DEF2ED" },
-  //         });
-  //         setCanRemove(true);
-  //       } else {
-  //         toast.error("Chỉ có bác sĩ khám mới có quyền thay đổi!", {
-  //           position: "top-right",
-  //           autoClose: 3000,
-  //           style: { color: "red", backgroundColor: "#DEF2ED" },
-  //         });
-  //       }
-  //     });
-  //   }
-  // };
+  // Hàm tìm kiếm với debounce
+  const handleSearch = debounce((value) => {
+    setParams((prevParams) => ({
+      ...prevParams,
+      keyword: value ? value.toLowerCase() : null,
+    }));
+  }, 300); // Thời gian debounce là 300ms
+
+  const handleSelect = (value) => {};
   const onFinish = (values) => {
     const lastData = recordId
       ? visitId
@@ -150,7 +142,7 @@ const MedicalRecordFormPage = () => {
           patientId: patientId,
           objectivesCreationDTOS: [],
         }; // Khi `recordId` là `false`
-
+    console.log(lastData);
     setSendData(lastData);
     setModal((prevVal) => ({
       ...prevVal,
@@ -370,14 +362,33 @@ const MedicalRecordFormPage = () => {
                                     },
                                   ]}
                                 >
-                                  <Select
-                                    // defaultValue="lucy"
-
-                                    allowClear
-                                    // onChange={(value) => handleSelectMethod(value)}
+                                  {/* <AutoComplete
+                                    style={{ width: "400px" }}
                                     options={treatments}
+                                    onSearch={handleSearch} // Gọi hàm tìm kiếm debounce
+                                    onSelect={handleSelect}
+                                    allowClear
+                                    placeholder="Nhập tên phương thức"
                                     disabled={role === "Role_Patient"}
-                                  ></Select>
+                                    optionLabelProp="label"
+                                  /> */}
+                                  <Select
+                                    showSearch
+                                    onSearch={handleSearch}
+                                    allowClear
+                                    // options={treatments}
+                                    disabled={role === "Role_Patient"}
+                                    optionFilterProp="children"
+                                  >
+                                    {treatments?.map((treatment) => (
+                                      <Select.Option
+                                        key={treatment.value}
+                                        value={treatment.value}
+                                      >
+                                        {treatment.label}
+                                      </Select.Option>
+                                    ))}
+                                  </Select>
                                 </Form.Item>
                                 <Form.Item
                                   {...field}

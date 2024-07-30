@@ -11,7 +11,7 @@ const treatment = {
         );
     },
     filterTreatments: (data) => {
-        const url = `/api/treatment`;
+        let url = `/api/treatment`;
         let params = [];
 
         // Kiểm tra từng tham số và thêm vào mảng params nếu có giá trị

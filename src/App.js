@@ -24,9 +24,13 @@ import ActiveMailPage from './features/Auth/ActiveMail';
 import AppointmentManagePage from './features/Manage/Appointment';
 import VisitPage from './features/Manage/Visit';
 import ChangePasswordPage from './features/Auth/Update/Password';
+import AdminRoute from './router/AdminRouter';
+import IncomePage from './features/Manage/Income';
+import HomePage from './features/HomePage';
 
 
 function App() {
+
   return (
     <AuthProvider>
 
@@ -34,7 +38,8 @@ function App() {
 
         <Header />
         <Routes>
-          {/* <Route path='/' Component={HomePage} /> */}
+          <Route path='/'
+            element={<HomePage />} />
           <Route path='/login' Component={LoginPage} />
           <Route path='/appointment'
             element={
@@ -189,6 +194,14 @@ function App() {
               <StaffRoute  >
                 <AppointmentPage />
               </StaffRoute>
+            }
+          />
+          <Route
+            path="/manage/income"
+            element={
+              <AdminRoute  >
+                <IncomePage />
+              </AdminRoute>
             }
           />
 

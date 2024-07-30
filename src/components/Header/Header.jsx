@@ -1,5 +1,6 @@
-import React, { useContext, useState } from "react";
+import React, { useContext } from "react";
 import "./style.scss";
+import dentalLogo from "../../../src/dental_logo.jpg";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../provider/AuthContext";
 import { Menu, Dropdown, Button } from "antd";
@@ -18,6 +19,7 @@ const Header = () => {
   const handleLogout = () => {
     logout(); // Gọi hàm logout từ AuthContext khi người dùng click vào nút đăng xuất
   };
+
   const isActive = (path) => {
     if (path === "/manage/working-time/past") {
       return location.pathname === path;
@@ -68,7 +70,9 @@ const Header = () => {
   return (
     <header className="header">
       <div className="logo">
-        <Link to="/">Logo</Link>
+        <Link to="/">
+          <img src={dentalLogo} alt="Dental Logo" />
+        </Link>
       </div>
       <div className="header-middle">
         {role === "Role_Admin" && (
@@ -84,6 +88,12 @@ const Header = () => {
               className={isActive("/manage/patient") ? "active" : ""}
             >
               Quản lý bệnh nhân
+            </Link>
+            <Link
+              to="/manage/income"
+              className={isActive("/manage/income") ? "active" : ""}
+            >
+              Thống kê doanh thu
             </Link>
           </>
         )}
@@ -123,12 +133,21 @@ const Header = () => {
         </Link>
       </div>
       <div className="header-right">
-        {role && (
+        {role ? (
           <Dropdown overlay={menu} trigger={["click"]}>
             <Button icon={<UserOutlined />}>
               <DownOutlined />
             </Button>
           </Dropdown>
+        ) : (
+          <>
+            <Link to="/login" className={isActive("/login") ? "active" : ""}>
+              Đăng nhập
+            </Link>
+            <Link to="/signup" className={isActive("/signup") ? "active" : ""}>
+              Đăng ký
+            </Link>
+          </>
         )}
       </div>
     </header>
