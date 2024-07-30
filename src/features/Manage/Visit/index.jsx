@@ -126,6 +126,10 @@ const VisitPage = () => {
       dispatch(deleteVisitByIdThunk({ visitId: modal?.val?.id })).then(
         (res) => {
           if (res?.payload?.message === "successfully") {
+            const newRecords = records.filter(
+              (item) => item.id !== modal?.val?.id
+            );
+            setRecords(newRecords);
             toast.success("Xoá lần khám thành công", {
               position: "top-right",
               autoClose: 3000,

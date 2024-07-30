@@ -21,37 +21,55 @@ import {
 } from "../../../redux/action/revenue";
 
 const { Option } = Select;
-const data = [
-  { id: 1, date: "2024-01-01", amountPaid: 150000, remaining: 50000 },
-  { id: 2, date: "2024-01-08", amountPaid: 200000, remaining: 100000 },
-  { id: 3, date: "2024-01-15", amountPaid: 250000, remaining: 150000 },
-  { id: 4, date: "2024-01-22", amountPaid: 300000, remaining: 200000 },
-  { id: 5, date: "2024-01-29", amountPaid: 350000, remaining: 250000 },
-  { id: 6, date: "2024-02-05", amountPaid: 150000, remaining: 50000 },
-  { id: 7, date: "2024-02-12", amountPaid: 200000, remaining: 100000 },
-  { id: 8, date: "2024-02-19", amountPaid: 250000, remaining: 150000 },
-  { id: 9, date: "2024-02-26", amountPaid: 300000, remaining: 200000 },
-  { id: 10, date: "2024-03-04", amountPaid: 150000, remaining: 50000 },
-  { id: 11, date: "2024-03-11", amountPaid: 200000, remaining: 100000 },
-  { id: 12, date: "2024-03-18", amountPaid: 250000, remaining: 150000 },
-  { id: 13, date: "2024-03-25", amountPaid: 300000, remaining: 200000 },
-  { id: 14, date: "2024-04-01", amountPaid: 150000, remaining: 50000 },
-  { id: 15, date: "2024-04-08", amountPaid: 200000, remaining: 100000 },
-  { id: 16, date: "2024-04-15", amountPaid: 250000, remaining: 150000 },
-  { id: 17, date: "2024-04-22", amountPaid: 300000, remaining: 200000 },
-  { id: 18, date: "2024-04-29", amountPaid: 350000, remaining: 250000 },
-  { id: 19, date: "2024-05-06", amountPaid: 150000, remaining: 50000 },
-  { id: 20, date: "2024-05-13", amountPaid: 200000, remaining: 100000 },
-  { id: 21, date: "2024-05-20", amountPaid: 250000, remaining: 150000 },
-  { id: 22, date: "2024-05-27", amountPaid: 300000, remaining: 200000 },
-  { id: 23, date: "2024-06-03", amountPaid: 150000, remaining: 50000 },
-  { id: 24, date: "2024-06-10", amountPaid: 200000, remaining: 100000 },
-  { id: 25, date: "2024-06-17", amountPaid: 250000, remaining: 150000 },
-  { id: 26, date: "2024-06-24", amountPaid: 300000, remaining: 200000 },
-  { id: 27, date: "2024-07-01", amountPaid: 150000, remaining: 50000 },
-  { id: 28, date: "2024-07-08", amountPaid: 200000, remaining: 100000 },
-  { id: 29, date: "2024-07-15", amountPaid: 250000, remaining: 150000 },
-];
+
+// Hàm để lấy ngày bắt đầu và kết thúc của tuần trong một tháng
+const getWeeksInMonth = (year, month) => {
+  // Thay đổi tháng từ 1-indexed (1 = January) sang 0-indexed (0 = January)
+  month -= 1;
+
+  // Tạo đối tượng Date cho ngày đầu tháng
+  const startOfMonth = new Date(year, month, 1);
+  const endOfMonth = new Date(year, month + 1, 0); // Ngày cuối tháng
+
+  const weeks = [];
+  let current = new Date(startOfMonth);
+
+  // Đảm bảo tuần bắt đầu từ Chủ Nhật
+  while (current.getDay() !== 0) {
+    current.setDate(current.getDate() - 1);
+  }
+
+  // Lặp qua từng tuần trong tháng
+  while (current <= endOfMonth) {
+    const weekStart = new Date(current);
+    const weekEnd = new Date(current);
+    weekEnd.setDate(weekStart.getDate() + 6);
+
+    if (weekEnd > endOfMonth) {
+      weekEnd.setDate(endOfMonth.getDate());
+    }
+
+    weeks.push({
+      week: Math.ceil((weekStart.getDate() - 1 + weekStart.getDay()) / 7),
+      start: weekStart.toISOString().split("T")[0],
+      end: weekEnd.toISOString().split("T")[0],
+    });
+
+    // Tiến đến tuần tiếp theo
+    current.setDate(current.getDate() + 7);
+  }
+
+  return weeks;
+};
+
+// Ví dụ sử dụng hàm
+const year = 2024;
+const month = 7; // Tháng 7
+
+const weeksInMonth = getWeeksInMonth(year, month);
+
+console.log(weeksInMonth);
+
 const IncomePage = () => {
   const dispatch = useDispatch();
   const [timeFrame, setTimeFrame] = useState("month"); // Default to month
@@ -98,7 +116,7 @@ const IncomePage = () => {
           year: currentYear,
         })
       ).then((res) => {
-        console.log(res);
+        // console.log(res); --> need change here
       });
     }
   };
@@ -136,28 +154,25 @@ const IncomePage = () => {
     let test = [];
     if (timeFrame === "week" && selectedWeek) {
       //   console.log(selectedWeek[start]);
-
-      test = data.filter((item) => {
-        // console.log(moment(new Date(selectedWeek.start)));
-        return (
-          moment(selectedWeek.start) <= moment(item.date) &&
-          moment(item.date) <= moment(selectedWeek.start)
-        );
-      });
-      console.log(test);
+      // test = data.filter((item) => {
+      //   // console.log(moment(new Date(selectedWeek.start)));
+      //   return (
+      //     moment(selectedWeek.start) <= moment(item.date) &&
+      //     moment(item.date) <= moment(selectedWeek.start)
+      //   );
+      // });
+      // console.log(test);
     }
 
     if (timeFrame === "month" && selectedMonth) {
-      test = data.filter((item) => {
-        return (
-          moment(item.date).month() === dayjs(selectedMonth).month() &&
-          moment(item.date).year() === dayjs(selectedMonth).year()
-        );
-      });
-      console.log(test);
-
+      // test = data.filter((item) => {
+      //   return (
+      //     moment(item.date).month() === dayjs(selectedMonth).month() &&
+      //     moment(item.date).year() === dayjs(selectedMonth).year()
+      //   );
+      // });
+      // console.log(test);
       //   setFilteredData(test);
-
       // return data.filter((item) =>
       //   moment(item.date).isSame(dayjs(selectedMonth).month() + 1, "month")
       // );

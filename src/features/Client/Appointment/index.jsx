@@ -12,6 +12,7 @@ import {
   Select,
   DatePicker,
   AutoComplete,
+  Radio,
 } from "antd";
 import { debounce } from "lodash";
 import { useDispatch } from "react-redux";
@@ -132,28 +133,29 @@ const AppointmentPage = () => {
         });
   }, [paramsAppointment]);
 
-  const handleSelectTime = (value) => {
-    console.log(value);
+  const handleSelectTime = (target) => {
+    console.log(target.target.value);
+
     const filAppointments = appoitmentOptions.filter((item) => {
-      // Kiểm tra nếu giá trị là mảng và không rỗng
-      if (Array.isArray(value) && value.length > 0) {
-        const isMorningSelected = value.includes("morning");
-        const isAfternoonSelected = value.includes("afternoon");
-        console.log(item);
-        if (isMorningSelected && isAfternoonSelected) {
-          return true; // Chọn cả buổi sáng và buổi chiều
-        } else if (isMorningSelected) {
-          return item?.workingDTO?.periodId == 1; // Chọn chỉ buổi sáng
-        } else if (isAfternoonSelected) {
-          return item?.workingDTO?.periodId == 2; // Chọn chỉ buổi chiều
-        }
+      const periodId = item?.workingDTO?.periodId;
+
+      // Chọn chỉ buổi sáng
+      if (target.target.value === "morning") {
+        return periodId === 1;
       }
 
-      return false; // Không chọn gì hoặc giá trị không hợp lệ
+      // Chọn chỉ buổi chiều
+      if (target.target.value === "afternoon") {
+        return periodId === 2;
+      }
+
+      return false;
     });
+
     console.log(filAppointments);
     setFilterAppointmentOptions(filAppointments);
   };
+
   // Hàm tìm kiếm với debounce
   const handleSearch = debounce((value) => {
     role !== "Role_Staff"
@@ -282,11 +284,12 @@ const AppointmentPage = () => {
               className="time-of-day"
               label="Thời gian trong ngày"
               name="timeOfDay"
+              style={{ textAlign: "left" }}
             >
-              <Checkbox.Group onChange={handleSelectTime}>
-                <Checkbox value="morning">Buổi sáng</Checkbox>
-                <Checkbox value="afternoon">Buổi chiều</Checkbox>
-              </Checkbox.Group>
+              <Radio.Group onChange={handleSelectTime}>
+                <Radio value="morning">Buổi sáng</Radio>
+                <Radio value="afternoon">Buổi chiều</Radio>
+              </Radio.Group>
             </Form.Item>
             <Form.Item
               className="treatment"
