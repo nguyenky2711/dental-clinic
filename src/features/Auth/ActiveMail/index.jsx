@@ -22,7 +22,7 @@ const ActiveMailPage = () => {
   const onFinish = (data) => {
     console.log(data);
     if (!sendMail) {
-      dispatch(sendActiveMailThunk(data.email)).then((res) => {
+      dispatch(sendActiveMailThunk({ email: data.email })).then((res) => {
         console.log(res);
         if (res?.payload?.message === "check your email") {
           toast.success("Hãy kiểm tra mail của bạn", {
