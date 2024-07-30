@@ -141,7 +141,7 @@ const LoginPage = () => {
             </Form.Item>
             <div className="flex justify-between">
               <p>
-                <Link to="/resetPassword/request">Quên mật khẩu? </Link>
+                <Link to="/forgot-password">Quên mật khẩu? </Link>
               </p>
               <p>
                 <NavLink to="/signup">Đăng ký </NavLink>

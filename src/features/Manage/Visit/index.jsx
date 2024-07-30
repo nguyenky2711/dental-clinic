@@ -4,6 +4,7 @@ import TableAntdCustom from "../../../components/TableAntd";
 import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import {
+  deleteVisitByIdThunk,
   getRecordByPatientIdThunk,
   getVisitByRecordIdThunk,
 } from "../../../redux/action/medicalRecord";
@@ -20,6 +21,7 @@ import ReusableModal from "../../../components/ReuseModalAntd";
 import VisitInforSearch from "./Search";
 import ConfirmModalAntd from "../../../components/ConfirmModalAntd";
 import { AuthContext } from "../../../provider/AuthContext";
+import { toast } from "react-toastify";
 
 const VisitPage = () => {
   const dispatch = useDispatch();
@@ -105,6 +107,7 @@ const VisitPage = () => {
 
   const showModal = (method, val) => {
     setModal((prevVal) => ({
+      val,
       visible: true,
       title: "Xoá lịch sử khám",
       content: `Bạn xác nhận xoá lịch sử khám ngày ${moment(
@@ -115,20 +118,37 @@ const VisitPage = () => {
 
   const handleOk = () => {
     // Hàm xử lý khi nhấn "Đồng ý"
-    console.log("Đã nhấn Đồng ý");
-    setModal((prevVal) => ({
-      ...prevVal,
-      visible: true,
-    }));
   };
 
-  const handleCancel = () => {
-    // Hàm xử lý khi nhấn "Hủy" hoặc nhấn ra ngoài modal
-    console.log("Đã nhấn Hủy");
+  const handleClick = (prop) => {
+    if (prop === "ok") {
+      console.log("Đã nhấn Đồng ý");
+      dispatch(deleteVisitByIdThunk({ visitId: modal?.val?.id })).then(
+        (res) => {
+          if (res?.payload?.message === "successfully") {
+            toast.success("Xoá lần khám thành công", {
+              position: "top-right",
+              autoClose: 3000,
+              style: { color: "$color-default", backgroundColor: "#DEF2ED" },
+            });
+          } else {
+            toast.error("Xoá lần khám thất bại", {
+              position: "top-right",
+              autoClose: 3000,
+              style: { color: "$color-default", backgroundColor: "#DEF2ED" },
+            });
+          }
+        }
+      );
+    } else {
+      console.log("Đã nhấn Hủy");
+    }
     setModal((prevVal) => ({
       ...prevVal,
       visible: false,
     }));
+    return;
+    // Hàm xử lý khi nhấn "Hủy" hoặc nhấn ra ngoài modal
   };
   useEffect(() => {
     // dispatch(getRecordByPatientIdThunk(patientId)).then((res) => {
@@ -177,8 +197,8 @@ const VisitPage = () => {
         open={modal.visible}
         header={modal.title}
         title={modal.content}
-        onOk={() => handleOk}
-        onCancel={handleCancel}
+        onOk={() => handleClick("ok")}
+        onCancel={() => handleClick("cancel")}
       />
     </div>
   );

@@ -5,6 +5,9 @@ const {
     confirmWithOTP,
     sendActiveMail,
     changePasssword,
+    confirmMail,
+    confirmResetPasswordOTP,
+    changePassswordWhenForgot,
 } = auth;
 
 
@@ -46,6 +49,42 @@ export const confirmWithOTPThunk = createAsyncThunk(
     async (data) => {
         try {
             const res = await confirmWithOTP(data);
+            return res;
+        } catch (error) {
+            return error;
+        }
+    }
+);
+export const confirmMailThunk = createAsyncThunk(
+    'auth/confirmMail',
+    async (data) => {
+        try {
+            console.log(data)
+            const res = await confirmMail(data);
+            return res;
+        } catch (error) {
+            return error;
+        }
+    }
+);
+
+export const confirmResetPasswordOTPThunk = createAsyncThunk(
+    'auth/confirmResetPasswordOTP',
+    async (data) => {
+        try {
+            const res = await confirmResetPasswordOTP(data);
+            return res;
+        } catch (error) {
+            return error;
+        }
+    }
+);
+
+export const changePassswordWhenForgotThunk = createAsyncThunk(
+    'auth/changePassswordWhenForgot',
+    async (data) => {
+        try {
+            const res = await changePassswordWhenForgot(data);
             return res;
         } catch (error) {
             return error;

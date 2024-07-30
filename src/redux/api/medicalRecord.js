@@ -115,6 +115,15 @@ const medicalRecord = {
             restData
         );
     },
+    updateProcedureById: (data) => {
+        const { procedureId, ...restData } = data
+        const url = `/api/procedure/${data.procedureId}`;
+
+        return internshipTransport.put(
+            url,
+            restData
+        );
+    },
     deleteProcedureById: (data) => {
         const url = `/api/procedure/${data.procedureId}`;
 

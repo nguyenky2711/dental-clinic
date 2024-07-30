@@ -8,8 +8,14 @@
     padding-left: 30px;
     margin: 0;
   }
-  &:hover {
-    border-radius: 6px;
-    background-color: #7042644f;
-  }
+  // &:hover {
+  //   border-radius: 6px;
+  //   background-color: #7042644f;
+  // }
+}
+.site-layout-background {
+  background: #fff;
+  height: 100vh;
+  position: fixed;
+  overflow: auto;
 }

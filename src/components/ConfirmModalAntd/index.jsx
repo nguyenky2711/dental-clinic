@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { Button, Modal, Form } from "antd";
+import React from "react";
+import { Button, Modal } from "antd";
 import "./style.scss";
+
 const ConfirmModalAntd = ({
   open = false,
   onCancel,
@@ -10,21 +11,25 @@ const ConfirmModalAntd = ({
   content = "",
   footer = true,
 }) => {
+  // Hàm xử lý khi nhấn nút "Hoàn thành"
   const handleOk = () => {
-    onOk(true);
-    onCancel(true);
-  };
-  const handleCancel = () => {
-    if (onCancel) {
-      onCancel(true);
+    if (onOk) {
+      onOk(); // Gọi hàm onOk
     }
   };
+
+  // Hàm xử lý khi nhấn nút "Hủy" hoặc khi đóng modal ra ngoài
+  const handleCancel = () => {
+    if (onCancel) {
+      onCancel(); // Gọi hàm onCancel
+    }
+  };
+
   return (
     <div className="modal_container">
       <Modal
-        // title=
         visible={open}
-        // open={open}
+        open={open}
         onOk={handleOk}
         onCancel={handleCancel}
         className="modal_information"
@@ -49,13 +54,13 @@ const ConfirmModalAntd = ({
         }
       >
         <div className="modal_header">
-          <h4>{header != "" && header}</h4>
+          <h4>{header}</h4>
         </div>
         <div className="modal_title">
-          <p>{title != "" && title}</p>
+          <p>{title}</p>
         </div>
         <div className="modal_content">
-          <p>{content != "" && content}</p>
+          <p>{content}</p>
         </div>
       </Modal>
     </div>

@@ -14,9 +14,12 @@ import {
   Input,
   InputNumber,
   Select,
+  DatePicker,
 } from "antd";
 import messages from "../../../config/messageCode/messages";
 import { AuthProvider } from "../../../provider/AuthContext";
+import moment from "moment";
+import { createPatientThunk } from "../../../redux/action/patient";
 const SignUpPage = () => {
   const x = useContext(AuthProvider);
   console.log(x);
@@ -24,38 +27,42 @@ const SignUpPage = () => {
   const navigate = useNavigate();
   const [form] = Form.useForm();
   const location = useLocation();
-  console.log(location.pathname);
   const onFinish = (data) => {
-    let formData = new FormData();
-    formData.append("email", data.email);
-    formData.append("password", data.password);
-    formData.append("name", data.name);
-    formData.append("address", data.address);
-    formData.append("phone", data.phone);
-    // dispatch(registerThunk(formData)).then((res) => {
-    //   console.log(res);
-    //   if (
-    //     res?.payload?.response?.data?.message === messages.EMAIL_ALREADY_EXISTS
-    //   ) {
-    //     toast.error("Địa chỉ mail đã được dùng để đăng ký tài khoản", {
-    //       position: "top-right",
-    //       autoClose: 3000,
-    //       style: { color: "red", backgroundColor: "#DEF2ED" },
-    //     });
-    //   } else {
-    //     toast.success("Đăng ký tài khoản thành công", {
-    //       position: "top-right",
-    //       autoClose: 3000,
-    //       style: { color: "green", backgroundColor: "#DEF2ED" },
-    //     });
-    //     toast.success("Hãy kiểm tra mail của bạn", {
-    //       position: "top-right",
-    //       autoClose: 3000,
-    //       style: { color: "green", backgroundColor: "#DEF2ED" },
-    //     });
-    //     navigate("/login");
-    //   }
-    // });
+    console.log(data);
+    const patientDTO = {
+      name: data.name,
+      birthday: moment(new Date(data.birthday)).format("YYYY-MM-DD"),
+      address: data.address,
+      // phoneNumber: data.phoneNumber,
+      medicalHistory: data.medicalHistory || "No significant medical history",
+    };
+    const loginDTO = {
+      userName: data.userName,
+      password: data.password,
+    };
+    let sendData = {
+      patientDTO,
+      loginDTO,
+    };
+    dispatch(createPatientThunk(sendData)).then((res) => {
+      if (res?.payload?.message === "successfully") {
+        toast.success("Đăng ký tài khoản thành công", {
+          position: "top-right",
+          autoClose: 3000,
+          style: { color: "green", backgroundColor: "#DEF2ED" },
+        });
+        navigate("/login");
+      } else {
+        console.log(res);
+        if (res?.payload?.response?.data?.message === "DATA EXISTING") {
+          toast.error("Tên đăng nhập đã tồn tại", {
+            position: "top-right",
+            autoClose: 3000,
+            style: { color: "red", backgroundColor: "#DEF2ED" },
+          });
+        }
+      }
+    });
   };
   return (
     <div className="container">
@@ -106,54 +113,55 @@ const SignUpPage = () => {
                 <Input placeholder="Nhập họ và tên" />
               </Form.Item>
             </div>
-            {location?.pathname !== "/signup" && (
-              <Form.Item
-                className="staff_item name"
-                label="Địa chỉ"
-                name="address"
-                rules={[
-                  {
-                    required: true,
-                    message: "Vui lòng nhập địa chỉ",
-                  },
-                ]}
-              >
-                <Input placeholder="Nhập địa chỉ" />
-              </Form.Item>
-            )}
-            {location?.pathname === "/signup" && (
-              <Form.Item
-                className="staff_item gender"
-                label="Giới tính"
-                name="gender"
-                rules={[
-                  {
-                    required: true,
-                    message: "Vui lòng chọn giới tính",
-                  },
-                ]}
-              >
-                <Select
-                  allowClear
-                  placeholder="Lựa chọn giới tính"
-                  options={[
-                    {
-                      value: 1,
-                      label: "Nam",
-                    },
-                    {
-                      value: 0,
-                      label: "Nữ",
-                    },
-                  ]}
-                />
-              </Form.Item>
-            )}
+            <Form.Item
+              className="student_item date"
+              label="Ngày sinh"
+              name={"birthday"}
+              rules={[
+                {
+                  required: true,
+                  message: "Vui lòng chọn ngày sinh",
+                },
+              ]}
+            >
+              <DatePicker
+                disabledDate={(d) => !d || d.isAfter(new Date())}
+                placeholder="Chọn ngày sinh"
+              />
+            </Form.Item>
+
+            <Form.Item
+              className="staff_item name"
+              label="Địa chỉ"
+              name="address"
+              rules={[
+                {
+                  required: true,
+                  message: "Vui lòng nhập địa chỉ",
+                },
+              ]}
+            >
+              <Input placeholder="Nhập địa chỉ" />
+            </Form.Item>
+
+            <Form.Item
+              className="staff_item name"
+              label="Tiền sử bệnh án"
+              name="medicalHistory"
+              rules={[
+                {
+                  required: false,
+                  message: "Vui lòng nhập địa chỉ",
+                },
+              ]}
+            >
+              <Input placeholder="Nhập tiền sử bệnh án" />
+            </Form.Item>
 
             <Form.Item
               className="staff_item phone"
-              label="Số điện thoại"
-              name="phone"
+              label="Tên đăng nhập (Số điện thoại)"
+              name="userName"
               rules={[
                 {
                   required: true,
@@ -204,40 +212,7 @@ const SignUpPage = () => {
                 addonBefore="+84"
               />
             </Form.Item>
-            <Form.Item
-              className="staff_item email"
-              label="Email"
-              name="email"
-              rules={[
-                {
-                  required: true,
-                  message: "Vui lòng nhập địa chỉ email",
-                },
-                {
-                  type: "email",
-                  message: "Địa chỉ email không hợp lệ",
-                },
-                {
-                  validator: (_, value) => {
-                    if (value && value.length <= 256 && value.trim() != "") {
-                      return Promise.resolve();
-                    } else {
-                      if (value && value.length > 256) {
-                        return Promise.reject("Vui lòng nhập tối đa 256 ký tự");
-                      }
-                      if (!value || value == "") {
-                        return Promise.reject();
-                      }
-                      if (value.trim() == "") {
-                        return Promise.reject("Vui lòng nhập họ và tên");
-                      }
-                    }
-                  },
-                },
-              ]}
-            >
-              <Input placeholder="Nhập email" />
-            </Form.Item>
+
             <Form.Item
               className="staff_item password"
               name="password"

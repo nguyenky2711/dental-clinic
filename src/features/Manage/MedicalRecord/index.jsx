@@ -238,6 +238,10 @@ function MedicalRecordPage() {
     role === "Role_Patient"
       ? dispatch(getRecordByTokenThunk()).then((res) => {
           setRecords(res?.payload);
+          const doctorDTOString = JSON.stringify(
+            res?.payload?.[res?.payload?.length - 1]?.staffDTO
+          );
+          sessionStorage.setItem("doctorDTO", doctorDTOString);
         })
       : dispatch(getRecordByPatientIdThunk(patientId)).then((res) => {
           setRecords(res?.payload);

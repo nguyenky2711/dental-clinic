@@ -35,6 +35,29 @@ const auth = {
             data
         );
     },
+    confirmMail: (data) => {
+        const url = `/api/user/mail/forget-password`;
+        return internshipTransport.post(
+            url,
+            data,
+        );
+    },
+    confirmResetPasswordOTP: (data) => {
+        const url = `/api/user/mail/otp`;
+
+        return internshipTransport.post(
+            url,
+            data,
+        );
+    },
+    changePassswordWhenForgot: (data) => {
+        const url = `/api/user/password`;
+
+        return internshipTransport.put(
+            url,
+            data
+        );
+    },
 };
 
 export default auth;

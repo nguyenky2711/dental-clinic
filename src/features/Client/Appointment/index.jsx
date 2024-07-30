@@ -34,6 +34,11 @@ const AppointmentPage = () => {
   const dispatch = useDispatch();
   const [form] = Form.useForm();
   const { token, role, logout } = useContext(AuthContext);
+  // Lấy chuỗi JSON từ sessionStorage
+  const doctorDTOString = sessionStorage.getItem("doctorDTO");
+
+  // Chuyển đổi chuỗi JSON thành đối tượng
+  const doctorDTO = JSON.parse(doctorDTOString);
 
   let week = moment().add(1, "weeks").startOf("isoWeek").format("WW");
   let year = moment().subtract(1, "weeks").startOf("isoWeek").format("YYYY");
@@ -41,6 +46,7 @@ const AppointmentPage = () => {
   const [staffOptions, setStaffOptions] = useState([]); // State lưu trữ danh sách gợi ý
   const [patientOptions, setPatientOptions] = useState([]); // State lưu trữ danh sách gợi ý
   const [appoitmentOptions, setAppointmentOptions] = useState([]); // State lưu trữ danh sách gợi ý
+  const [filterAppoitmentOptions, setFilterAppointmentOptions] = useState([]); // State lưu trữ danh sách gợi ý
 
   const [paramsStaff, setParamsStaff] = useState({
     keyword: null,
@@ -100,9 +106,8 @@ const AppointmentPage = () => {
               value: item.id,
               label: `Ngày: ${moment(new Date(item.workingDTO.date)).format(
                 "DD/MM/YYYY"
-              )} -  ${
-                item.workingDTO.periodId == 1 ? "Buổi sáng" : "Buổi chiều"
-              }`,
+              )} `,
+              workingDTO: item.workingDTO,
             };
           });
           setAppointmentOptions(tempAppointmentList);
@@ -119,15 +124,36 @@ const AppointmentPage = () => {
               value: item.id,
               label: `Ngày: ${moment(new Date(item.workingDTO.date)).format(
                 "DD/MM/YYYY"
-              )} -  ${
-                item.workingDTO.periodId == 1 ? "Buổi sáng" : "Buổi chiều"
-              } - Số người đã đặt lịch: ${item.countPatientScheduled}`,
+              )}  - Số người đã đặt lịch: ${item.countPatientScheduled}`,
+              workingDTO: item.workingDTO,
             };
           });
           setAppointmentOptions(tempAppointmentList);
         });
   }, [paramsAppointment]);
 
+  const handleSelectTime = (value) => {
+    console.log(value);
+    const filAppointments = appoitmentOptions.filter((item) => {
+      // Kiểm tra nếu giá trị là mảng và không rỗng
+      if (Array.isArray(value) && value.length > 0) {
+        const isMorningSelected = value.includes("morning");
+        const isAfternoonSelected = value.includes("afternoon");
+        console.log(item);
+        if (isMorningSelected && isAfternoonSelected) {
+          return true; // Chọn cả buổi sáng và buổi chiều
+        } else if (isMorningSelected) {
+          return item?.workingDTO?.periodId == 1; // Chọn chỉ buổi sáng
+        } else if (isAfternoonSelected) {
+          return item?.workingDTO?.periodId == 2; // Chọn chỉ buổi chiều
+        }
+      }
+
+      return false; // Không chọn gì hoặc giá trị không hợp lệ
+    });
+    console.log(filAppointments);
+    setFilterAppointmentOptions(filAppointments);
+  };
   // Hàm tìm kiếm với debounce
   const handleSearch = debounce((value) => {
     role !== "Role_Staff"
@@ -144,6 +170,8 @@ const AppointmentPage = () => {
   const handleSelect = (value) => {
     console.log(value);
     if (role !== "Role_Staff") {
+      form.setFieldValue("name", value);
+
       setParamsAppointment((prevParams) => ({
         ...prevParams,
         keyword: value.toLowerCase(),
@@ -154,6 +182,7 @@ const AppointmentPage = () => {
 
       setPatientId(client?.id);
     }
+    form.resetFields(["timeOfDay", "workingId"]);
   };
 
   const onFinish = (data) => {
@@ -218,6 +247,7 @@ const AppointmentPage = () => {
                 ]}
               >
                 <AutoComplete
+                  defaultValue={doctorDTO?.name}
                   style={{ width: "400px" }}
                   options={staffOptions}
                   onSearch={handleSearch} // Gọi hàm tìm kiếm debounce
@@ -248,7 +278,16 @@ const AppointmentPage = () => {
                 />
               </Form.Item>
             )}
-
+            <Form.Item
+              className="time-of-day"
+              label="Thời gian trong ngày"
+              name="timeOfDay"
+            >
+              <Checkbox.Group onChange={handleSelectTime}>
+                <Checkbox value="morning">Buổi sáng</Checkbox>
+                <Checkbox value="afternoon">Buổi chiều</Checkbox>
+              </Checkbox.Group>
+            </Form.Item>
             <Form.Item
               className="treatment"
               label="Thời gian khám"
@@ -263,7 +302,9 @@ const AppointmentPage = () => {
               <Select
                 placeholder={"Chọn thời gian khám "}
                 allowClear
-                options={appoitmentOptions ? appoitmentOptions : null}
+                options={
+                  filterAppoitmentOptions ? filterAppoitmentOptions : null
+                }
               ></Select>
             </Form.Item>
             <Form.Item

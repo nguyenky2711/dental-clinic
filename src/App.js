@@ -27,6 +27,7 @@ import ChangePasswordPage from './features/Auth/Update/Password';
 import AdminRoute from './router/AdminRouter';
 import IncomePage from './features/Manage/Income';
 import HomePage from './features/HomePage';
+import ForgotPasswordPage from './features/Auth/ForgotPassword';
 
 
 function App() {
@@ -208,6 +209,7 @@ function App() {
 
           <Route path='/signup' element={<SignUpPage />} />
           <Route path='/change-password' element={<ChangePasswordPage />} />
+          <Route path='/forgot-password' element={<ForgotPasswordPage />} />
           <Route
             path="/treatment"
             element={<TreatmentPage />}

@@ -1,4 +1,9 @@
-import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
+import {
+  DeleteOutlined,
+  PlusOutlined,
+  SaveFilled,
+  SaveOutlined,
+} from "@ant-design/icons";
 import {
   AutoComplete,
   Button,
@@ -26,6 +31,7 @@ import {
   deleteProcedureByIdThunk,
   getProceduredByRecorIdThunk,
   getProceduredByVisitIdThunk,
+  updateProcedureByIdThunk,
 } from "../../../../redux/action/medicalRecord";
 import { AuthContext } from "../../../../provider/AuthContext";
 import { debounce } from "lodash";
@@ -223,7 +229,9 @@ const MedicalRecordFormPage = () => {
           maxWidth: "100%",
         }}
         autoComplete="off"
-        onFieldsChange={(changeField, allFields) => {}}
+        onFieldsChange={(changeField, allFields) => {
+          console.log(changeField);
+        }}
       >
         <div className="courseContent_container">
           <div
@@ -337,6 +345,56 @@ const MedicalRecordFormPage = () => {
                               });
                             }
                           };
+                          const handleSave = (id, fieldName) => {
+                            const treatmentId = form.getFieldValue([
+                              "procedureCreationDTOS",
+                              fieldName,
+                              "treatmentId",
+                            ]);
+                            const count = form.getFieldValue([
+                              "procedureCreationDTOS",
+                              fieldName,
+                              "count",
+                            ]);
+                            const note = form.getFieldValue([
+                              "procedureCreationDTOS",
+                              fieldName,
+                              "note",
+                            ]);
+                            const sendData = {
+                              procedureId: id,
+                              treatmentId,
+                              count,
+                              note,
+                            };
+
+                            dispatch(updateProcedureByIdThunk(sendData)).then(
+                              (res) => {
+                                if (res?.payload?.message === "successfully") {
+                                  toast.success(
+                                    "Chỉnh sửa tiến trình thành công",
+                                    {
+                                      position: "top-right",
+                                      autoClose: 3000,
+                                      style: {
+                                        color: "$color-default",
+                                        backgroundColor: "#DEF2ED",
+                                      },
+                                    }
+                                  );
+                                } else {
+                                  toast.error("Chỉnh sửa tiến trình thất bại", {
+                                    position: "top-right",
+                                    autoClose: 3000,
+                                    style: {
+                                      color: "$color-default",
+                                      backgroundColor: "#DEF2ED",
+                                    },
+                                  });
+                                }
+                              }
+                            );
+                          };
                           return (
                             <Space
                               className="treament_item"
@@ -362,16 +420,6 @@ const MedicalRecordFormPage = () => {
                                     },
                                   ]}
                                 >
-                                  {/* <AutoComplete
-                                    style={{ width: "400px" }}
-                                    options={treatments}
-                                    onSearch={handleSearch} // Gọi hàm tìm kiếm debounce
-                                    onSelect={handleSelect}
-                                    allowClear
-                                    placeholder="Nhập tên phương thức"
-                                    disabled={role === "Role_Patient"}
-                                    optionLabelProp="label"
-                                  /> */}
                                   <Select
                                     showSearch
                                     onSearch={handleSearch}
@@ -414,7 +462,7 @@ const MedicalRecordFormPage = () => {
                                           }
                                           if (value > 100000000) {
                                             return Promise.reject(
-                                              "Học phí tối đa là 100.000.000"
+                                              "Số lượng tối đa là 60"
                                             );
                                           }
                                         } else {
@@ -470,6 +518,15 @@ const MedicalRecordFormPage = () => {
                                   }}
                                 />
                               )}
+                              {id && (
+                                <SaveOutlined
+                                  onClick={() => {
+                                    if (role !== "Role_Patient") {
+                                      visitId && handleSave(id, field.name);
+                                    }
+                                  }}
+                                />
+                              )}
                             </Space>
                           );
                         })}
@@ -482,7 +539,13 @@ const MedicalRecordFormPage = () => {
                         >
                           <Button
                             type="dashed"
-                            onClick={() => add()} // Make sure 'add' is a valid function
+                            onClick={() => {
+                              add();
+                              setParams((prevParams) => ({
+                                ...prevParams,
+                                keyword: null,
+                              }));
+                            }} // Make sure 'add' is a valid function
                             block
                             icon={<PlusOutlined />}
                           >

@@ -31,6 +31,15 @@ const ActiveMailPage = () => {
             style: { color: "green", backgroundColor: "#D7F1FD" },
           });
           setSendMail(true);
+        } else if (
+          res?.payload?.response?.data?.errors?.message ===
+          "the account not active email"
+        ) {
+          toast.error("Kiểm tra lại email được nhập", {
+            position: "top-right",
+            autoClose: 3000,
+            style: { color: "red", backgroundColor: "#DEF2ED" },
+          });
         }
       });
     }
@@ -51,7 +60,7 @@ const ActiveMailPage = () => {
   return (
     <div className="container">
       <div className="login_container">
-        <div className="login-header">Kích hoạt tài khoản</div>
+        <div className="login-header">Xác thực người dùng</div>
         <div className="form_login">
           <Form
             name="dynamic_form_nest_item"
@@ -84,14 +93,14 @@ const ActiveMailPage = () => {
                         return Promise.reject();
                       }
                       if (value.trim() == "") {
-                        return Promise.reject("Vui lòng nhập họ và tên");
+                        return Promise.reject("Vui lòng nhập địa chỉ email");
                       }
                     }
                   },
                 },
               ]}
             >
-              <Input placeholder="Nhập email nhân viên" />
+              <Input placeholder="Nhập địa chỉ email" />
             </Form.Item>
             <Form.Item name="otp" label="Mã OTP">
               <Input
