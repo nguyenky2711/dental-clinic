@@ -123,6 +123,12 @@ const Header = () => {
             >
               Quản lý lịch đặt khám
             </Link>
+            <Link
+              to="/manage/queue"
+              className={isActive("/manage/queue") ? "active" : ""}
+            >
+              Bệnh nhân đến khám
+            </Link>
           </>
         )}
         <Link

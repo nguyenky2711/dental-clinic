@@ -14,6 +14,7 @@ const {
     addVisitForRecord,
     deleteVisitById,
     getVisitByRecordId,
+    exportVisitToPDF,
     doneRecord,
     reopenRecord,
 } = medicalRecord;
@@ -149,6 +150,17 @@ export const deleteVisitByIdThunk = createAsyncThunk(
     async (data) => {
         try {
             const res = await deleteVisitById(data);
+            return res;
+        } catch (error) {
+            return error;
+        }
+    }
+);
+export const exportVisitToPDFThunk = createAsyncThunk(
+    'medicalRecord/exportVisitToPDF',
+    async (data) => {
+        try {
+            const res = await exportVisitToPDF(data);
             return res;
         } catch (error) {
             return error;

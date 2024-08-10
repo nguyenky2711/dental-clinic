@@ -54,6 +54,7 @@ const medicalRecord = {
             data
         );
     },
+
     //Objective - visit
     getVisitByRecordId: (data) => {
         const url = `/api/objective/record/${data.recordId}`;
@@ -61,6 +62,15 @@ const medicalRecord = {
         return internshipTransport.get(
             url,
             data
+        );
+    },
+    exportVisitToPDF: (data) => {
+        const { visitId, ...restData } = data
+        const url = `/api/objective/pdf/${visitId}`;
+
+        return internshipTransport.get(
+            url,
+            restData
         );
     },
     deleteVisitById: (data) => {
@@ -80,6 +90,7 @@ const medicalRecord = {
             records
         );
     },
+
     // procedure
     getProceduredByVisitdId: (data) => {
         const { visitId, ...restData } = data

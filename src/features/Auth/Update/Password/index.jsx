@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-// import { changePasswordThunk } from "../../../../store/action/auth";
 import "./style.scss";
 import {
   Button,
@@ -17,6 +16,7 @@ import {
 } from "antd";
 import { changePassswordThunk } from "../../../../redux/action/auth";
 import { AuthProvider } from "../../../../provider/AuthContext";
+
 const ChangePasswordPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();

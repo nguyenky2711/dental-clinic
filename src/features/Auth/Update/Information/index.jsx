@@ -1,11 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify";
-// import {
-//   changeInforThunk,
-//   getUserByIdThunk,
-// } from "../../../../store/action/auth";
 import "./style.scss";
 import {
   Button,
@@ -17,6 +12,7 @@ import {
   InputNumber,
   Select,
 } from "antd";
+
 const ChangeInforPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();

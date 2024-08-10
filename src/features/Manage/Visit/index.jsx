@@ -5,6 +5,7 @@ import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   deleteVisitByIdThunk,
+  exportVisitToPDFThunk,
   getRecordByPatientIdThunk,
   getVisitByRecordIdThunk,
 } from "../../../redux/action/medicalRecord";
@@ -13,6 +14,7 @@ import {
   CheckOutlined,
   DeleteOutlined,
   EditOutlined,
+  FilePdfOutlined,
   RedoOutlined,
 } from "@ant-design/icons";
 import moment from "moment";
@@ -84,6 +86,16 @@ const VisitPage = () => {
               <EditOutlined />
               <p>Xem chi tiết</p>
             </div>
+            {role == "Role_Staff" && (
+              <div
+                className="action-item"
+                onClick={() => handleExportPDF(record.id)}
+              >
+                <FilePdfOutlined />
+                <p>Xuất file</p>
+              </div>
+            )}
+
             {role !== "Role_Patient" && (
               <div
                 className="action-item"
@@ -154,6 +166,21 @@ const VisitPage = () => {
     return;
     // Hàm xử lý khi nhấn "Hủy" hoặc nhấn ra ngoài modal
   };
+  const handleTablePageChange = (page, additionalData) => {
+    // let temp = sendData;
+    // temp.no = page;
+    // setCurrentPage(page);
+    // setSendData(temp);
+    // dispatch(filterUserThunk(temp)).then((res) => {});
+  };
+  const handleSearchChange = (values) => {};
+  const handleSubmitSearch = (values) => {};
+  const handleExportPDF = (visitId) => {
+    dispatch(exportVisitToPDFThunk({ visitId: visitId })).then((res) =>
+      console.log(res)
+    );
+  };
+
   useEffect(() => {
     // dispatch(getRecordByPatientIdThunk(patientId)).then((res) => {
     //   console.log(res);
@@ -164,15 +191,6 @@ const VisitPage = () => {
     });
   }, []);
 
-  const handleTablePageChange = (page, additionalData) => {
-    // let temp = sendData;
-    // temp.no = page;
-    // setCurrentPage(page);
-    // setSendData(temp);
-    // dispatch(filterUserThunk(temp)).then((res) => {});
-  };
-  const handleSearchChange = (values) => {};
-  const handleSubmitSearch = (values) => {};
   return (
     <div>
       <div className="staffPage-header">

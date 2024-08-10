@@ -10,6 +10,35 @@ const treatment = {
             data
         );
     },
+    createService: (data) => {
+        const url = `/api/treatment/service`;
+
+        return internshipTransport.post(
+            url,
+            data
+        );
+    },
+    updateService: (data) => {
+        const { serviceId, ...restData } = data
+        const url = `/api/treatment/service/${serviceId}`;
+
+        return internshipTransport.put(
+            url,
+            restData
+        );
+    },
+    deleteService: (data) => {
+        const { serviceId, ...restData } = data
+        const url = `/api/treatment/service/${serviceId}`;
+
+        return internshipTransport.delete(
+            url,
+            data
+        );
+    },
+
+
+
     filterTreatments: (data) => {
         let url = `/api/treatment`;
         let params = [];
@@ -35,6 +64,32 @@ const treatment = {
         return internshipTransport.get(
             url,
             data
+        );
+    },
+    createTreatment: (data) => {
+        const url = `/api/treatment`;
+
+        return internshipTransport.post(
+            url,
+            data
+        );
+    },
+    updateTreatment: (data) => {
+        const { treatmentId, ...restData } = data
+        const url = `/api/treatment/${treatmentId}`;
+
+        return internshipTransport.put(
+            url,
+            restData
+        );
+    },
+    deleteTreatment: (data) => {
+        const { treatmentId, ...restData } = data
+        const url = `/api/treatment/${treatmentId}`;
+
+        return internshipTransport.delete(
+            url,
+            restData
         );
     },
 };

@@ -8,14 +8,74 @@
     padding-left: 30px;
     margin: 0;
   }
-  // &:hover {
-  //   border-radius: 6px;
-  //   background-color: #7042644f;
-  // }
 }
+
 .site-layout-background {
   background: #fff;
   height: 100vh;
   position: fixed;
   overflow: auto;
+}
+
+.ant-menu-item {
+  display: flex;
+  align-items: center;
+  padding-left: 16px;
+
+  &:hover {
+    background-color: #f0f0f0; // Add hover background color
+  }
+
+  .anticon {
+    margin-right: 8px; // Space between icon and text
+    transition: color 0.3s;
+  }
+
+  &:hover .anticon {
+    color: #1890ff; // Change icon color on hover
+  }
+}
+
+.ant-menu-item:last-child {
+  margin-top: auto; // Push the "+" button to the bottom
+}
+
+.ant-menu-item:hover {
+  background-color: #e6f7ff; // Hover effect for the "+" button
+}
+
+.ant-menu-item:hover .anticon {
+  // color: #52c41a; // Icon color on hover for the "+" button
+}
+
+.ant-menu-title-content {
+  text-align: left;
+  position: relative;
+  .menu-icon-right-upd {
+    position: absolute;
+    top: 4px;
+    right: 25px;
+    padding: 8px;
+    border-radius: 4px;
+    transition: 0.3s;
+    &:hover {
+      color: #52c41a;
+      background-color: rgba(0, 0, 0, 0.1);
+    }
+  }
+  .menu-icon-right-del {
+    position: absolute;
+    top: 4px;
+    right: -5px;
+    padding: 8px;
+    border-radius: 4px;
+    transition: 0.3s;
+    &:hover {
+      color: rgb(157, 36, 36);
+      background-color: rgba(0, 0, 0, 0.1);
+    }
+  }
+}
+.staffPage-header {
+  position: relative;
 }

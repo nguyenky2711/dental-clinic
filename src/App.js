@@ -28,6 +28,7 @@ import AdminRoute from './router/AdminRouter';
 import IncomePage from './features/Manage/Income';
 import HomePage from './features/HomePage';
 import ForgotPasswordPage from './features/Auth/ForgotPassword';
+import QueuePage from './features/Manage/Queue';
 
 
 function App() {
@@ -194,6 +195,14 @@ function App() {
             element={
               <StaffRoute  >
                 <AppointmentPage />
+              </StaffRoute>
+            }
+          />
+          <Route
+            path="/manage/queue"
+            element={
+              <StaffRoute  >
+                <QueuePage />
               </StaffRoute>
             }
           />
