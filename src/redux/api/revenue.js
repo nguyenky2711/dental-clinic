@@ -10,6 +10,24 @@ const revenue = {
             data
         );
     },
+    addDebitPay: (data) => {
+        const { invoiceId, ...restData } = data
+        const url = `/api/invoice/${invoiceId}`;
+
+        return internshipTransport.put(
+            url,
+            restData
+        );
+    },
+    deleteInvoice: (data) => {
+        const { invoiceId, ...restData } = data
+        const url = `/api/invoice/${invoiceId}`;
+
+        return internshipTransport.delete(
+            url,
+            restData
+        );
+    },
     findInvoiceByVisitId: (data) => {
         console.log(data)
         const { visitId, ...restData } = data

@@ -1,6 +1,6 @@
 import { internshipTransport } from "../../config/http/transport";
 
-const staff = {
+const queue = {
     getQueueByStaffId: (data) => {
         const { staffId, ...restData } = data
         const url = `/api/queue/staff/${staffId}`;
@@ -31,4 +31,4 @@ const staff = {
     },
 };
 
-export default staff;
+export default queue;

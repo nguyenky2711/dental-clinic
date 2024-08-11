@@ -8,6 +8,7 @@ import { filterStaffThunk } from "../../../../../redux/action/staff";
 import { AuthContext } from "../../../../../provider/AuthContext";
 import { filterPatientThunk } from "../../../../../redux/action/patient";
 import { addPatientToQueueThunk } from "../../../../../redux/action/queue";
+import { toast } from "react-toastify";
 
 const ReceptionistQueueFormPage = ({ action = null }) => {
   const dispatch = useDispatch();
@@ -107,6 +108,17 @@ const ReceptionistQueueFormPage = ({ action = null }) => {
   const onFinish = (data) => {
     dispatch(addPatientToQueueThunk(paramsQueue)).then((res) => {
       if (res?.payload?.message === "successfully") {
+        toast.success("Đã thêm vào danh sách chờ", {
+          position: "top-right",
+          autoClose: 3000,
+          style: { color: "green", backgroundColor: "#D7F1FD" },
+        });
+      } else {
+        toast.error("Thêm vào danh sách chờ thất bại!", {
+          position: "top-right",
+          autoClose: 3000,
+          style: { color: "red", backgroundColor: "#DEF2ED" },
+        });
       }
     });
   };

@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-// import { registerThunk } from "../../../store/action/auth";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./style.scss";
@@ -16,13 +15,6 @@ import {
   Select,
   DatePicker,
 } from "antd";
-import moment from "moment";
-import dayjs from "dayjs";
-import {
-  createStaffThunk,
-  updateStaffThunk,
-} from "../../../../redux/action/staff";
-import { PlusSquareOutlined } from "@ant-design/icons";
 import {
   createTreatmentThunk,
   updateTreatmentThunk,
@@ -49,11 +41,20 @@ const TreatmentFormPage = ({ propsData = null, action }) => {
         serviceId: propsData?.currentService?.details?.id,
         treatmentId: id,
       };
-      console.log(sendData);
       dispatch(updateTreatmentThunk(sendData)).then((res) => {
-        console.log(res);
         if (res?.payload?.message === "successfully") {
           action("cancle");
+          toast.success("Cập nhật phương thức điều trị thành công", {
+            position: "top-right",
+            autoClose: 3000,
+            style: { color: "green", backgroundColor: "#D7F1FD" },
+          });
+        } else {
+          toast.error("Cập nhật phương thức điều trị thất bại!", {
+            position: "top-right",
+            autoClose: 3000,
+            style: { color: "red", backgroundColor: "#DEF2ED" },
+          });
         }
       });
     } else {
@@ -61,11 +62,20 @@ const TreatmentFormPage = ({ propsData = null, action }) => {
         ...data,
         serviceId: propsData?.currentService?.details?.id,
       };
-      console.log(sendData);
       dispatch(createTreatmentThunk(sendData)).then((res) => {
-        console.log(res);
         if (res?.payload?.message === "successfully") {
           form.resetFields();
+          toast.success("Tạo mới phương thức điều trị thành công", {
+            position: "top-right",
+            autoClose: 3000,
+            style: { color: "green", backgroundColor: "#D7F1FD" },
+          });
+        } else {
+          toast.error("Tạo mới phương thức điều trị thất bại!", {
+            position: "top-right",
+            autoClose: 3000,
+            style: { color: "red", backgroundColor: "#DEF2ED" },
+          });
         }
       });
     }

@@ -3,7 +3,7 @@ import queue from '../api/queue';
 const {
     addPatientToQueue,
     getNextByStaffId,
-    getQueueByStaffId
+    getQueueByStaffId,
 } = queue;
 
 

@@ -2,6 +2,8 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import revenue from '../api/revenue';
 const {
     createInvoice,
+    addDebitPay,
+    deleteInvoice,
     findInvoiceByVisitId,
     getRevenueByWeek,
     getRevenueByMonth,
@@ -14,6 +16,28 @@ export const createInvoiceThunk = createAsyncThunk(
     async (data) => {
         try {
             const res = await createInvoice(data);
+            return res;
+        } catch (error) {
+            return error;
+        }
+    }
+);
+export const addDebitPayThunk = createAsyncThunk(
+    'revenue/addDebitPay',
+    async (data) => {
+        try {
+            const res = await addDebitPay(data);
+            return res;
+        } catch (error) {
+            return error;
+        }
+    }
+);
+export const deleteInvoiceThunk = createAsyncThunk(
+    'revenue/deleteInvoice',
+    async (data) => {
+        try {
+            const res = await deleteInvoice(data);
             return res;
         } catch (error) {
             return error;

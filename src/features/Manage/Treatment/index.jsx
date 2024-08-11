@@ -22,6 +22,7 @@ import treatment from "../../../redux/api/treatment";
 import TreatmentFormPage from "./Form";
 import ConfirmModalAntd from "../../../components/ConfirmModalAntd";
 import { AuthContext } from "../../../provider/AuthContext";
+import { toast } from "react-toastify";
 
 const groupByServiceDTO = (items) => {
   return items.reduce((result, item) => {
@@ -161,6 +162,11 @@ const TreatmentPage = () => {
       };
       dispatch(updateServiceMedicalThunk(sendData)).then((res) => {
         if (res?.payload?.message === "successfully") {
+          toast.success("Cập nhật phương thức điều trị thành công", {
+            position: "top-right",
+            autoClose: 3000,
+            style: { color: "green", backgroundColor: "#D7F1FD" },
+          });
           setTreatmentData((prevData) => {
             const { [currentService.serviceName]: oldData, ...rest } = prevData;
             return {
@@ -175,12 +181,23 @@ const TreatmentPage = () => {
             serviceName: null,
             details: null,
           });
+        } else {
+          toast.error("Cập nhật phương thức điều trị thất bại!", {
+            position: "top-right",
+            autoClose: 3000,
+            style: { color: "red", backgroundColor: "#DEF2ED" },
+          });
         }
       });
     } else {
       const sendData = { name: editValue };
       dispatch(createServiceMedicalThunk(sendData)).then((res) => {
         if (res?.payload?.message === "successfully") {
+          toast.success("Tạo mới dịch vụ thành công", {
+            position: "top-right",
+            autoClose: 3000,
+            style: { color: "green", backgroundColor: "#D7F1FD" },
+          });
           setTreatmentData((prevData) => {
             return {
               ...prevData,
@@ -189,6 +206,12 @@ const TreatmentPage = () => {
                 items: [],
               },
             };
+          });
+        } else {
+          toast.error("Tạo mới dịch vụ thất bại!", {
+            position: "top-right",
+            autoClose: 3000,
+            style: { color: "red", backgroundColor: "#DEF2ED" },
           });
         }
       });
@@ -255,38 +278,58 @@ const TreatmentPage = () => {
     }));
   };
   const handleOkDeleteModal = (data) => {
-    console.log(deleteModalParams);
     if (deleteModalParams.for === "treatment") {
       const treatmentId = deleteModalParams?.data?.id;
       dispatch(deleteTreatmentThunk({ treatmentId: treatmentId })).then(
         (res) => {
-          console.log(res);
           if (res?.payload?.message === "successfully") {
+            toast.success("Xoá phương thức điều trị thành công", {
+              position: "top-right",
+              autoClose: 3000,
+              style: { color: "green", backgroundColor: "#D7F1FD" },
+            });
+            setTreatmentData((prevData) => {
+              const { [currentService.serviceName]: oldData, ...rest } =
+                prevData;
+              return {
+                ...rest,
+                [currentService.serviceName]: {
+                  id: oldData.id,
+                  items: oldData.items.filter((item) => item.id != treatmentId),
+                },
+              };
+            });
+          } else {
+            toast.error("Xoá phương thức điều trị thất bại!", {
+              position: "top-right",
+              autoClose: 3000,
+              style: { color: "red", backgroundColor: "#DEF2ED" },
+            });
           }
-          setTreatmentData((prevData) => {
-            const { [currentService.serviceName]: oldData, ...rest } = prevData;
-            return {
-              ...rest,
-              [currentService.serviceName]: {
-                id: oldData.id,
-                items: oldData.items.filter((item) => item.id != treatmentId),
-              },
-            };
-          });
         }
       );
     } else if (deleteModalParams.for === "service") {
       const serviceId = deleteModalParams?.data?.details?.id;
       dispatch(deleteServiceMedicalThunk({ serviceId: serviceId })).then(
         (res) => {
-          console.log(res);
           if (res?.payload?.message === "successfully") {
+            toast.success("Xoá dịch vụ thành công", {
+              position: "top-right",
+              autoClose: 3000,
+              style: { color: "green", backgroundColor: "#D7F1FD" },
+            });
             setTreatmentData((prevData) => {
               const newTreatmentData = { ...prevData };
               delete newTreatmentData[currentService.serviceName];
               return newTreatmentData;
             });
             setSelectedService("all");
+          } else {
+            toast.error("Xoá dịch vụ thất bại!", {
+              position: "top-right",
+              autoClose: 3000,
+              style: { color: "red", backgroundColor: "#DEF2ED" },
+            });
           }
         }
       );
@@ -337,17 +380,18 @@ const TreatmentPage = () => {
               )}
             </Menu.Item>
           ))}
-
-          <Menu.Item
-            key="add"
-            style={{ marginTop: "auto" }}
-            onClick={() => {
-              showServiceModal();
-            }}
-          >
-            <PlusOutlined className="menu-icon-left" />
-            Thêm mới
-          </Menu.Item>
+          {role === "Role_Admin" && (
+            <Menu.Item
+              key="add"
+              style={{ marginTop: "auto" }}
+              onClick={() => {
+                showServiceModal();
+              }}
+            >
+              <PlusOutlined className="menu-icon-left" />
+              Thêm mới
+            </Menu.Item>
+          )}
         </Menu>
         <Modal
           title={editValue ? "Chinh sửa tên dịch vụ" : "Thêm mới dịch vụ"}

@@ -24,6 +24,29 @@ import VisitInforSearch from "./Search";
 import ConfirmModalAntd from "../../../components/ConfirmModalAntd";
 import { AuthContext } from "../../../provider/AuthContext";
 import { toast } from "react-toastify";
+import axios from "axios";
+
+const downloadPdf = async (visitId) => {
+  try {
+    const response = await axios({
+      url: `http://localhost:8085/api/objective/pdf/${visitId}`,
+      method: "GET",
+      responseType: "blob", // Quan trọng: nhận về dữ liệu dưới dạng blob
+    });
+
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `DonKham#${visitId}.pdf`; // Tên file muốn tải xuống
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+
+    window.URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error("There was an error!", error);
+  }
+};
 
 const VisitPage = () => {
   const dispatch = useDispatch();
@@ -177,7 +200,7 @@ const VisitPage = () => {
   const handleSubmitSearch = (values) => {};
   const handleExportPDF = (visitId) => {
     dispatch(exportVisitToPDFThunk({ visitId: visitId })).then((res) =>
-      console.log(res)
+      downloadPdf(visitId)
     );
   };
 

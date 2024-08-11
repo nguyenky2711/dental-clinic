@@ -95,7 +95,7 @@ const LoginPage = () => {
                 // },
               ]}
             >
-              <Input placeholder="Nhập email" />
+              <Input placeholder="Nhập tên đăng nhập" />
             </Form.Item>
             <Form.Item
               className="staff_item password"

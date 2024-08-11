@@ -1,8 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Select, DatePicker, Button } from "antd";
 import {
-  BarChart,
-  Bar,
   LineChart,
   Line,
   XAxis,
@@ -21,15 +19,9 @@ import {
 } from "../../../redux/action/revenue";
 
 const { Option } = Select;
-
-const getStartOfWeek = (year, week) => {
-  return moment().year(year).week(week).startOf("isoWeek").format("YYYY-MM-DD");
-};
-
+//For month
 const getWeeksInMonth = (year, month) => {
-  // Tạo mảng lưu các tuần
   const weeks = [];
-  // Lấy ngày đầu tháng và ngày cuối tháng
   const startOfMonth = moment()
     .year(year)
     .month(month - 1)
@@ -39,7 +31,6 @@ const getWeeksInMonth = (year, month) => {
     .month(month - 1)
     .endOf("month");
 
-  // Xác định tuần đầu tiên và tuần cuối cùng trong tháng
   let current = startOfMonth.clone().startOf("isoWeek");
   const end = endOfMonth.clone().endOf("isoWeek");
 
@@ -60,12 +51,11 @@ const getWeeksInMonth = (year, month) => {
   return weeks;
 };
 
-const currentYear = new Date().getFullYear();
-
 const addMissingWeeks = (currentData, weeks) => {
-  const updatedData = [...currentData];
+  const updatedData = [];
   const existingWeeks = new Set(currentData.map((item) => item.week));
 
+  // Add missing weeks
   weeks.forEach((week) => {
     if (!existingWeeks.has(week.week)) {
       updatedData.push({
@@ -73,68 +63,205 @@ const addMissingWeeks = (currentData, weeks) => {
         totalRevenue: 0,
         week: week.week,
         startDate: week.start,
+        endDate: week.end,
       });
     }
   });
 
-  updatedData.forEach((item) => {
-    if (!item.startDate) {
-      const weekData = weeks.find((w) => w.week === item.week);
-      if (weekData) {
-        item.startDate = weekData.startDate;
-      }
+  // Add existing weeks, ensuring each has a start date
+  currentData.forEach((item) => {
+    const weekData = weeks.find((w) => w.week === item.week);
+    if (weekData) {
+      updatedData.push({
+        ...item,
+        startDate: weekData.start,
+        endDate: weekData.end,
+      });
     }
   });
+
+  // Sort data by week
   updatedData.sort((a, b) => a.week - b.week);
   return updatedData;
 };
+
+const extendWithBoundaryDates = (data) => {
+  let extendedData = [...data];
+  if (data.length > 0) {
+    extendedData = [
+      {
+        startDate: data[0].startDate,
+        totalRevenue: 0,
+        totalAmountRemaining: 0,
+      },
+      {
+        startDate: data[1].startDate,
+        totalRevenue: data[0].totalRevenue,
+        totalAmountRemaining: data[0].totalAmountRemaining,
+      },
+      {
+        startDate: data[2].startDate,
+        totalRevenue: data[1].totalRevenue,
+        totalAmountRemaining: data[1].totalAmountRemaining,
+      },
+      {
+        startDate: data[3].startDate,
+        totalRevenue: data[2].totalRevenue,
+        totalAmountRemaining: data[2].totalAmountRemaining,
+      },
+      {
+        startDate: data[3].endDate,
+        totalRevenue: data[3].totalRevenue,
+        totalAmountRemaining: data[3].totalAmountRemaining,
+      },
+    ];
+  }
+
+  return extendedData;
+};
+
+//For week
+const getWeeksInYear = () => {
+  const weeks = [];
+  const now = moment();
+  const startOfYear = moment().startOf("year");
+  const endOfYear = moment().endOf("year");
+
+  let current = startOfYear.clone().startOf("isoWeek");
+
+  while (current.isBefore(endOfYear)) {
+    const endOfWeek = current.clone().endOf("isoWeek");
+
+    if (endOfWeek.isBefore(now) || endOfWeek.isSame(now, "week")) {
+      weeks.push({
+        week: current.isoWeek(),
+        start: current.format("YYYY-MM-DD"),
+        end: endOfWeek.format("YYYY-MM-DD"),
+      });
+    }
+
+    current.add(1, "week");
+  }
+
+  weeks.sort((a, b) => b.week - a.week);
+  return weeks;
+};
+const getWeekStartAndEndDates = (weekNumber, year) => {
+  // Use isoWeek for consistency with getWeeksInYear
+  const startDate = moment()
+    .year(year)
+    .isoWeek(weekNumber)
+    .startOf("isoWeek")
+    .format("YYYY-MM-DD");
+  const endDate = moment()
+    .year(year)
+    .isoWeek(weekNumber)
+    .endOf("isoWeek")
+    .format("YYYY-MM-DD");
+  return { startDate, endDate };
+};
+const generateWeekDays = (startDate, endDate) => {
+  const days = [];
+  let currentDate = moment(startDate);
+
+  while (currentDate <= moment(endDate)) {
+    days.push({
+      date: currentDate.format("YYYY-MM-DD"),
+      totalAmountRemaining: 0,
+      totalRevenue: 0,
+    });
+    currentDate.add(1, "day");
+  }
+
+  return days;
+};
+const addDataFromAPI = (weeks, dataAPI) => {
+  // Create a map for quick lookup of dataAPI values by date
+  const dataMap = dataAPI.reduce((map, item) => {
+    map[item.date] = item; // Use date as the key
+    return map;
+  }, {});
+
+  // Iterate over weeks and update with values from dataAPI if available
+  const updatedWeeks = weeks.map((week) => {
+    // Check if there's data for the current week's start date in dataAPI
+    const data = dataMap[week.date];
+    return {
+      ...week,
+      totalAmountRemaining: data
+        ? data.totalAmountRemaining
+        : week.totalAmountRemaining,
+      totalRevenue: data ? data.totalRevenue : week.totalRevenue,
+    };
+  });
+
+  return updatedWeeks;
+};
+
+const CustomTooltip = ({ payload, label }) => {
+  if (payload && payload.length) {
+    const { totalRevenue, totalAmountRemaining, startDate } =
+      payload[0].payload;
+    return (
+      <div className="custom-tooltip">
+        <p className="label">{`Ngày kết thúc: ${moment(startDate)
+          .subtract(1, "days")
+          .format("DD-MM-YYYY")}`}</p>
+
+        <p className="label">{`Ngày bắt đầu: ${moment(startDate).format(
+          "DD-MM-YYYY"
+        )}`}</p>
+        <p className="intro">{`Doanh thu: ${totalRevenue.toLocaleString(
+          "vi-VN",
+          { style: "currency", currency: "VND" }
+        )}`}</p>
+        <p className="intro">{`Số tiền còn lại: ${totalAmountRemaining.toLocaleString(
+          "vi-VN",
+          { style: "currency", currency: "VND" }
+        )}`}</p>
+      </div>
+    );
+  }
+
+  return null;
+};
+
 const IncomePage = () => {
   const dispatch = useDispatch();
-  const [timeFrame, setTimeFrame] = useState("month"); // Default to month
+  const [timeFrame, setTimeFrame] = useState("month");
   const [selectedWeek, setSelectedWeek] = useState(null);
   const [selectedMonth, setSelectedMonth] = useState(moment().startOf("month"));
   const [filteredData, setFilteredData] = useState([]);
 
   const currentYear = new Date().getFullYear();
-  // Function to get weeks of a given month
-  // const getWeeksInMonth = (date) => {
-  //   const startOfMonth = moment(date).startOf("month");
-  //   const endOfMonth = moment(date).endOf("month");
-  //   const weeks = [];
-  //   let current = startOfMonth.clone();
-
-  //   while (current.isBefore(endOfMonth)) {
-  //     const startOfWeek = current.clone().startOf("isoWeek");
-  //     const endOfWeek = current.clone().endOf("isoWeek");
-  //     weeks.push({
-  //       week: startOfWeek.isoWeek(),
-  //       start: startOfWeek.format("YYYY-MM-DD"),
-  //       end: endOfWeek.format("YYYY-MM-DD"),
-  //     });
-  //     current.add(1, "week");
-  //   }
-
-  //   return weeks;
-  // };
 
   const showRevenueResult = () => {
-    if (timeFrame === "week") {
+    if (timeFrame === "week" && selectedWeek) {
+      const weekStartEnd = getWeekStartAndEndDates(
+        JSON.parse(selectedWeek).week,
+        currentYear
+      );
+      const weeks = generateWeekDays(
+        weekStartEnd.startDate,
+        weekStartEnd.endDate
+      );
+
       dispatch(
         getRevenueByWeekThunk({
           week: JSON.parse(selectedWeek).week,
           year: currentYear,
         })
       ).then((res) => {
-        console.log(res);
+        const fullWeekData = addDataFromAPI(weeks, res?.payload?.revenues);
+        setFilteredData(fullWeekData);
       });
-    } else if (timeFrame === "month") {
+    } else if (timeFrame === "month" && selectedMonth) {
       dispatch(
         getRevenueByMonthThunk({
           month: dayjs(selectedMonth).month() + 1,
           year: currentYear,
         })
       ).then((res) => {
-        console.log(res);
         const weekInSelectedMonth = getWeeksInMonth(
           currentYear,
           dayjs(selectedMonth).month() + 1
@@ -143,76 +270,11 @@ const IncomePage = () => {
           res?.payload?.revenues,
           weekInSelectedMonth
         );
-
-        console.log(completeRevenueData);
-        setFilteredData(completeRevenueData);
+        const extendedData = extendWithBoundaryDates(completeRevenueData);
+        setFilteredData(extendedData);
       });
     }
   };
-  // Function to get weeks in the current year
-  const getWeeksInYear = () => {
-    const weeks = [];
-    const now = moment();
-    const startOfYear = moment().startOf("year");
-    const endOfYear = moment().endOf("year");
-
-    let current = startOfYear.clone().startOf("isoWeek");
-
-    while (current.isBefore(endOfYear)) {
-      const endOfWeek = current.clone().endOf("isoWeek");
-
-      // Lọc tuần không quá tuần hiện tại
-      if (endOfWeek.isBefore(now) || endOfWeek.isSame(now, "week")) {
-        weeks.push({
-          week: current.isoWeek(),
-          start: current.format("YYYY-MM-DD"),
-          end: endOfWeek.format("YYYY-MM-DD"),
-        });
-      }
-
-      current.add(1, "week");
-    }
-
-    // Sắp xếp tuần từ tuần hiện tại trở về trước
-    weeks.sort((a, b) => b.week - a.week);
-    return weeks;
-  };
-
-  // Compute filtered data based on the selected time frame and options
-  const computeFilteredData = () => {
-    let test = [];
-    if (timeFrame === "week" && selectedWeek) {
-      //   console.log(selectedWeek[start]);
-      // test = data.filter((item) => {
-      //   // console.log(moment(new Date(selectedWeek.start)));
-      //   return (
-      //     moment(selectedWeek.start) <= moment(item.date) &&
-      //     moment(item.date) <= moment(selectedWeek.start)
-      //   );
-      // });
-      // console.log(test);
-    }
-
-    if (timeFrame === "month" && selectedMonth) {
-      // test = data.filter((item) => {
-      //   return (
-      //     moment(item.date).month() === dayjs(selectedMonth).month() &&
-      //     moment(item.date).year() === dayjs(selectedMonth).year()
-      //   );
-      // });
-      // console.log(test);
-      //   setFilteredData(test);
-      // return data.filter((item) =>
-      //   moment(item.date).isSame(dayjs(selectedMonth).month() + 1, "month")
-      // );
-    }
-    return test;
-  };
-
-  // Update filtered data whenever the time frame or selected options change
-  useEffect(() => {
-    // setFilteredData(computeFilteredData());
-  }, [timeFrame, selectedWeek, selectedMonth]);
 
   return (
     <div>
@@ -220,6 +282,7 @@ const IncomePage = () => {
         value={timeFrame}
         onChange={(value) => {
           setTimeFrame(value);
+          setFilteredData();
           if (value === "month") {
             setSelectedWeek(null);
             setSelectedMonth(moment().startOf("month"));
@@ -236,7 +299,10 @@ const IncomePage = () => {
       {timeFrame === "week" && (
         <Select
           placeholder="Chọn tuần"
-          onChange={(value) => setSelectedWeek(value)}
+          onChange={(value) => {
+            setSelectedWeek(value);
+            setFilteredData();
+          }}
           style={{ width: 200, marginBottom: 16 }}
         >
           {getWeeksInYear().map((week) => (
@@ -250,10 +316,10 @@ const IncomePage = () => {
       {timeFrame === "month" && (
         <DatePicker
           picker="month"
-          onChange={(date) =>
-            //  console.log(dayjs(date))
-            setSelectedMonth(date ? date : null)
-          }
+          onChange={(date) => {
+            setSelectedMonth(date ? date : null);
+            setFilteredData();
+          }}
           value={selectedMonth ? dayjs(selectedMonth) : null}
           style={{ width: 200, marginBottom: 16 }}
           disabledDate={(current) =>
@@ -264,42 +330,30 @@ const IncomePage = () => {
 
       <Button
         type="primary"
-        onClick={() => {
-          // setFilteredData(computeFilteredData())
-          console.log(timeFrame);
-          console.log(JSON.parse(selectedWeek));
-          console.log(selectedMonth);
-          showRevenueResult();
-        }}
+        onClick={showRevenueResult}
         style={{ marginBottom: 16 }}
       >
         Xem
       </Button>
 
-      {/* <ResponsiveContainer width="100%" height={400}>
-        <BarChart data={filteredData}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="date" />
-          <YAxis />
-          <Tooltip />
-          <Legend />
-          <Bar dataKey="amountPaid" fill="#8884d8" />
-          <Bar dataKey="remaining" fill="#82ca9d" />
-        </BarChart>
-      </ResponsiveContainer> */}
-
       <ResponsiveContainer width="100%" height={400}>
         <LineChart data={filteredData}>
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="startDate" />
+          <XAxis dataKey={timeFrame === "month" ? "startDate" : "date"} />
           <YAxis />
-          <Tooltip />
+          <Tooltip content={<CustomTooltip />} />
           <Legend />
-          <Line type="monotone" dataKey="totalRevenue" stroke="#8884d8" />
+          <Line
+            type="monotone"
+            dataKey="totalRevenue"
+            stroke="#8884d8"
+            name="Doanh thu"
+          />
           <Line
             type="monotone"
             dataKey="totalAmountRemaining"
             stroke="#82ca9d"
+            name="Số tiền còn lại"
           />
         </LineChart>
       </ResponsiveContainer>
