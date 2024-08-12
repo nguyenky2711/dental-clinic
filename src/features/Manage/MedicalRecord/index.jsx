@@ -19,7 +19,6 @@ import {
 } from "@ant-design/icons";
 import moment from "moment";
 import { Tag } from "antd";
-import ReusableModal from "../../../components/ReuseModalAntd";
 import { toast } from "react-toastify";
 import ConfirmModalAntd from "../../../components/ConfirmModalAntd";
 import { AuthContext } from "../../../provider/AuthContext";
@@ -28,6 +27,15 @@ function MedicalRecordPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { patientId } = useParams();
+  const [total, setTotal] = useState({
+    pages: null,
+    items: null,
+  });
+  const [params, setParams] = useState({
+    patientId: patientId,
+    pageNumber: 1,
+    pageSize: 5,
+  });
   const [records, setRecords] = useState();
   const { token, role, logout } = useContext(AuthContext);
 
@@ -166,11 +174,31 @@ function MedicalRecordPage() {
               style: { color: "$color-default", backgroundColor: "#DEF2ED" },
             });
           } else {
-            toast.error("Xoá bệnh án thất bại", {
-              position: "top-right",
-              autoClose: 3000,
-              style: { color: "$color-default", backgroundColor: "#DEF2ED" },
-            });
+            if (
+              res?.payload?.response?.data?.errors?.message ===
+              "this is not yours"
+            ) {
+              toast.error("Chỉ bác sĩ có thẩm quyền mới thực hiện được", {
+                position: "top-right",
+                autoClose: 3000,
+                style: { color: "$color-default", backgroundColor: "#DEF2ED" },
+              });
+            } else if (
+              res?.payload?.response?.data?.errors?.message ===
+              `can't update record done`
+            ) {
+              toast.error("Bệnh án đã hoàn thành", {
+                position: "top-right",
+                autoClose: 3000,
+                style: { color: "$color-default", backgroundColor: "#DEF2ED" },
+              });
+            } else {
+              toast.error("Xoá bệnh án thất bại", {
+                position: "top-right",
+                autoClose: 3000,
+                style: { color: "$color-default", backgroundColor: "#DEF2ED" },
+              });
+            }
           }
         })
         .finally(() => {
@@ -201,16 +229,30 @@ function MedicalRecordPage() {
               }
             );
           } else {
-            toast.error(
-              modal.data.status === "Ongoing"
-                ? "Kết thúc bệnh án thất bại"
-                : "Mở lại bệnh án thất bại",
-              {
+            if (
+              res?.payload?.response?.data?.errors?.message ===
+              "this is not yours"
+            ) {
+              toast.error("Chỉ bác sĩ có thẩm quyền mới thực hiện được", {
                 position: "top-right",
                 autoClose: 3000,
                 style: { color: "$color-default", backgroundColor: "#DEF2ED" },
-              }
-            );
+              });
+            } else {
+              toast.error(
+                modal.data.status === "Ongoing"
+                  ? "Kết thúc bệnh án thất bại"
+                  : "Mở lại bệnh án thất bại",
+                {
+                  position: "top-right",
+                  autoClose: 3000,
+                  style: {
+                    color: "$color-default",
+                    backgroundColor: "#DEF2ED",
+                  },
+                }
+              );
+            }
           }
         })
         .finally(() => {
@@ -237,23 +279,51 @@ function MedicalRecordPage() {
   useEffect(() => {
     role === "Role_Patient"
       ? dispatch(getRecordByTokenThunk()).then((res) => {
-          setRecords(res?.payload);
+          const temp = res?.payload;
+          if (temp) {
+            setRecords(temp.contents);
+            setTotal((preVal) => ({
+              ...preVal,
+              pages: temp.totalPages,
+              items: temp.totalItems,
+            }));
+          }
           const doctorDTOString = JSON.stringify(
-            res?.payload?.[res?.payload?.length - 1]?.staffDTO
+            temp.contents?.[temp.contents.length - 1]?.staffDTO
           );
           sessionStorage.setItem("doctorDTO", doctorDTOString);
         })
-      : dispatch(getRecordByPatientIdThunk(patientId)).then((res) => {
-          setRecords(res?.payload);
+      : dispatch(getRecordByPatientIdThunk(params)).then((res) => {
+          if (
+            res?.payload?.response?.data?.errors?.message ===
+            "You are not allowed to view someone else's medical records"
+          ) {
+            toast.error("Bạn chỉ xem được bệnh án của bản thân", {
+              position: "top-right",
+              autoClose: 3000,
+              style: { color: "$color-default", backgroundColor: "#DEF2ED" },
+            });
+          } else {
+            const temp = res?.payload;
+            if (temp) {
+              setRecords(temp.contents);
+              setTotal((preVal) => ({
+                ...preVal,
+                pages: temp.totalPages,
+                items: temp.totalItems,
+              }));
+            }
+          }
         });
   }, [modal]);
 
   const handleTablePageChange = (page, additionalData) => {
-    // let temp = sendData;
-    // temp.no = page;
-    // setCurrentPage(page);
-    // setSendData(temp);
-    // dispatch(filterUserThunk(temp)).then((res) => {});
+    if (page) {
+      setParams((preVal) => ({
+        ...preVal,
+        pageNumber: page,
+      }));
+    }
   };
   const handleSearchChange = (values) => {};
   const handleSubmitSearch = (values) => {};
@@ -268,19 +338,21 @@ function MedicalRecordPage() {
           />
         )}
       </div>
-      <div className="staffinfor-tableWrapper">
-        <TableAntdCustom
-          list={records ? records : null}
-          totalItems={10}
-          totalPages={1}
-          pageSize={5}
-          no={0}
-          columns={columnsMedicalRecord}
-          onChange={handleTablePageChange}
-          className={"staffinfor-table"}
-          emptyText="Hiện chưa có lịch sử khám"
-        ></TableAntdCustom>
-      </div>
+      {records && (
+        <div className="staffinfor-tableWrapper">
+          <TableAntdCustom
+            list={records}
+            totalItems={total.items}
+            totalPages={total.pages}
+            pageSize={params.pageSize}
+            no={params.pageNumber}
+            columns={columnsMedicalRecord}
+            onChange={handleTablePageChange}
+            className={"staffinfor-table"}
+            emptyText="Hiện chưa có lịch sử khám"
+          ></TableAntdCustom>
+        </div>
+      )}
       <ConfirmModalAntd
         open={modal.visible}
         header={modal.title}

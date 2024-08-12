@@ -86,7 +86,6 @@ const ReceptionistQueuePage = () => {
     if (selectDoctor) {
       dispatch(getQueueByStaffIdThunk({ staffId: selectDoctor.id })).then(
         (res) => {
-          console.log(res);
           setQueueList(res?.payload);
         }
       );

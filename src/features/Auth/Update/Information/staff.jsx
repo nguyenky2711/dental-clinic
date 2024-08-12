@@ -1,113 +1,69 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-// import { registerThunk } from "../../../store/action/auth";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./style.scss";
+import { Button, Form, Input, Select } from "antd";
 import {
-  Button,
-  Checkbox,
-  Col,
-  Row,
-  Form,
-  Input,
-  InputNumber,
-  Select,
-  DatePicker,
-} from "antd";
-import moment from "moment";
-import {
-  createPatientThunk,
-  updatePatientThunk,
-} from "../../../../redux/action/patient";
-import dayjs from "dayjs";
-const CreatePatientPage = () => {
+  getStaffByTokenThunk,
+  updateStaffThunk,
+} from "../../../../redux/action/staff";
+const StaffInfPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const [form] = Form.useForm();
 
-  const { patientId } = useParams();
-  const patientResult = useSelector((state) => {
-    if (patientId) {
-      return state.patient.listPatients.contents.find(
-        (item) => item.id == patientId
-      );
-    }
-    return undefined;
-  });
+  const [staffResult, setStaffResult] = useState();
   useEffect(() => {
-    if (patientResult) {
-      form.setFieldValue("name", patientResult.name);
-      form.setFieldValue("birthday", dayjs(patientResult.birthday));
-      form.setFieldValue("address", patientResult.address);
-      form.setFieldValue("medicalHistory", patientResult.medicalHistory);
-      form.setFieldValue("phoneNumber", patientResult.phoneNumber);
-    }
-  }, [patientResult]);
+    dispatch(getStaffByTokenThunk()).then((res) => {
+      console.log(res);
+      const staffResult = res?.payload;
+      if (staffResult) {
+        form.setFieldValue("name", staffResult.name);
+        form.setFieldValue(
+          "professionalQualification",
+          staffResult.professionalQualification
+        );
+        form.setFieldValue("phoneNumber", staffResult.phoneNumber);
+        setStaffResult(res?.payload);
+      }
+    });
+  }, []);
 
   const onFinish = (data) => {
-    const patientDTO = {
+    const staffDTO = {
       name: data.name,
-      birthday: moment(new Date(data.birthday)).format("YYYY-MM-DD"),
-      address: data.address,
-      medicalHistory: data.medicalHistory,
-      ...(patientResult && { phoneNumber: data.phoneNumber }), // Conditionally include phoneNumber
+      professionalQualification: data.professionalQualification,
+      phoneNumber: data.phoneNumber,
     };
-
-    const loginDTO = {
-      userName: data.userName,
-      password: "123456",
+    let sendData = {
+      staffId: staffResult.id,
+      staffDTO,
     };
-    let sendData = {};
-    if (patientResult) {
-      sendData = {
-        patientId,
-        patientDTO,
-      };
-    } else {
-      sendData = {
-        patientDTO,
-        loginDTO,
-      };
-    }
-    dispatch(
-      patientResult
-        ? updatePatientThunk(sendData)
-        : createPatientThunk(sendData)
-    ).then((res) => {
+    dispatch(updateStaffThunk(sendData)).then((res) => {
       console.log(res);
       if (res?.payload?.message === "successfully") {
-        toast.success(
-          patientResult
-            ? "Cập nhật thông tin thành công"
-            : "Thêm thông tin thành công",
-          {
-            position: "top-right",
-            autoClose: 3000,
-            style: { color: "green", backgroundColor: "#DEF2ED" },
-          }
-        );
-        navigate("/manage/patient");
+        toast.success("Cập nhật thông tin thành công", {
+          position: "top-right",
+          autoClose: 3000,
+          style: { color: "green", backgroundColor: "#DEF2ED" },
+        });
+        navigate("/manage/queue");
       } else {
         if (res?.payload?.response?.data?.message === "DATA EXISTING") {
-          toast.error("Số điện thoại đã tồn tại", {
+          toast.error("Số điện thoại đã được dùng để đăng ký tài khoản", {
             position: "top-right",
             autoClose: 3000,
             style: { color: "red", backgroundColor: "#DEF2ED" },
           });
         } else {
-          toast.error(
-            patientResult
-              ? "Cập nhật thông tin thất bại"
-              : "Thêm thông tin thất bại",
-            {
-              position: "top-right",
-              autoClose: 3000,
-              style: { color: "red", backgroundColor: "#DEF2ED" },
-            }
-          );
+          toast.error("Cập nhật thông tin thất bại", {
+            position: "top-right",
+            autoClose: 3000,
+            style: { color: "red", backgroundColor: "#DEF2ED" },
+          });
         }
       }
     });
@@ -115,9 +71,7 @@ const CreatePatientPage = () => {
   return (
     <div className="container">
       <div className="register_container">
-        <div className="register-header">
-          {patientResult ? "Thông tin khách hàng" : "Thêm thông tin khách hàng"}
-        </div>
+        <div className="register-header">Thông tin nhân viên</div>
         <div className="form_register">
           <Form
             name="dynamic_form_nest_item"
@@ -164,56 +118,47 @@ const CreatePatientPage = () => {
               </Form.Item>
             </div>
             <Form.Item
-              className="student_item date"
-              label="Ngày sinh"
-              name={"birthday"}
-              rules={[
-                {
-                  required: true,
-                  message: "Vui lòng chọn ngày sinh",
-                },
-              ]}
-            >
-              <DatePicker
-                disabledDate={(d) => !d || d.isAfter(new Date())}
-                placeholder="Chọn ngày sinh"
-              />
-            </Form.Item>
-            <Form.Item
               className="staff_item name"
-              label="Địa chỉ"
-              name="address"
+              label="Trình độ chuyên môn"
+              name="professionalQualification"
               rules={[
                 {
                   required: true,
-                  message: "Vui lòng nhập địa chỉ",
+                  message: "Vui lòng nhập trình độ chuyên môn",
                 },
-              ]}
-            >
-              <Input placeholder="Nhập địa chỉ" />
-            </Form.Item>
-            <Form.Item
-              className="staff_item name"
-              label="Tiền sử bệnh án"
-              name="medicalHistory"
-              rules={[
                 {
-                  required: true,
-                  message: "Vui lòng nhập tiền sử bệnh án",
+                  pattern: new RegExp(
+                    /^[A-Za-zÀ-ỹẠ-ỹĂ-ắÂ-ẽÊ-ỷÔ-ỗƠ-ờƯ-ứĐđ]+( [A-Za-zÀ-ỹẠ-ỹĂ-ắÂ-ẽÊ-ỷÔ-ỗƠ-ờƯ-ứĐđ]+)*$/
+                  ),
+                  message: "Trình độ chuyên môn không hợp lệ",
+                },
+                {
+                  validator: (_, value) => {
+                    if (value) {
+                      if (value.length < 2 || value.length > 64) {
+                        return Promise.reject(
+                          "Trình độ chuyên môn phải có độ dài từ 2 đến 64 ký tự"
+                        );
+                      }
+                      if (value.trim() == "") {
+                        return Promise.reject(
+                          "Vui lòng nhập trình độ chuyên môn"
+                        );
+                      }
+                      return Promise.resolve();
+                    } else if (!value || value == "") {
+                      return Promise.reject();
+                    }
+                  },
                 },
               ]}
             >
-              <Input placeholder="Nhập tiền sử bệnh án" />
+              <Input placeholder="Nhập trình độ chuyên môn" />
             </Form.Item>
-
             <Form.Item
               className="staff_item phone"
-              label={
-                patientResult
-                  ? "Số điện thoại"
-                  : "Tên đăng nhập (Số điện thoại)"
-              }
-              name={patientResult ? "phoneNumber" : "userName"}
+              label={"Số điện thoại"}
+              name={staffResult ? "phoneNumber" : "userName"}
               rules={[
                 {
                   required: true,
@@ -267,14 +212,14 @@ const CreatePatientPage = () => {
 
             <Form.Item className="submitBtn">
               <Button type="submit" htmlType="submit">
-                {patientResult ? "Cập nhật" : "Thêm"}
+                Cập nhật
               </Button>
             </Form.Item>
             <Form.Item>
               <Button
                 className="cancleBtn"
                 type="button"
-                onClick={() => navigate(`/manage/patient`)}
+                onClick={() => navigate(`/manage/queue`)}
               >
                 Huỷ
               </Button>
@@ -286,4 +231,4 @@ const CreatePatientPage = () => {
   );
 };
 
-export default CreatePatientPage;
+export default StaffInfPage;

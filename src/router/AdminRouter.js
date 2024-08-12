@@ -3,7 +3,7 @@ import { Navigate, useLocation } from 'react-router-dom';
 import { AuthContext } from '../provider/AuthContext';
 
 const AdminRoute = ({ children, requiredRoles = 'Role_Admin', redirectPath = '/login' }) => {
-    const { role, token } = useContext(AuthContext);
+    const { role, token, logout } = useContext(AuthContext);
     const [loggedIn, setLoggedIn] = useState(false);
     const [initialized, setInitialized] = useState(false);
     const location = useLocation();
@@ -35,6 +35,7 @@ const AdminRoute = ({ children, requiredRoles = 'Role_Admin', redirectPath = '/l
     useEffect(() => {
         // Kiểm tra xem đã khởi tạo role và token từ localStorage
         if (!role && !token && initialized) {
+            logout()
             // Chưa khởi tạo, chuyển hướng người dùng đến trang đăng nhập
             return <Navigate to={redirectPath} replace state={{ from: location }} />;
         }

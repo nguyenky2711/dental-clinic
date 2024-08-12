@@ -1,42 +1,29 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-// import { registerThunk } from "../../../store/action/auth";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./style.scss";
-import {
-  Button,
-  Checkbox,
-  Col,
-  Row,
-  Form,
-  Input,
-  InputNumber,
-  Select,
-  DatePicker,
-} from "antd";
+import { Button, Form, Input, DatePicker } from "antd";
 import moment from "moment";
 import {
-  createPatientThunk,
+  getPatientByTokenThunk,
   updatePatientThunk,
 } from "../../../../redux/action/patient";
 import dayjs from "dayjs";
-const CreatePatientPage = () => {
+const UpdateInfPatientPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const [form] = Form.useForm();
 
-  const { patientId } = useParams();
-  const patientResult = useSelector((state) => {
-    if (patientId) {
-      return state.patient.listPatients.contents.find(
-        (item) => item.id == patientId
-      );
-    }
-    return undefined;
-  });
+  const [patientResult, setPatientResult] = useState();
+  useEffect(() => {
+    dispatch(getPatientByTokenThunk()).then((res) => {
+      console.log(res);
+      setPatientResult(res?.payload);
+    });
+  }, []);
   useEffect(() => {
     if (patientResult) {
       form.setFieldValue("name", patientResult.name);
@@ -53,43 +40,19 @@ const CreatePatientPage = () => {
       birthday: moment(new Date(data.birthday)).format("YYYY-MM-DD"),
       address: data.address,
       medicalHistory: data.medicalHistory,
-      ...(patientResult && { phoneNumber: data.phoneNumber }), // Conditionally include phoneNumber
+      phoneNumber: data.phoneNumber,
     };
+    let sendData = { patientId: patientResult.id, patientDTO };
 
-    const loginDTO = {
-      userName: data.userName,
-      password: "123456",
-    };
-    let sendData = {};
-    if (patientResult) {
-      sendData = {
-        patientId,
-        patientDTO,
-      };
-    } else {
-      sendData = {
-        patientDTO,
-        loginDTO,
-      };
-    }
-    dispatch(
-      patientResult
-        ? updatePatientThunk(sendData)
-        : createPatientThunk(sendData)
-    ).then((res) => {
+    dispatch(updatePatientThunk(sendData)).then((res) => {
       console.log(res);
       if (res?.payload?.message === "successfully") {
-        toast.success(
-          patientResult
-            ? "Cập nhật thông tin thành công"
-            : "Thêm thông tin thành công",
-          {
-            position: "top-right",
-            autoClose: 3000,
-            style: { color: "green", backgroundColor: "#DEF2ED" },
-          }
-        );
-        navigate("/manage/patient");
+        toast.success("Cập nhật thông tin thành công", {
+          position: "top-right",
+          autoClose: 3000,
+          style: { color: "green", backgroundColor: "#DEF2ED" },
+        });
+        navigate("/appointment");
       } else {
         if (res?.payload?.response?.data?.message === "DATA EXISTING") {
           toast.error("Số điện thoại đã tồn tại", {
@@ -98,16 +61,11 @@ const CreatePatientPage = () => {
             style: { color: "red", backgroundColor: "#DEF2ED" },
           });
         } else {
-          toast.error(
-            patientResult
-              ? "Cập nhật thông tin thất bại"
-              : "Thêm thông tin thất bại",
-            {
-              position: "top-right",
-              autoClose: 3000,
-              style: { color: "red", backgroundColor: "#DEF2ED" },
-            }
-          );
+          toast.error("Cập nhật thông tin thất bại", {
+            position: "top-right",
+            autoClose: 3000,
+            style: { color: "red", backgroundColor: "#DEF2ED" },
+          });
         }
       }
     });
@@ -115,9 +73,7 @@ const CreatePatientPage = () => {
   return (
     <div className="container">
       <div className="register_container">
-        <div className="register-header">
-          {patientResult ? "Thông tin khách hàng" : "Thêm thông tin khách hàng"}
-        </div>
+        <div className="register-header">Thông tin người dùng</div>
         <div className="form_register">
           <Form
             name="dynamic_form_nest_item"
@@ -208,12 +164,8 @@ const CreatePatientPage = () => {
 
             <Form.Item
               className="staff_item phone"
-              label={
-                patientResult
-                  ? "Số điện thoại"
-                  : "Tên đăng nhập (Số điện thoại)"
-              }
-              name={patientResult ? "phoneNumber" : "userName"}
+              label={"Số điện thoại"}
+              name={"phoneNumber"}
               rules={[
                 {
                   required: true,
@@ -267,14 +219,14 @@ const CreatePatientPage = () => {
 
             <Form.Item className="submitBtn">
               <Button type="submit" htmlType="submit">
-                {patientResult ? "Cập nhật" : "Thêm"}
+                Cập nhật
               </Button>
             </Form.Item>
             <Form.Item>
               <Button
                 className="cancleBtn"
                 type="button"
-                onClick={() => navigate(`/manage/patient`)}
+                onClick={() => navigate(`/appointment`)}
               >
                 Huỷ
               </Button>
@@ -286,4 +238,4 @@ const CreatePatientPage = () => {
   );
 };
 
-export default CreatePatientPage;
+export default UpdateInfPatientPage;

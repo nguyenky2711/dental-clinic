@@ -13,26 +13,34 @@ function StaffPage() {
   const [staffs, setStaffs] = useState();
   const [params, setParams] = useState({
     keyword: null,
-    pageNumber: null,
-    pageSize: null,
     positionId: null,
+    pageNumber: 1,
+    pageSize: 10,
   });
-
+  const [total, setTotal] = useState({
+    page: null,
+    item: null,
+  });
   useEffect(() => {
     dispatch(filterStaffThunk(params)).then((res) => {
       const temp = res?.payload;
       if (temp) {
         setStaffs(temp.contents);
+        setTotal((preVal) => ({
+          ...preVal,
+          page: temp.totalPages,
+          item: temp.totalItems,
+        }));
       }
     });
   }, [params]);
   const handleTablePageChange = (page, additionalData) => {
-    // let temp = sendData;
-    // temp.no = page;
-    // setCurrentPage(page);
-    // setSendData(temp);
-    // dispatch(filterUserThunk(temp)).then((res) => {});
+    setParams((prevVal) => ({
+      ...prevVal,
+      pageNumber: page,
+    }));
   };
+
   const columnsStaff = [
     {
       title: "Họ và tên",
@@ -68,18 +76,33 @@ function StaffPage() {
       width: "10%",
       render: (_, record) => {
         return (
-          <>
-            <EditOutlined
+          <div className="action">
+            <div
+              className="action-item"
               onClick={() => navigate(`/manage/staff/${record.id}`)}
-            />
-            <DeleteOutlined />
-          </>
+            >
+              <EditOutlined />
+              <p>Xem chi tiết</p>
+            </div>
+            <div className="action-item">
+              <DeleteOutlined />
+              Xoá
+            </div>
+          </div>
         );
       },
     },
   ];
   const handleSearchChange = (values) => {};
-  const handleSubmitSearch = (values) => {};
+  const handleSubmitSearch = (values) => {
+    if (values) {
+      setParams((preVal) => ({
+        ...preVal,
+        keyword: values.keyword,
+        positionId: values.positionId,
+      }));
+    }
+  };
   return (
     <div>
       <div className="staffPage-header">
@@ -93,10 +116,10 @@ function StaffPage() {
         {staffs ? (
           <TableAntdCustom
             list={staffs}
-            totalItems={10}
-            totalPages={1}
-            pageSize={5}
-            no={0}
+            totalItems={total.item}
+            totalPages={total.page}
+            pageSize={params.pageSize}
+            no={params.pageNumber}
             columns={columnsStaff}
             onChange={handleTablePageChange}
             className={"staffinfor-table"}

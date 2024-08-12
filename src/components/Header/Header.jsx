@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import "./style.scss";
 import dentalLogo from "../../../src/dental_logo.jpg";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -10,11 +10,15 @@ import {
   LogoutOutlined,
   KeyOutlined,
 } from "@ant-design/icons";
+import { useDispatch } from "react-redux";
+import { getStaffByTokenThunk } from "../../redux/action/staff";
 
 const Header = () => {
-  const { role, logout, userName } = useContext(AuthContext);
+  const { role, logout, userName, position } = useContext(AuthContext);
   const location = useLocation();
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [welcome, setWelcome] = useState("Chào bạn");
 
   const handleLogout = () => {
     logout(); // Gọi hàm logout từ AuthContext khi người dùng click vào nút đăng xuất
@@ -30,10 +34,28 @@ const Header = () => {
     return location.pathname.startsWith(path);
   };
 
+  useEffect(() => {
+    if (role === "Role_Admin") {
+      setWelcome("Xin chào Admin");
+    } else if (role === "Role_Staff") {
+      if (position === "dentist") {
+        setTimeout(() => {
+          dispatch(getStaffByTokenThunk()).then((res) => {
+            const result = res?.payload;
+            setWelcome(`Xin chào Bác sĩ, ${result?.name}`);
+          });
+        }, 300); // 300ms delay
+      } else {
+        setWelcome(`Xin chào Lễ tân, ${userName}`);
+      }
+    } else if (role === "Role_Patient") {
+    }
+  }, [role]);
+
   const menu = (
     <Menu>
       <Menu.Item key="0" disabled>
-        <span>Xin chào {userName}</span>
+        <span>{welcome}</span>
       </Menu.Item>
       {role === "Role_Patient" && (
         <>
@@ -61,7 +83,15 @@ const Header = () => {
       >
         Đổi mật khẩu
       </Menu.Item>
-      <Menu.Item key="2" icon={<LogoutOutlined />} onClick={handleLogout}>
+      <Menu.Item
+        key="2"
+        icon={<UserOutlined />}
+        className={isActive("/information") ? "active-menu-item" : ""}
+        onClick={() => navigate("/information")}
+      >
+        Thông tin tài khoản
+      </Menu.Item>
+      <Menu.Item key="3" icon={<LogoutOutlined />} onClick={handleLogout}>
         Đăng xuất
       </Menu.Item>
     </Menu>

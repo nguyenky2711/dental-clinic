@@ -125,14 +125,13 @@
   text-decoration: none;
   color: #333;
   font-size: 16px;
-  padding: 5px 10px;
+  padding: 10px;
   transition: color 0.3s, background-color 0.3s;
 }
 
 .header-middle a.active {
   color: #49243e;
   font-weight: bold;
-  padding: 10px;
   border-radius: 8px;
   background-color: #7042644f;
 }

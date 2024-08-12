@@ -29,6 +29,7 @@ import IncomePage from './features/Manage/Income';
 import HomePage from './features/HomePage';
 import ForgotPasswordPage from './features/Auth/ForgotPassword';
 import QueuePage from './features/Manage/Queue';
+import ChangeInforPage from './features/Auth/Update/Information';
 
 
 function App() {
@@ -218,6 +219,7 @@ function App() {
 
           <Route path='/signup' element={<SignUpPage />} />
           <Route path='/change-password' element={<ChangePasswordPage />} />
+          <Route path='/information' element={<ChangeInforPage />} />
           <Route path='/forgot-password' element={<ForgotPasswordPage />} />
           <Route
             path="/treatment"

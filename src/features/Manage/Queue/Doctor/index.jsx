@@ -12,8 +12,11 @@ import {
   filterStaffThunk,
   getStaffByTokenThunk,
 } from "../../../../redux/action/staff";
+import { AuthContext } from "../../../../provider/AuthContext";
 
 const DoctorQueuePage = () => {
+  const { token, role, logout, position } = useContext(AuthContext);
+
   const dispatch = useDispatch();
   const [openFormPage, setOpenFormPage] = useState(false);
   const [selectDoctor, setSelectDoctor] = useState(false);
@@ -88,13 +91,15 @@ const DoctorQueuePage = () => {
     <>
       <h1>
         Danh sách bệnh nhân đang chờ{" "}
-        <PlusSquareOutlined
-          onClick={() => {
-            setOpenFormPage(true);
-            setSelectDoctor();
-            setQueueList();
-          }}
-        />
+        {position === "receptionist" && (
+          <PlusSquareOutlined
+            onClick={() => {
+              setOpenFormPage(true);
+              setSelectDoctor();
+              setQueueList();
+            }}
+          />
+        )}
       </h1>
 
       <TableAntdCustom

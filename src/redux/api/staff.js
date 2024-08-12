@@ -14,7 +14,7 @@ const staff = {
             params.push(`positionId=${data.positionId}`);
         }
         if (data.pageNumber) {
-            params.push(`pageNumber=${data.pageNumber}`);
+            params.push(`pageNumber=${data.pageNumber - 1}`);
         }
         if (data.pageSize) {
             params.push(`pageSize=${data.pageSize}`);

@@ -3,6 +3,7 @@ import patient from '../api/patient';
 const {
     create,
     filter,
+    getPatientByToken,
     update,
 } = patient;
 
@@ -12,6 +13,17 @@ export const filterPatientThunk = createAsyncThunk(
     async (data) => {
         try {
             const res = await filter(data);
+            return res;
+        } catch (error) {
+            return error;
+        }
+    }
+);
+export const getPatientByTokenThunk = createAsyncThunk(
+    'patient/getPatientByToken',
+    async (data) => {
+        try {
+            const res = await getPatientByToken(data);
             return res;
         } catch (error) {
             return error;

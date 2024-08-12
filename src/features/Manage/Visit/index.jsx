@@ -6,20 +6,14 @@ import { useNavigate, useParams } from "react-router-dom";
 import {
   deleteVisitByIdThunk,
   exportVisitToPDFThunk,
-  getRecordByPatientIdThunk,
   getVisitByRecordIdThunk,
 } from "../../../redux/action/medicalRecord";
-import MedicalRecordInforSearch from "./Search";
 import {
-  CheckOutlined,
   DeleteOutlined,
   EditOutlined,
   FilePdfOutlined,
-  RedoOutlined,
 } from "@ant-design/icons";
 import moment from "moment";
-import { Tag } from "antd";
-import ReusableModal from "../../../components/ReuseModalAntd";
 import VisitInforSearch from "./Search";
 import ConfirmModalAntd from "../../../components/ConfirmModalAntd";
 import { AuthContext } from "../../../provider/AuthContext";
@@ -54,6 +48,15 @@ const VisitPage = () => {
   const { patientId, recordId } = useParams();
   const [records, setRecords] = useState();
   const { token, role, logout } = useContext(AuthContext);
+  const [total, setTotal] = useState({
+    pages: null,
+    items: null,
+  });
+  const [params, setParams] = useState({
+    recordId: recordId,
+    pageNumber: 1,
+    pageSize: 5,
+  });
 
   const columnsMedicalRecord = [
     {
@@ -62,7 +65,7 @@ const VisitPage = () => {
       align: "center",
       width: "8%",
       render: (text, record, index) => {
-        return index + 1;
+        return (params.pageNumber - 1) * params.pageSize + index + 1;
       },
     },
     {
@@ -171,11 +174,40 @@ const VisitPage = () => {
               style: { color: "$color-default", backgroundColor: "#DEF2ED" },
             });
           } else {
-            toast.error("Xoá lần khám thất bại", {
-              position: "top-right",
-              autoClose: 3000,
-              style: { color: "$color-default", backgroundColor: "#DEF2ED" },
-            });
+            if (
+              res?.payload?.response?.data?.errors?.message ===
+              "this is not yours"
+            ) {
+              toast.error("Chỉ bác sĩ có thẩm quyền mới thực hiện được", {
+                position: "top-right",
+                autoClose: 3000,
+                style: { color: "$color-default", backgroundColor: "#DEF2ED" },
+              });
+            } else if (
+              res?.payload?.response?.data?.errors?.message ===
+              `can't update record done`
+            ) {
+              toast.error("Bệnh án đã hoàn thành", {
+                position: "top-right",
+                autoClose: 3000,
+                style: { color: "$color-default", backgroundColor: "#DEF2ED" },
+              });
+            } else if (
+              res?.payload?.response?.data?.errors?.message ===
+              `the customer have been paid for the obj`
+            ) {
+              toast.error("Tiến trình đã được trả tiền", {
+                position: "top-right",
+                autoClose: 3000,
+                style: { color: "$color-default", backgroundColor: "#DEF2ED" },
+              });
+            } else {
+              toast.error("Xoá lần khám thất bại", {
+                position: "top-right",
+                autoClose: 3000,
+                style: { color: "$color-default", backgroundColor: "#DEF2ED" },
+              });
+            }
           }
         }
       );
@@ -190,11 +222,12 @@ const VisitPage = () => {
     // Hàm xử lý khi nhấn "Hủy" hoặc nhấn ra ngoài modal
   };
   const handleTablePageChange = (page, additionalData) => {
-    // let temp = sendData;
-    // temp.no = page;
-    // setCurrentPage(page);
-    // setSendData(temp);
-    // dispatch(filterUserThunk(temp)).then((res) => {});
+    if (page) {
+      setParams((preVal) => ({
+        ...preVal,
+        pageNumber: page,
+      }));
+    }
   };
   const handleSearchChange = (values) => {};
   const handleSubmitSearch = (values) => {};
@@ -205,14 +238,18 @@ const VisitPage = () => {
   };
 
   useEffect(() => {
-    // dispatch(getRecordByPatientIdThunk(patientId)).then((res) => {
-    //   console.log(res);
-    //   setRecords(res?.payload);
-    // });
-    dispatch(getVisitByRecordIdThunk({ recordId: recordId })).then((res) => {
-      setRecords(res?.payload);
+    dispatch(getVisitByRecordIdThunk(params)).then((res) => {
+      const temp = res?.payload;
+      if (temp) {
+        setRecords(temp.contents);
+        setTotal((preVal) => ({
+          ...preVal,
+          pages: temp.totalPages,
+          items: temp.totalItems,
+        }));
+      }
     });
-  }, []);
+  }, [params]);
 
   return (
     <div>
@@ -225,19 +262,21 @@ const VisitPage = () => {
           />
         )}
       </div>
-      <div className="staffinfor-tableWrapper">
-        <TableAntdCustom
-          list={records ? records : null}
-          totalItems={10}
-          totalPages={1}
-          pageSize={5}
-          no={0}
-          columns={columnsMedicalRecord}
-          onChange={handleTablePageChange}
-          className={"staffinfor-table"}
-          emptyText="Hiện chưa có lịch sử khám"
-        ></TableAntdCustom>
-      </div>
+      {records && (
+        <div className="staffinfor-tableWrapper">
+          <TableAntdCustom
+            list={records}
+            totalItems={total.items}
+            totalPages={total.pages}
+            pageSize={params.pageSize}
+            no={params.pageNumber}
+            columns={columnsMedicalRecord}
+            onChange={handleTablePageChange}
+            className={"staffinfor-table"}
+            emptyText="Hiện chưa có lịch sử khám"
+          ></TableAntdCustom>
+        </div>
+      )}
       <ConfirmModalAntd
         open={modal.visible}
         header={modal.title}

@@ -17,7 +17,7 @@ const PatientPage = () => {
   const { token, role, logout } = useContext(AuthContext);
   const [params, setParams] = useState({
     keyword: null,
-    pageNumber: 0,
+    pageNumber: 1,
     pageSize: 10,
   });
   const columnsPatient = [
@@ -25,78 +25,67 @@ const PatientPage = () => {
       title: "Họ và tên",
       key: "name",
       width: "15%",
-      render: (text) => {
-        return text.name;
-      },
+      render: (text) => text.name,
     },
     {
-      title: "Ngày sinh",
-      key: "birthday",
+      title: "Thông tin cơ bản",
+      key: "infor",
       align: "center",
       width: "10%",
-      render: (text) => {
-        return text.birthday;
-      },
+      render: (text) => (
+        <>
+          <p>Ngày sinh: {text.birthday}</p>
+          <p>Số điện thoại: {text.phoneNumber}</p>
+          <p>Địa chỉ: {text.address}</p>
+        </>
+      ),
     },
     {
-      title: "Số điện thoại",
-      key: "phone",
-      align: "center",
-      width: "10%",
-      render: (text) => {
-        return (
-          <>
-            <p>SĐT: {text.phoneNumber}</p>
-          </>
-        );
-      },
-    },
-    {
-      title: "Địa chỉ",
-      key: "address",
+      title: "Tiền sử bệnh án",
+      key: "medicalHistory",
       width: "20%",
-      render: (text) => {
-        return (
-          <>
-            <p>Địa chỉ: {text.address}</p>
-          </>
-        );
-      },
+      render: (text) => text.medicalHistory,
     },
-
-    {
-      title: "Bệnh án",
-      align: "center",
-      width: "10%",
-      render: (_, record) => {
-        return (
-          <div className="action">
-            <div
-              className="action-item"
-              onClick={() =>
-                navigate(`/manage/patient/${record.id}/medical-record`)
-              }
-            >
-              Xem bệnh án
-            </div>
-          </div>
-        );
-      },
-    },
+    ...(role !== "Role_Admin"
+      ? [
+          {
+            title: "Bệnh án",
+            align: "center",
+            width: "10%",
+            render: (_, record) => (
+              <div className="action">
+                <div
+                  className="action-item"
+                  onClick={() =>
+                    navigate(`/manage/patient/${record.id}/medical-record`)
+                  }
+                >
+                  Xem bệnh án
+                </div>
+              </div>
+            ),
+          },
+        ]
+      : []),
     {
       title: "",
       align: "center",
       width: "5%",
-      render: (_, record) => {
-        return (
-          <>
-            <EditOutlined
-              onClick={() => navigate(`/manage/patient/${record.id}`)}
-            />
+      render: (_, record) => (
+        <div className="action">
+          <div
+            className="action-item"
+            onClick={() => navigate(`/manage/patient/${record.id}`)}
+          >
+            <EditOutlined />
+            <p>Xem chi tiết</p>
+          </div>
+          {/* <div className="action-item">
             <DeleteOutlined />
-          </>
-        );
-      },
+            Xoá
+          </div> */}
+        </div>
+      ),
     },
   ];
 
@@ -111,12 +100,11 @@ const PatientPage = () => {
       }
     });
   }, [params, token, role]);
-
   const handleTablePageChange = (page) => {
     if (page) {
       setParams({
         ...params,
-        pageNumber: page - 1,
+        pageNumber: page,
       });
     }
   };
@@ -145,7 +133,7 @@ const PatientPage = () => {
             totalItems={totalItems}
             totalPages={totalPages}
             pageSize={params.pageSize}
-            no={params.pageNumber + 1}
+            no={params.pageNumber}
             columns={columnsPatient}
             onChange={handleTablePageChange}
             className={"staffinfor-table"}

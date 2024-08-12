@@ -22,13 +22,17 @@ function AppointmentManagePage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [appointment, setAppointments] = useState([]);
-  const [active, setActive] = useState(false);
-  const [totalPages, setTotalPages] = useState();
-  const [totalItems, setTotalItems] = useState();
+  const [status, setStatus] = useState(null);
   const { token, role, logout, position } = useContext(AuthContext);
+  const [total, setTotal] = useState({
+    pages: null,
+    items: null,
+  });
   const [params, setParams] = useState({
     isConfirm: null,
     staffId: null,
+    pageNumber: 1,
+    pageSize: 5,
   });
   const columnsAppoitment = [
     {
@@ -67,8 +71,8 @@ function AppointmentManagePage() {
     },
     {
       title: "Trạng thái",
-      key: "phone",
-      width: "20%",
+      key: "confirm",
+      width: "10%",
       align: "center",
       render: (text) => {
         return text.confirm ? (
@@ -82,23 +86,26 @@ function AppointmentManagePage() {
     {
       title: "",
       align: "center",
-      width: "5%",
-      render: (_, record) => {
-        return record.confirm ? (
-          <></>
-        ) : (
-          <>
-            <div>
-              <CheckOutlined onClick={() => handleAccept(record.id)} />
-              Duyệt
+      width: "15%",
+      render: (_, record) =>
+        !record.confirm && (
+          <div className="action">
+            <div
+              className="action-item"
+              onClick={() => handleAccept(record.id)}
+            >
+              <CheckOutlined />
+              <p>Duyệt</p>
             </div>
-            <div>
-              <DeleteOutlined onClick={() => handleDecline(record.id)} />
+            <div
+              className="action-item"
+              onClick={() => handleDecline(record.id)}
+            >
+              <DeleteOutlined />
               Huỷ
             </div>
-          </>
-        );
-      },
+          </div>
+        ),
     },
   ];
 
@@ -106,56 +113,99 @@ function AppointmentManagePage() {
     dispatch(filterAppointmentThunk(params)).then((res) => {
       const temp = res?.payload;
       if (temp) {
-        setAppointments(temp);
-        setActive(false);
+        setAppointments(temp.contents);
+        setTotal((preVal) => ({
+          ...preVal,
+          pages: temp.totalPages,
+          items: temp.totalItems,
+        }));
       }
+      setStatus(null);
     });
-  }, [params, active]);
+  }, [params]);
 
+  useEffect(() => {
+    status !== null &&
+      dispatch(filterAppointmentThunk(params)).then((res) => {
+        const temp = res?.payload;
+        if (temp) {
+          setAppointments(temp.contents);
+          setTotal((preVal) => ({
+            ...preVal,
+            pages: temp.totalPages,
+            items: temp.totalItems,
+          }));
+        }
+        setStatus(null);
+      });
+  }, [status]);
   const handleAccept = (id) => {
     dispatch(confirmAppointmentThunk({ workingId: id })).then((res) => {
-      console.log(res);
       if (res?.payload?.message === "successfully") {
         toast.success("Duyệt lịch khám thành công", {
           position: "top-right",
           autoClose: 3000,
           style: { color: "green", backgroundColor: "#D7F1FD" },
         });
-        setActive(true);
+        setStatus("successfully");
+      } else {
+        toast.error("Duyệt lịch khám thất bại", {
+          position: "top-right",
+          autoClose: 3000,
+          style: { color: "red", backgroundColor: "#DEF2ED" },
+        });
       }
     });
   };
   const handleDecline = (id) => {
     dispatch(declineAppointmentThunk({ workingId: id })).then((res) => {
-      console.log(res);
-      toast.success("Huỷ lịch khám thành công", {
-        position: "top-right",
-        autoClose: 3000,
-        style: { color: "green", backgroundColor: "#D7F1FD" },
-      });
-      setActive(true);
+      if (res?.payload?.message === "successfully") {
+        toast.success("Huỷ lịch khám thành công", {
+          position: "top-right",
+          autoClose: 3000,
+          style: { color: "green", backgroundColor: "#D7F1FD" },
+        });
+        setStatus("successfully");
+      } else {
+        toast.error("Huỷ lịch khám thất bại", {
+          position: "top-right",
+          autoClose: 3000,
+          style: { color: "red", backgroundColor: "#DEF2ED" },
+        });
+      }
     });
   };
 
   const handleTablePageChange = (page) => {
     if (page) {
-      setParams({
-        ...params,
-        pageNumber: page - 1,
-      });
+      setParams((preVal) => ({
+        ...preVal,
+        pageNumber: page,
+      }));
     }
   };
-
+  const isDeepEqual = (obj1, obj2) => {
+    return JSON.stringify(obj1) === JSON.stringify(obj2);
+  };
   const handleSearchChange = debounce((values) => {
-    setParams(values);
+    const { pageNumber, pageSize, ...restData } = params;
+    !isDeepEqual(values, restData) &&
+      setParams((preVal) => ({
+        ...preVal,
+        isConfirm: values.isConfirm,
+        staffId: values.staffId,
+      }));
   }, 300);
-  const handleSubmitSearch = (values) => {
-    if (values.keyword) {
-      setParams({ ...params, keyword: values.keyword });
-    } else {
-      setParams({ ...params, keyword: null });
-    }
-  };
+  const handleSubmitSearch = debounce((values) => {
+    const { pageNumber, pageSize, ...restData } = params;
+    !isDeepEqual(values, restData) &&
+      setParams((preVal) => ({
+        ...preVal,
+        isConfirm: values.isConfirm,
+        staffId: values.staffId,
+      }));
+  }, 300);
+
   return (
     <div>
       <div className="staffPage-header">
@@ -168,11 +218,11 @@ function AppointmentManagePage() {
       <div className="staffinfor-tableWrapper">
         {appointment ? (
           <TableAntdCustom
-            list={appointment != [] ? appointment : null}
-            totalItems={totalItems}
-            totalPages={totalPages}
+            list={appointment}
+            totalItems={total.items}
+            totalPages={total.pages}
             pageSize={params.pageSize}
-            no={params.pageNumber + 1}
+            no={params.pageNumber}
             columns={columnsAppoitment}
             onChange={handleTablePageChange}
             className={"staffinfor-table"}

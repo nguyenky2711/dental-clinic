@@ -3,7 +3,7 @@ import { Navigate, useLocation } from 'react-router-dom';
 import { AuthContext } from '../provider/AuthContext';
 
 const StaffRoute = ({ children, requiredRoles = ['Role_Admin', 'Role_Staff'], redirectPath = '/login' }) => {
-    const { role, token } = useContext(AuthContext);
+    const { role, token, logout } = useContext(AuthContext);
     const [loggedIn, setLoggedIn] = useState(false);
     const [initialized, setInitialized] = useState(false);
     const location = useLocation();
@@ -43,6 +43,7 @@ const StaffRoute = ({ children, requiredRoles = ['Role_Admin', 'Role_Staff'], re
 
     // Kiểm tra xem người dùng có quyền truy cập không
     if (!requiredRoles.includes(role)) {
+        logout()
         return <Navigate to={redirectPath} replace state={{ from: location }} />;
     }
 

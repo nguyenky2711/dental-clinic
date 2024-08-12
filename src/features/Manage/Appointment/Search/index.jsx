@@ -78,13 +78,7 @@ const AppointmentInforSearch = ({ handleSubmit, handleChange }) => {
   }, 300); // Thời gian debounce là 300ms
 
   const onFinish = (values) => {
-    const sendData = {
-      keyword:
-        values.name != undefined && values.name.trim() != ""
-          ? values.name
-          : null,
-    };
-    handleSubmit(sendData);
+    handleSubmit(searchObj);
   };
 
   return (
@@ -97,9 +91,13 @@ const AppointmentInforSearch = ({ handleSubmit, handleChange }) => {
       >
         <div className="keyWord_search-container">
           {position !== "dentist" && (
-            <Form.Item className="staff_item name" name="staffId">
+            <Form.Item
+              className="staff_item name"
+              name="staffId"
+              style={{ flexBasis: "30%" }}
+            >
               <AutoComplete
-                style={{ width: "300px" }}
+                // style={{ width: "500px" }}
                 options={dentistOptions}
                 onSearch={handleSearch} // Gọi hàm tìm kiếm debounce
                 onSelect={(val) => {
@@ -124,12 +122,16 @@ const AppointmentInforSearch = ({ handleSubmit, handleChange }) => {
                   }
                 }}
                 allowClear
-                placeholder="Nhập tên"
+                placeholder="Nhập tên bác sĩ khám"
               />
             </Form.Item>
           )}
 
-          <Form.Item name="isConfirm" className="treatment-searchForm-input">
+          <Form.Item
+            name="isConfirm"
+            className="staff_item select"
+            style={{ flexBasis: "20%" }}
+          >
             <Select
               placeholder="Chọn trạng thái"
               options={[

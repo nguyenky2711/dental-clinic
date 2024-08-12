@@ -34,7 +34,7 @@ const LoginPage = () => {
           res?.payload?.message == "Request failed with status code 403" ||
           res?.payload?.message == "Request failed with status code 404"
         ) {
-          toast.error("Hãy kiểm tra lại tài khoản hoặc mật khẩu", {
+          toast.error("Hãy kiểm tra lại tên đăng nhập hoặc mật khẩu", {
             position: "top-right",
             autoClose: 3000,
             style: { color: "red", backgroundColor: "#DEF2ED" },

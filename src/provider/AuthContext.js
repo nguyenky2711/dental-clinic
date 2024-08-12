@@ -47,11 +47,12 @@ export const AuthProvider = ({ children }) => {
             setRole(role);
             setToken(token);
             setPosition(position);
+            setUserName(userName)
             setTimeout(() => {
-                if (role === 'Role_Staff' && position === 'dentist') {
-                    navigate('/manage/appointment');
+                if (role === 'Role_Staff') {
+                    position === 'dentist' ? navigate('/manage/queue') : navigate('/manage/appointment');
                 } else {
-                    navigate('/manage/patient');
+                    navigate('/manage/staff');
                 }
             }, 1000);
         } else if (role === 'Role_Patient') {

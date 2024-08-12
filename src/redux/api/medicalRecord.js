@@ -3,12 +3,23 @@ import { internshipTransport } from "../../config/http/transport";
 const medicalRecord = {
 
     getRecordByPatientId: (data) => {
-        const url = `/api/record/patient/${data}`;
 
-        return internshipTransport.get(
-            url,
-            data
-        );
+        let url = `/api/record/patient/${data.patientId}`;
+        let params = [];
+
+        if (data.pageNumber) {
+            params.push(`pageNumber=${data.pageNumber - 1}`);
+        }
+        if (data.pageSize) {
+            params.push(`pageSize=${data.pageSize}`);
+        }
+
+        // Nếu có tham số nào, nối chúng vào URL
+        if (params.length > 0) {
+            url += '?' + params.join('&');
+        }
+
+        return internshipTransport.get(url, data);
     },
     getRecordByToken: (data) => {
         const url = `/api/record/token`;
@@ -57,12 +68,23 @@ const medicalRecord = {
 
     //Objective - visit
     getVisitByRecordId: (data) => {
-        const url = `/api/objective/record/${data.recordId}`;
+        let url = `/api/objective/record/${data.recordId}`;
+        let params = [];
 
-        return internshipTransport.get(
-            url,
-            data
-        );
+        if (data.pageNumber) {
+            params.push(`pageNumber=${data.pageNumber - 1}`);
+        }
+        if (data.pageSize) {
+            params.push(`pageSize=${data.pageSize}`);
+        }
+
+        // Nếu có tham số nào, nối chúng vào URL
+        if (params.length > 0) {
+            url += '?' + params.join('&');
+        }
+
+        return internshipTransport.get(url, data);
+
     },
     exportVisitToPDF: (data) => {
         const { visitId, ...restData } = data

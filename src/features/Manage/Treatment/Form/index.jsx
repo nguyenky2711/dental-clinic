@@ -24,8 +24,11 @@ const TreatmentFormPage = ({ propsData = null, action }) => {
   const navigate = useNavigate();
 
   const [form] = Form.useForm();
+  form.resetFields();
+
   useEffect(() => {
-    console.log(propsData);
+    form.resetFields();
+
     if (propsData?.selectedTreatment) {
       form.setFieldValue("cost", propsData?.selectedTreatment.cost);
       form.setFieldValue("note", propsData?.selectedTreatment.note);
@@ -64,7 +67,7 @@ const TreatmentFormPage = ({ propsData = null, action }) => {
       };
       dispatch(createTreatmentThunk(sendData)).then((res) => {
         if (res?.payload?.message === "successfully") {
-          form.resetFields();
+          action("cancle");
           toast.success("Tạo mới phương thức điều trị thành công", {
             position: "top-right",
             autoClose: 3000,
@@ -79,6 +82,7 @@ const TreatmentFormPage = ({ propsData = null, action }) => {
         }
       });
     }
+    form.resetFields();
   };
   return (
     <div className="container">
@@ -208,11 +212,6 @@ const TreatmentFormPage = ({ propsData = null, action }) => {
             <Form.Item className="submitBtn">
               <Button type="submit" htmlType="submit">
                 {propsData?.selectedTreatment ? "Cập nhật" : "Thêm"}
-              </Button>
-            </Form.Item>
-            <Form.Item className="cancleBtn">
-              <Button type="button" onClick={() => action("cancle")}>
-                Huỷ
               </Button>
             </Form.Item>
           </Form>

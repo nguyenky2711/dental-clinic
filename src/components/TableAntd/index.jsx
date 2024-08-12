@@ -25,6 +25,7 @@ const TableAntdCustom = ({
     }
   };
   const showTotal = () => {
+    console.log(no, pageSize, totalItems);
     const start = (no - 1) * pageSize + 1;
     const end = Math.min(no * pageSize, totalItems);
     return `Hiển thị ${start} - ${end} trong ${totalItems} dữ liệu`;

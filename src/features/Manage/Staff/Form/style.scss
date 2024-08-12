@@ -30,6 +30,16 @@
         .ant-input-affix-wrapper {
           width: 300px;
         }
+        .cancleBtn {
+          background-color: white !important;
+          border: 1px solid #49243e;
+          color: #49243e;
+          opacity: 0.7;
+          transition: 0.3s;
+          &:hover {
+            opacity: 1;
+          }
+        }
         button {
           width: 100%;
           margin: 0px auto;

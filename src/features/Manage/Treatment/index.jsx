@@ -11,14 +11,11 @@ import TableAntdCustom from "../../../components/TableAntd";
 import { useDispatch } from "react-redux";
 import {
   createServiceMedicalThunk,
-  createTreatmentThunk,
   deleteServiceMedicalThunk,
   deleteTreatmentThunk,
   filterTreatmentsThunk,
-  getServicesMedicalThunk,
   updateServiceMedicalThunk,
 } from "../../../redux/action/treatment";
-import treatment from "../../../redux/api/treatment";
 import TreatmentFormPage from "./Form";
 import ConfirmModalAntd from "../../../components/ConfirmModalAntd";
 import { AuthContext } from "../../../provider/AuthContext";
@@ -64,6 +61,10 @@ const TreatmentPage = () => {
     content: null,
     data: null,
     for: null,
+  });
+  const [modalTreatmentParams, setModalTreatmentParams] = useState({
+    open: false,
+    action: null,
   });
   const [currentService, setCurrentService] = useState({
     serviceName: null,
@@ -122,7 +123,12 @@ const TreatmentPage = () => {
               className="action-item"
               onClick={() => {
                 setSelectedTreatment(record);
-                setOpenFormPage(true);
+                // setOpenFormPage(true);
+                setModalTreatmentParams((preVal) => ({
+                  ...preVal,
+                  open: true,
+                  action: "edit",
+                }));
               }}
             >
               <EditOutlined />
@@ -232,7 +238,11 @@ const TreatmentPage = () => {
   const handleForm = (e) => {
     if (e == "cancle") {
       setSelectedTreatment();
-      setOpenFormPage(false);
+      setModalTreatmentParams((preVal) => ({
+        ...preVal,
+        open: false,
+        action: null,
+      }));
       dispatch(filterTreatmentsThunk(paramsTreatment)).then((res) => {
         setTreatmentData(groupByServiceDTO(res.payload));
       });
@@ -300,11 +310,22 @@ const TreatmentPage = () => {
               };
             });
           } else {
-            toast.error("Xoá phương thức điều trị thất bại!", {
-              position: "top-right",
-              autoClose: 3000,
-              style: { color: "red", backgroundColor: "#DEF2ED" },
-            });
+            if (
+              res?.payload?.response?.data?.errors?.message ===
+              "treatment has been used"
+            ) {
+              toast.error("Phương thức điều trị đang được sử dụng", {
+                position: "top-right",
+                autoClose: 3000,
+                style: { color: "$color-default", backgroundColor: "#DEF2ED" },
+              });
+            } else {
+              toast.error("Xoá phương thức điều trị thất bại!", {
+                position: "top-right",
+                autoClose: 3000,
+                style: { color: "red", backgroundColor: "#DEF2ED" },
+              });
+            }
           }
         }
       );
@@ -325,11 +346,22 @@ const TreatmentPage = () => {
             });
             setSelectedService("all");
           } else {
-            toast.error("Xoá dịch vụ thất bại!", {
-              position: "top-right",
-              autoClose: 3000,
-              style: { color: "red", backgroundColor: "#DEF2ED" },
-            });
+            if (
+              res?.payload?.response?.data?.errors?.message ===
+              "service has been used"
+            ) {
+              toast.error("Vui lòng xoá các phương thức trước", {
+                position: "top-right",
+                autoClose: 3000,
+                style: { color: "$color-default", backgroundColor: "#DEF2ED" },
+              });
+            } else {
+              toast.error("Xoá dịch vụ thất bại!", {
+                position: "top-right",
+                autoClose: 3000,
+                style: { color: "red", backgroundColor: "#DEF2ED" },
+              });
+            }
           }
         }
       );
@@ -341,6 +373,15 @@ const TreatmentPage = () => {
       content: null,
       for: null,
       data: null,
+    }));
+  };
+
+  const handleTreatmentModalCancel = () => {
+    setSelectedTreatment();
+    setModalTreatmentParams((preVal) => ({
+      ...preVal,
+      open: false,
+      action: null,
     }));
   };
 
@@ -425,7 +466,18 @@ const TreatmentPage = () => {
           <div className="staffPage-header">
             <h1>
               Danh sách phương thức điều trị{" "}
-              <PlusSquareOutlined onClick={() => setOpenFormPage(true)} />
+              {/* <PlusSquareOutlined onClick={() => setOpenFormPage(true)} /> */}
+              {role === "Role_Admin" && (
+                <PlusSquareOutlined
+                  onClick={() =>
+                    setModalTreatmentParams((preVal) => ({
+                      ...preVal,
+                      open: true,
+                      action: "add",
+                    }))
+                  }
+                />
+              )}
             </h1>
           </div>
           {filteredData &&
@@ -452,6 +504,18 @@ const TreatmentPage = () => {
             })}
         </Layout>
       )}
+      <Modal
+        open={modalTreatmentParams.open}
+        onCancel={handleTreatmentModalCancel}
+        footer={null} // Hide the default footer
+        width={600}
+      >
+        <TreatmentFormPage
+          style={{ padding: "24px" }}
+          propsData={{ selectedTreatment, currentService }}
+          action={handleForm}
+        />
+      </Modal>
       <ConfirmModalAntd
         open={deleteModalParams.open}
         onCancel={handleDeleteModalCancel}

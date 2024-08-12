@@ -9,13 +9,15 @@ import { AuthContext } from "../../../../../provider/AuthContext";
 import { filterPatientThunk } from "../../../../../redux/action/patient";
 import { addPatientToQueueThunk } from "../../../../../redux/action/queue";
 import { toast } from "react-toastify";
+import { showForClientThunk } from "../../../../../redux/action/workingTime";
 
 const ReceptionistQueueFormPage = ({ action = null }) => {
   const dispatch = useDispatch();
   const [form] = Form.useForm();
-  const { token, role, logout } = useContext(AuthContext);
   const [paramsStaff, setParamsStaff] = useState({
     keyword: null,
+    periodId: new Date().getHours() >= 13 ? 2 : 1,
+    date: moment(new Date()).format("YYYY-MM-DD"),
   });
   const [paramsPatient, setParamsPatient] = useState({
     keyword: null,
@@ -30,12 +32,12 @@ const ReceptionistQueueFormPage = ({ action = null }) => {
   const [patientOptions, setPatientOptions] = useState([]); // State lưu trữ danh sách gợi ý
 
   useEffect(() => {
-    dispatch(filterStaffThunk(paramsStaff)).then((res) => {
-      const tempStaffList = res?.payload?.contents?.map((item) => {
+    dispatch(showForClientThunk(paramsStaff)).then((res) => {
+      const tempStaffList = res?.payload?.map((item) => {
         return {
-          id: item.id,
-          value: item.name,
-          label: item.name,
+          id: item.staffDTO.id,
+          value: item.staffDTO.name,
+          label: item.staffDTO.name,
         };
       });
       setStaffOptions(tempStaffList);
@@ -96,7 +98,6 @@ const ReceptionistQueueFormPage = ({ action = null }) => {
         patientId: patient ? patient.id : null,
       }));
     }
-    console.log(value);
   };
   const handleSelectDoctor = (value) => {
     handleSelect(value, "doctor");
@@ -120,6 +121,7 @@ const ReceptionistQueueFormPage = ({ action = null }) => {
           style: { color: "red", backgroundColor: "#DEF2ED" },
         });
       }
+      form.resetFields();
     });
   };
 

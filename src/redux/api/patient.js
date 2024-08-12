@@ -11,7 +11,7 @@ const patient = {
             params.push(`keyword=${encodeURIComponent(data.keyword)}`);
         }
         if (data.pageNumber >= 0) {
-            params.push(`pageNumber=${data.pageNumber}`);
+            params.push(`pageNumber=${data.pageNumber - 1}`);
         }
         if (data.pageSize) {
             params.push(`pageSize=${data.pageSize}`);
@@ -23,6 +23,14 @@ const patient = {
         }
 
         return internshipTransport.get(url, data);
+    },
+    getPatientByToken: (data) => {
+        const url = `/api/patient/token`;
+
+        return internshipTransport.get(
+            url,
+            data
+        );
     },
 
     create: (data) => {

@@ -7,12 +7,15 @@
       align-items: center;
       justify-content: space-between;
       .employee-searchForm-input {
-        flex-basis: 55%;
+        flex-basis: 45%;
         &:hover {
           .ant-input-affix-wrapper {
             border-color: #dbafa0;
           }
         }
+      }
+      .employee-searchForm-select {
+        flex-basis: 20%;
       }
       .employee-searchForm-btn {
         flex-basis: 13%;

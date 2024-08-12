@@ -194,18 +194,54 @@ const MedicalRecordFormPage = () => {
               )
             : navigate(`/manage/patient/${patientId}/medical-record`);
         } else {
-          toast.error(
-            recordId
-              ? visitId
-                ? "Chỉnh sửa tiến trình thất bại"
-                : "Thêm tiến trình thất bại"
-              : "Thêm bệnh án thất bại",
-            {
+          if (
+            res?.payload?.response?.data?.errors?.message ===
+            "you aren't a dentist"
+          ) {
+            toast.error(
+              recordId
+                ? visitId
+                  ? "Chỉnh sửa tiến trình thất bại"
+                  : "Thêm tiến trình thất bại"
+                : "Chỉ có bác sĩ mới được tạo bệnh án",
+              {
+                position: "top-right",
+                autoClose: 3000,
+                style: { color: "$color-default", backgroundColor: "#DEF2ED" },
+              }
+            );
+          } else if (
+            res?.payload?.response?.data?.errors?.message ===
+            "this is not yours"
+          ) {
+            toast.error("Chỉ bác sĩ có thẩm quyền mới thực hiện được", {
               position: "top-right",
               autoClose: 3000,
               style: { color: "$color-default", backgroundColor: "#DEF2ED" },
-            }
-          );
+            });
+          } else if (
+            res?.payload?.response?.data?.errors?.message ===
+            `can't update record done`
+          ) {
+            toast.error("Bệnh án đã hoàn thành", {
+              position: "top-right",
+              autoClose: 3000,
+              style: { color: "$color-default", backgroundColor: "#DEF2ED" },
+            });
+          } else {
+            toast.error(
+              recordId
+                ? visitId
+                  ? "Chỉnh sửa tiến trình thất bại"
+                  : "Thêm tiến trình thất bại"
+                : "Thêm bệnh án thất bại",
+              {
+                position: "top-right",
+                autoClose: 3000,
+                style: { color: "$color-default", backgroundColor: "#DEF2ED" },
+              }
+            );
+          }
         }
       });
   };
@@ -330,17 +366,34 @@ const MedicalRecordFormPage = () => {
                                   // Directly remove the field here after successful deletion
                                   remove(fieldName);
                                 } else {
-                                  toast.error(
-                                    "Chỉ có bác sĩ khám mới có quyền thay đổi!",
-                                    {
+                                  if (
+                                    res?.payload?.response?.data?.errors
+                                      ?.message === "this is not yours"
+                                  ) {
+                                    toast.error(
+                                      "Chỉ bác sĩ có thẩm quyền mới thực hiện được",
+                                      {
+                                        position: "top-right",
+                                        autoClose: 3000,
+                                        style: {
+                                          color: "$color-default",
+                                          backgroundColor: "#DEF2ED",
+                                        },
+                                      }
+                                    );
+                                  } else if (
+                                    res?.payload?.response?.data?.errors
+                                      ?.message === `can't update record done`
+                                  ) {
+                                    toast.error("Bệnh án đã hoàn thành", {
                                       position: "top-right",
                                       autoClose: 3000,
                                       style: {
-                                        color: "red",
+                                        color: "$color-default",
                                         backgroundColor: "#DEF2ED",
                                       },
-                                    }
-                                  );
+                                    });
+                                  }
                                 }
                               });
                             }
@@ -383,14 +436,46 @@ const MedicalRecordFormPage = () => {
                                     }
                                   );
                                 } else {
-                                  toast.error("Chỉnh sửa tiến trình thất bại", {
-                                    position: "top-right",
-                                    autoClose: 3000,
-                                    style: {
-                                      color: "$color-default",
-                                      backgroundColor: "#DEF2ED",
-                                    },
-                                  });
+                                  if (
+                                    res?.payload?.response?.data?.errors
+                                      ?.message === "this is not yours"
+                                  ) {
+                                    toast.error(
+                                      "Chỉ bác sĩ có thẩm quyền mới thực hiện được",
+                                      {
+                                        position: "top-right",
+                                        autoClose: 3000,
+                                        style: {
+                                          color: "$color-default",
+                                          backgroundColor: "#DEF2ED",
+                                        },
+                                      }
+                                    );
+                                  } else if (
+                                    res?.payload?.response?.data?.errors
+                                      ?.message === `can't update record done`
+                                  ) {
+                                    toast.error("Bệnh án đã hoàn thành", {
+                                      position: "top-right",
+                                      autoClose: 3000,
+                                      style: {
+                                        color: "$color-default",
+                                        backgroundColor: "#DEF2ED",
+                                      },
+                                    });
+                                  } else {
+                                    toast.error(
+                                      "Chỉnh sửa tiến trình thất bại",
+                                      {
+                                        position: "top-right",
+                                        autoClose: 3000,
+                                        style: {
+                                          color: "$color-default",
+                                          backgroundColor: "#DEF2ED",
+                                        },
+                                      }
+                                    );
+                                  }
                                 }
                               }
                             );

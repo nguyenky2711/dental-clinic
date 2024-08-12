@@ -39,7 +39,10 @@ const StaffFormPage = () => {
         "professionalQualification",
         staffResult.professionalQualification
       );
-      form.setFieldValue("userName", staffResult.phoneNumber);
+      form.setFieldValue(
+        staffResult ? "phoneNumber" : "userName",
+        staffResult.phoneNumber
+      );
       form.setFieldValue("positionId", staffResult.positionDTO.id);
     }
   }, [staffResult]);
@@ -47,6 +50,8 @@ const StaffFormPage = () => {
     const staffDTO = {
       name: data.name,
       professionalQualification: data.professionalQualification,
+      ...(staffResult && { phoneNumber: data.phoneNumber }), // Conditionally include phoneNumber
+      // phoneNumber: data.userName,
     };
     const positionId = data.positionId;
     const loginDTO = {
@@ -66,6 +71,7 @@ const StaffFormPage = () => {
         positionId,
       };
     }
+    console.log(sendData);
     dispatch(
       staffResult ? updateStaffThunk(sendData) : createStaffThunk(sendData)
     ).then((res) => {
@@ -82,11 +88,24 @@ const StaffFormPage = () => {
         );
         navigate("/manage/staff");
       } else {
-        toast.error("Số điện thoại đã được dùng để đăng ký tài khoản", {
-          position: "top-right",
-          autoClose: 3000,
-          style: { color: "red", backgroundColor: "#DEF2ED" },
-        });
+        if (res?.payload?.response?.data?.message === "DATA EXISTING") {
+          toast.error("Số điện thoại đã được dùng để đăng ký tài khoản", {
+            position: "top-right",
+            autoClose: 3000,
+            style: { color: "red", backgroundColor: "#DEF2ED" },
+          });
+        } else {
+          toast.error(
+            staffResult
+              ? "Cập nhật thông tin thất bại"
+              : "Thêm thông tin thất bại",
+            {
+              position: "top-right",
+              autoClose: 3000,
+              style: { color: "red", backgroundColor: "#DEF2ED" },
+            }
+          );
+        }
       }
     });
   };
@@ -181,8 +200,10 @@ const StaffFormPage = () => {
             </Form.Item>
             <Form.Item
               className="staff_item phone"
-              label="Số điện thoại"
-              name="userName"
+              label={
+                staffResult ? "Số điện thoại" : "Tên đăng nhập (Số điện thoại)"
+              }
+              name={staffResult ? "phoneNumber" : "userName"}
               rules={[
                 {
                   required: true,
@@ -231,28 +252,39 @@ const StaffFormPage = () => {
               <Input
                 placeholder="Số điện thoại bắt đầu với đầu số 03,05,07,09"
                 addonBefore="+84"
-                readOnly={staffResult ? true : false}
               />
             </Form.Item>
-            <Form.Item
-              className="staff_item phone"
-              label="Vị trí"
-              name="positionId"
-              rules={[
-                {
-                  required: true,
-                  message: "Vui lòng chọn vị trí",
-                },
-              ]}
-            >
-              <Select>
-                <Select.Option value={1}>Nha sĩ</Select.Option>
-                <Select.Option value={2}>Lễ tân</Select.Option>
-              </Select>
-            </Form.Item>
+            {!staffResult && (
+              <Form.Item
+                className="staff_item phone"
+                label="Vị trí"
+                name="positionId"
+                rules={[
+                  {
+                    required: true,
+                    message: "Vui lòng chọn vị trí",
+                  },
+                ]}
+              >
+                <Select>
+                  <Select.Option value={1}>Nha sĩ</Select.Option>
+                  <Select.Option value={2}>Lễ tân</Select.Option>
+                </Select>
+              </Form.Item>
+            )}
+
             <Form.Item className="submitBtn">
               <Button type="submit" htmlType="submit">
                 {staffResult ? "Cập nhật" : "Thêm"}
+              </Button>
+            </Form.Item>
+            <Form.Item>
+              <Button
+                className="cancleBtn"
+                type="button"
+                onClick={() => navigate(`/manage/staff`)}
+              >
+                Huỷ
               </Button>
             </Form.Item>
           </Form>
