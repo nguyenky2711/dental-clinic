@@ -203,6 +203,7 @@ const AppointmentPage = () => {
 
       return false;
     });
+    form.resetFields(["workingId"]);
 
     setFilterAppointmentOptions(filAppointments);
   };
