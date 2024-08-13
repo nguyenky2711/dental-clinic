@@ -71,15 +71,15 @@ const VisitPage = () => {
   });
 
   const columnsMedicalRecord = [
-    {
-      title: "Lần khám",
-      key: "stt",
-      align: "center",
-      width: "8%",
-      render: (text, record, index) => {
-        return (params.pageNumber - 1) * params.pageSize + index + 1;
-      },
-    },
+    // {
+    //   title: "Lần khám",
+    //   key: "stt",
+    //   align: "center",
+    //   width: "8%",
+    //   render: (text, record, index) => {
+    //     return (params.pageNumber - 1) * params.pageSize + index + 1;
+    //   },
+    // },
     {
       title: "Ngày khám",
       key: "name",
@@ -122,14 +122,22 @@ const VisitPage = () => {
               //       )
               //     : navigate(`/medical-record/${recordId}/visit/${record.id}`)
               // }
-              onClick={() =>
-                (role === "Role_Staff" && position !== "dentist") ||
-                role === "Role_Patient"
-                  ? openProcModal(record.id)
-                  : navigate(
+              onClick={() => {
+                if (
+                  (role === "Role_Staff" && position !== "dentist") ||
+                  role === "Role_Patient"
+                ) {
+                  openProcModal(record.id);
+                } else {
+                  if (record?.invoice?.id) {
+                    openProcModal(record.id);
+                  } else {
+                    navigate(
                       `/manage/patient/${patientId}/medical-record/${recordId}/visit/${record.id}`
-                    )
-              }
+                    );
+                  }
+                }
+              }}
             >
               <EditOutlined />
               <p>Xem chi tiết</p>
@@ -152,16 +160,18 @@ const VisitPage = () => {
                 <p>Xuất file hoá đơn</p>
               </div>
             )}
-            {role === "Role_Staff" && position === "dentist" && (
-              <div
-                className="action-item"
-                style={{ width: "150px" }}
-                onClick={() => showModal("delete", record)}
-              >
-                <DeleteOutlined />
-                Xoá lần khám
-              </div>
-            )}
+            {role === "Role_Staff" &&
+              position === "dentist" &&
+              !record.invoice && (
+                <div
+                  className="action-item"
+                  style={{ width: "150px" }}
+                  onClick={() => showModal("delete", record)}
+                >
+                  <DeleteOutlined />
+                  Xoá lần khám
+                </div>
+              )}
           </div>
         );
       },
@@ -275,7 +285,14 @@ const VisitPage = () => {
   const isDeepEqual = (obj1, obj2) => {
     return JSON.stringify(obj1) === JSON.stringify(obj2);
   };
-  const handleSearchChange = (values) => {};
+  const handleSearchChange = debounce((values) => {
+    const { pageNumber, pageSize, recordId, ...restData } = params;
+    !isDeepEqual(values, restData) &&
+      setParams((preVal) => ({
+        ...preVal,
+        visitId: values.visitId,
+      }));
+  }, 300);
   const handleSubmitSearch = debounce((values) => {
     const { pageNumber, pageSize, recordId, ...restData } = params;
     !isDeepEqual(values, restData) &&
@@ -329,7 +346,7 @@ const VisitPage = () => {
         <h1>Chi tiết các lần khám</h1>
         {role === "Role_Staff" && (
           <VisitInforSearch
-            handleSearchChange={null}
+            handleSearchChange={handleSearchChange}
             handleSubmitSearch={handleSubmitSearch}
           />
         )}

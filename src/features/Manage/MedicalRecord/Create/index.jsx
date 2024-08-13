@@ -35,6 +35,7 @@ import {
 } from "../../../../redux/action/medicalRecord";
 import { AuthContext } from "../../../../provider/AuthContext";
 import { debounce } from "lodash";
+import { findInvoiceByVisitIdThunk } from "../../../../redux/action/revenue";
 // import ConfirmModalAntd from "src/component/shared/ConfirmModalAntd";
 const MedicalRecordFormPage = ({ visitInfor = null }) => {
   const dispatch = useDispatch();
@@ -47,6 +48,7 @@ const MedicalRecordFormPage = ({ visitInfor = null }) => {
     sortOrder: null,
   });
   const [sendData, setSendData] = useState();
+  const [invoice, setInvoice] = useState();
   let [treatments, setTreatments] = useState();
   const [canRemove, setCanRemove] = useState(false);
   const [form] = Form.useForm();
@@ -64,7 +66,7 @@ const MedicalRecordFormPage = ({ visitInfor = null }) => {
 
   useEffect(() => {
     const visitID = visitId ? visitId : visitInfor;
-    visitID &&
+    if (visitID) {
       dispatch(getProceduredByVisitIdThunk({ visitId: visitID })).then(
         (res) => {
           const result = res?.payload?.procedureShowDTOS?.map((item) => {
@@ -81,6 +83,10 @@ const MedicalRecordFormPage = ({ visitInfor = null }) => {
           form.setFieldValue("note", res?.payload?.note);
         }
       );
+      dispatch(findInvoiceByVisitIdThunk({ visitId: visitID })).then((res) => {
+        res?.payload?.id && setInvoice(res?.payload);
+      });
+    }
   }, [visitId]);
 
   useEffect(() => {
@@ -325,6 +331,7 @@ const MedicalRecordFormPage = ({ visitInfor = null }) => {
               >
                 <Input
                   readOnly={
+                    invoice ||
                     role === "Role_Patient" ||
                     (role === "Role_Staff" && position !== "dentist")
                   }
@@ -338,6 +345,7 @@ const MedicalRecordFormPage = ({ visitInfor = null }) => {
               >
                 <Input
                   readOnly={
+                    invoice ||
                     role === "Role_Patient" ||
                     (role === "Role_Staff" && position !== "dentist")
                   }
@@ -525,6 +533,7 @@ const MedicalRecordFormPage = ({ visitInfor = null }) => {
                                     allowClear
                                     // options={treatments}
                                     disabled={
+                                      invoice ||
                                       role === "Role_Patient" ||
                                       (role === "Role_Staff" &&
                                         position !== "dentist")
@@ -578,6 +587,7 @@ const MedicalRecordFormPage = ({ visitInfor = null }) => {
                                 >
                                   <InputNumber
                                     readOnly={
+                                      invoice ||
                                       role === "Role_Patient" ||
                                       (role === "Role_Staff" &&
                                         position !== "dentist")
@@ -612,6 +622,7 @@ const MedicalRecordFormPage = ({ visitInfor = null }) => {
                                 >
                                   <Input
                                     readOnly={
+                                      invoice ||
                                       role === "Role_Patient" ||
                                       (role === "Role_Staff" &&
                                         position !== "dentist")
@@ -620,7 +631,8 @@ const MedicalRecordFormPage = ({ visitInfor = null }) => {
                                 </Form.Item>
                               </div>
 
-                              {role === "Role_Staff" &&
+                              {!invoice &&
+                                role === "Role_Staff" &&
                                 position === "dentist" && (
                                   <>
                                     {index >= 0 && (
@@ -649,29 +661,31 @@ const MedicalRecordFormPage = ({ visitInfor = null }) => {
                             </Space>
                           );
                         })}
-                      {role === "Role_Staff" && position === "dentist" && (
-                        <Form.Item
-                          style={{
-                            margin: "50px auto",
-                            width: "180px",
-                          }}
-                        >
-                          <Button
-                            type="dashed"
-                            onClick={() => {
-                              add();
-                              setParams((prevParams) => ({
-                                ...prevParams,
-                                keyword: null,
-                              }));
-                            }} // Make sure 'add' is a valid function
-                            block
-                            icon={<PlusOutlined />}
+                      {!invoice &&
+                        role === "Role_Staff" &&
+                        position === "dentist" && (
+                          <Form.Item
+                            style={{
+                              margin: "50px auto",
+                              width: "180px",
+                            }}
                           >
-                            Thêm phương thức
-                          </Button>
-                        </Form.Item>
-                      )}
+                            <Button
+                              type="dashed"
+                              onClick={() => {
+                                add();
+                                setParams((prevParams) => ({
+                                  ...prevParams,
+                                  keyword: null,
+                                }));
+                              }} // Make sure 'add' is a valid function
+                              block
+                              icon={<PlusOutlined />}
+                            >
+                              Thêm phương thức
+                            </Button>
+                          </Form.Item>
+                        )}
                     </>
                   );
                 }}
@@ -680,14 +694,14 @@ const MedicalRecordFormPage = ({ visitInfor = null }) => {
           )}
         </div>
         <div className="buttonGroup">
-          {role === "Role_Staff" && position === "dentist" && (
+          {!invoice && role === "Role_Staff" && position === "dentist" && (
             <Form.Item className="submitBtn">
               <Button type="submit" htmlType="submit">
                 Thêm
               </Button>
             </Form.Item>
           )}
-          {role === "Role_Staff" && position === "dentist" && (
+          {!invoice && role === "Role_Staff" && position === "dentist" && (
             <Form.Item className="cancelBtn">
               <Button
                 type="button"

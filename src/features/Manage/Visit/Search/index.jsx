@@ -11,10 +11,15 @@ const VisitInforSearch = ({ handleSubmitSearch, handleSearchChange }) => {
   const { patientId, recordId } = useParams();
   const navigate = useNavigate();
   const [form] = Form.useForm();
-
+  const [sendData, setSendData] = useState({
+    visitId: null,
+  });
   const onFinish = (values) => {
     handleSubmitSearch(values);
   };
+  useEffect(() => {
+    handleSearchChange(sendData);
+  }, [sendData]);
 
   return (
     <>
@@ -29,6 +34,13 @@ const VisitInforSearch = ({ handleSubmitSearch, handleSearchChange }) => {
             <Input
               prefix={<SearchOutlined className="site-form-item-icon" />}
               placeholder="Tìm kiếm mã khám"
+              onChange={(e) =>
+                setSendData((preVal) => ({
+                  ...preVal,
+                  visitId:
+                    e.target.value.trim() != "" ? e.target.value.trim() : null,
+                }))
+              }
             />
           </Form.Item>
 

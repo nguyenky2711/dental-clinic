@@ -27,6 +27,7 @@ const ReceptionistQueuePage = () => {
   const [queueList, setQueueList] = useState([]); // State lưu trữ danh sách gợi ý
   const [paramsStaff, setParamsStaff] = useState({
     keyword: null,
+    positionId: 1,
   });
 
   const columnsPatient = [

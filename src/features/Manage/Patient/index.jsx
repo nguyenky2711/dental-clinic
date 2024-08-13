@@ -8,6 +8,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { AuthContext } from "../../../provider/AuthContext";
 import moment from "moment";
+import { debounce } from "lodash";
 
 const PatientPage = () => {
   const dispatch = useDispatch();
@@ -111,15 +112,29 @@ const PatientPage = () => {
       });
     }
   };
-
-  const handleSearchChange = (values) => {};
-  const handleSubmitSearch = (values) => {
-    if (values.keyword) {
-      setParams({ ...params, keyword: values.keyword });
-    } else {
-      setParams({ ...params, keyword: null });
-    }
+  const isDeepEqual = (obj1, obj2) => {
+    return JSON.stringify(obj1) === JSON.stringify(obj2);
   };
+
+  const handleSearchChange = debounce((values) => {
+    const { pageNumber, pageSize, ...restData } = params;
+    if (!isDeepEqual(values, restData)) {
+      setParams((preVal) => ({
+        ...preVal,
+        keyword: values.keyword,
+      }));
+    }
+  }, 300);
+  const handleSubmitSearch = debounce((values) => {
+    const { pageNumber, pageSize, ...restData } = params;
+    if (!isDeepEqual(values, restData)) {
+      setParams((preVal) => ({
+        ...preVal,
+        keyword: values.keyword,
+      }));
+    }
+  }, 300); // Thời gian debounce là 300ms
+
   return (
     <div>
       <div className="staffPage-header">

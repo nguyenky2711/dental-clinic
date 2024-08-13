@@ -162,31 +162,6 @@ const AppointmentPage = () => {
     }
   }, [paramsAppointment]);
 
-  const processAppointments = async (week) => {
-    try {
-      const res = await dispatch(showForStaffByWeekThunk({ year, week }));
-      let tempAppointmentList = res?.payload?.filter(
-        (item) => new Date(item.workingDTO.date) > new Date()
-      );
-
-      tempAppointmentList = tempAppointmentList
-        .sort(
-          (a, b) => new Date(a.workingDTO.date) - new Date(b.workingDTO.date)
-        )
-        .map((item) => ({
-          value: item.id,
-          label: `Ngày: ${moment(new Date(item.workingDTO.date)).format(
-            "DD/MM/YYYY"
-          )}`,
-          workingDTO: item.workingDTO,
-        }));
-
-      return tempAppointmentList;
-    } catch (error) {
-      console.error("Error processing appointments:", error);
-      return [];
-    }
-  };
   const handleSelectTime = (target) => {
     const filAppointments = appoitmentOptions.filter((item) => {
       const periodId = item?.workingDTO?.periodId;
@@ -383,7 +358,11 @@ const AppointmentPage = () => {
             <Form.Item className="cancleBtn">
               <Button
                 type="button"
-                onClick={() => navigate("/manage/appointment")}
+                onClick={() =>
+                  role === "Role_Patient"
+                    ? navigate("/medical-record")
+                    : navigate("/manage/appointment")
+                }
               >
                 Quay lại
               </Button>

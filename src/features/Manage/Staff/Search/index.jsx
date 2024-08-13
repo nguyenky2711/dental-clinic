@@ -11,13 +11,22 @@ import "./styles.scss";
 const StaffinforSearch = ({ handleSubmit, handleChange }) => {
   const navigate = useNavigate();
   const [form] = Form.useForm();
+  const [sendData, setSendData] = useState({
+    keyword: null,
+    positionId: null,
+  });
   const onFinish = (data) => {
     const sendData = {
-      keyword: data?.keyword ? data.keyword.toLowerCase() : null,
+      keyword:
+        data?.keyword?.trim() != "" ? data.keyword.trim().toLowerCase() : null,
       positionId: data?.positionId ? data.positionId : null,
     };
     handleSubmit(sendData);
   };
+
+  useEffect(() => {
+    handleChange(sendData);
+  }, [sendData]);
 
   return (
     <>
@@ -32,6 +41,15 @@ const StaffinforSearch = ({ handleSubmit, handleChange }) => {
             <Input
               prefix={<SearchOutlined className="site-form-item-icon" />}
               placeholder="Tìm kiếm theo tên, sdt"
+              onChange={(e) =>
+                setSendData((preVal) => ({
+                  ...preVal,
+                  keyword:
+                    e.target.value.trim() != ""
+                      ? e.target.value.trim().toLowerCase()
+                      : null,
+                }))
+              }
             />
           </Form.Item>
           <Form.Item name="positionId" className="employee-searchForm-select">
@@ -53,6 +71,12 @@ const StaffinforSearch = ({ handleSubmit, handleChange }) => {
                 },
               ]}
               allowClear
+              onChange={(value) =>
+                setSendData((preVal) => ({
+                  ...preVal,
+                  positionId: value ? value : null,
+                }))
+              }
             />
           </Form.Item>
           <Form.Item className="employee-searchForm-btn">

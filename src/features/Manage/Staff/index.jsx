@@ -6,6 +6,7 @@ import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { filterStaffThunk } from "../../../redux/action/staff";
 import { useDispatch } from "react-redux";
+import { debounce } from "lodash";
 
 function StaffPage() {
   const navigate = useNavigate();
@@ -93,16 +94,31 @@ function StaffPage() {
       },
     },
   ];
-  const handleSearchChange = (values) => {};
-  const handleSubmitSearch = (values) => {
-    if (values) {
+  const isDeepEqual = (obj1, obj2) => {
+    return JSON.stringify(obj1) === JSON.stringify(obj2);
+  };
+
+  const handleSearchChange = debounce((values) => {
+    const { pageNumber, pageSize, ...restData } = params;
+    if (!isDeepEqual(values, restData)) {
       setParams((preVal) => ({
         ...preVal,
         keyword: values.keyword,
         positionId: values.positionId,
       }));
     }
-  };
+  }, 300);
+  const handleSubmitSearch = debounce((values) => {
+    const { pageNumber, pageSize, ...restData } = params;
+    if (!isDeepEqual(values, restData)) {
+      setParams((preVal) => ({
+        ...preVal,
+        keyword: values.keyword,
+        positionId: values.positionId,
+      }));
+    }
+  }, 300); // Thời gian debounce là 300ms
+
   return (
     <div>
       <div className="staffPage-header">
