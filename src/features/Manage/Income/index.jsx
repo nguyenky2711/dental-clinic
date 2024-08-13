@@ -198,34 +198,63 @@ const addDataFromAPI = (weeks, dataAPI) => {
   return updatedWeeks;
 };
 
-const CustomTooltip = ({ payload, label }) => {
-  if (payload && payload.length) {
-    const { totalRevenue, totalAmountRemaining, startDate } =
-      payload[0].payload;
-    return (
-      <div className="custom-tooltip">
-        <p className="label">{`Ngày kết thúc: ${moment(startDate)
-          .subtract(1, "days")
-          .format("DD-MM-YYYY")}`}</p>
+// const CustomTooltip = ({ payload, label }) => {
+//   if (payload && payload.length) {
+//     const { totalRevenue, totalAmountRemaining, startDate } =
+//       payload[0].payload;
+//     return (
+//       <div className="custom-tooltip">
+//         <p className="label">{`Ngày kết thúc: ${moment(startDate)
+//           .subtract(1, "days")
+//           .format("DD-MM-YYYY")}`}</p>
 
-        <p className="label">{`Ngày bắt đầu: ${moment(startDate).format(
-          "DD-MM-YYYY"
-        )}`}</p>
-        <p className="intro">{`Doanh thu: ${totalRevenue.toLocaleString(
-          "vi-VN",
-          { style: "currency", currency: "VND" }
-        )}`}</p>
-        <p className="intro">{`Số tiền còn lại: ${totalAmountRemaining.toLocaleString(
-          "vi-VN",
-          { style: "currency", currency: "VND" }
-        )}`}</p>
-      </div>
-    );
-  }
+//         <p className="label">{`Ngày bắt đầu: ${moment(startDate).format(
+//           "DD-MM-YYYY"
+//         )}`}</p>
+//         <p className="intro">{`Doanh thu: ${totalRevenue.toLocaleString(
+//           "vi-VN",
+//           { style: "currency", currency: "VND" }
+//         )}`}</p>
+//         <p className="intro">{`Số tiền còn lại: ${totalAmountRemaining.toLocaleString(
+//           "vi-VN",
+//           { style: "currency", currency: "VND" }
+//         )}`}</p>
+//       </div>
+//     );
+//   }
 
-  return null;
-};
+//   return null;
+// };
 
+// const CustomTooltip = ({ payload, label }) => {
+//   if (payload && payload.length) {
+//     const { totalRevenue, totalAmountRemaining, startDate } =
+//       payload[0].payload;
+
+//     // Formatting dates and currency
+//     const formattedStartDate = moment(startDate).format("DD-MM-YYYY");
+//     const formattedEndDate = moment(startDate)
+//       .subtract(1, "days")
+//       .format("DD-MM-YYYY");
+
+//     return (
+//       <div className="custom-tooltip">
+//         <p className="label">{`Ngày kết thúc: ${formattedEndDate}`}</p>
+//         <p className="label">{`Ngày bắt đầu: ${formattedStartDate}`}</p>
+//         <p className="intro">{`Doanh thu: ${totalRevenue.toLocaleString(
+//           "vi-VN",
+//           { style: "currency", currency: "VND" }
+//         )}`}</p>
+//         <p className="intro">{`Số tiền còn lại: ${totalAmountRemaining.toLocaleString(
+//           "vi-VN",
+//           { style: "currency", currency: "VND" }
+//         )}`}</p>
+//       </div>
+//     );
+//   }
+
+//   return null;
+// };
 const IncomePage = () => {
   const dispatch = useDispatch();
   const [timeFrame, setTimeFrame] = useState("month");
@@ -277,12 +306,12 @@ const IncomePage = () => {
   };
 
   return (
-    <div>
+    <div style={{ marginTop: 30 }}>
       <Select
         value={timeFrame}
         onChange={(value) => {
           setTimeFrame(value);
-          setFilteredData();
+          setFilteredData([]);
           if (value === "month") {
             setSelectedWeek(null);
             setSelectedMonth(moment().startOf("month"));
@@ -290,7 +319,7 @@ const IncomePage = () => {
             setSelectedMonth(null);
           }
         }}
-        style={{ width: 200, marginBottom: 16 }}
+        style={{ width: 200, marginBottom: 16, marginRight: 20 }}
       >
         <Option value="week">Tuần</Option>
         <Option value="month">Tháng</Option>
@@ -301,9 +330,9 @@ const IncomePage = () => {
           placeholder="Chọn tuần"
           onChange={(value) => {
             setSelectedWeek(value);
-            setFilteredData();
+            setFilteredData([]);
           }}
-          style={{ width: 200, marginBottom: 16 }}
+          style={{ width: 300, marginBottom: 16, marginRight: 20 }}
         >
           {getWeeksInYear().map((week) => (
             <Option key={week.week} value={JSON.stringify(week)}>
@@ -341,7 +370,8 @@ const IncomePage = () => {
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey={timeFrame === "month" ? "startDate" : "date"} />
           <YAxis />
-          <Tooltip content={<CustomTooltip />} />
+          {/* <Tooltip content={<CustomTooltip />} /> */}
+          <Tooltip />
           <Legend />
           <Line
             type="monotone"

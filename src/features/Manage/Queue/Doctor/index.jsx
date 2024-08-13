@@ -16,12 +16,13 @@ import {
 import { AuthContext } from "../../../../provider/AuthContext";
 import moment from "moment";
 import { Modal } from "antd";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const DoctorQueuePage = () => {
   const { token, role, logout, position } = useContext(AuthContext);
   const location = useLocation();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [openFormPage, setOpenFormPage] = useState(false);
   const [selectDoctor, setSelectDoctor] = useState(false);
   const [staffOptions, setStaffOptions] = useState([]); // State lưu trữ danh sách gợi ý
@@ -168,9 +169,10 @@ const DoctorQueuePage = () => {
       )}
       <Modal
         open={modalProps.open}
-        onCancel={() =>
-          setModalProps((preVal) => ({ ...preVal, open: false, data: null }))
-        }
+        onCancel={() => {
+          setModalProps((preVal) => ({ ...preVal, open: false, data: null }));
+          navigate(`/manage/patient/${modalProps?.data?.id}/medical-record`);
+        }}
         footer={null} // Hide the default footer
         width={500}
       >

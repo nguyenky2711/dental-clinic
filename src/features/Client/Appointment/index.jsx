@@ -230,6 +230,7 @@ const AppointmentPage = () => {
               autoClose: 3000,
               style: { color: "green", backgroundColor: "#D7F1FD" },
             });
+            navigate("/medical-record");
             form.resetFields();
           }
         })
@@ -242,6 +243,7 @@ const AppointmentPage = () => {
               style: { color: "green", backgroundColor: "#D7F1FD" },
             });
             form.resetFields();
+            navigate("/manage/appointment");
           }
         });
   };
@@ -255,6 +257,9 @@ const AppointmentPage = () => {
             form={form}
             onFinish={onFinish}
             onFieldsChange={(changeField, allFields) => {}}
+            initialValues={{
+              name: doctorDTO?.name,
+            }}
           >
             {role !== "Role_Staff" ? (
               <Form.Item

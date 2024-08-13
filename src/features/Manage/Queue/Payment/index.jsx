@@ -9,6 +9,7 @@ import {
 } from "../../../../redux/action/revenue";
 import axios from "axios";
 import { AuthContext } from "../../../../provider/AuthContext";
+import { toast } from "react-toastify";
 
 const downloadPdf = async (invoiceId, token) => {
   try {
@@ -34,29 +35,6 @@ const downloadPdf = async (invoiceId, token) => {
     console.error("There was an error!", error);
   }
 };
-
-// const downloadPdf = async (invoiceId) => {
-//   try {
-//     const response = await axios({
-//       url: `http://localhost:8085/api/invoice/export-pdf/${invoiceId}`,
-//       method: "GET",
-//       responseType: "blob", // Quan trọng: nhận về dữ liệu dưới dạng blob
-//     });
-
-//     const url = window.URL.createObjectURL(new Blob([response.data]));
-//     const a = document.createElement("a");
-//     a.href = url;
-//     a.download = `HoaDon#${invoiceId}.pdf`; // Tên file muốn tải xuống
-//     document.body.appendChild(a);
-//     a.click();
-//     a.remove();
-
-//     window.URL.revokeObjectURL(url);
-//   } catch (error) {
-//     console.error("There was an error!", error);
-//   }
-// };
-
 const PaymentPage = () => {
   const dispatch = useDispatch();
   const [form] = Form.useForm();
@@ -75,8 +53,27 @@ const PaymentPage = () => {
     ).then((res) => {
       console.log(res);
       if (res?.payload?.message === "successfully") {
+        toast.success("Thanh toán thành công", {
+          position: "top-right",
+          autoClose: 3000,
+          style: { color: "green", backgroundColor: "#D7F1FD" },
+        });
         downloadPdf(res?.payload?.id, token);
         form.resetFields();
+      } else {
+        if (res?.payload?.response?.data?.message === "DATA NOT FOUND") {
+          toast.error("Mã khám không tồn tại", {
+            position: "top-right",
+            autoClose: 3000,
+            style: { color: "$color-default", backgroundColor: "#DEF2ED" },
+          });
+        } else {
+          toast.error("Thanh toán thất bại!", {
+            position: "top-right",
+            autoClose: 3000,
+            style: { color: "red", backgroundColor: "#DEF2ED" },
+          });
+        }
       }
     });
   };
