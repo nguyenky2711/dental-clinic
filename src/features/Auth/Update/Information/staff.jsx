@@ -18,7 +18,6 @@ const StaffInfPage = () => {
   const [staffResult, setStaffResult] = useState();
   useEffect(() => {
     dispatch(getStaffByTokenThunk()).then((res) => {
-      console.log(res);
       const staffResult = res?.payload;
       if (staffResult) {
         form.setFieldValue("name", staffResult.name);
@@ -43,7 +42,6 @@ const StaffInfPage = () => {
       staffDTO,
     };
     dispatch(updateStaffThunk(sendData)).then((res) => {
-      console.log(res);
       if (res?.payload?.message === "successfully") {
         toast.success("Cập nhật thông tin thành công", {
           position: "top-right",

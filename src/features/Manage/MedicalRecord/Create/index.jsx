@@ -36,10 +36,10 @@ import {
 import { AuthContext } from "../../../../provider/AuthContext";
 import { debounce } from "lodash";
 // import ConfirmModalAntd from "src/component/shared/ConfirmModalAntd";
-const MedicalRecordFormPage = () => {
+const MedicalRecordFormPage = ({ visitInfor = null }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { token, role, logout } = useContext(AuthContext);
+  const { token, role, logout, position } = useContext(AuthContext);
 
   const [params, setParams] = useState({
     serviceId: null,
@@ -52,18 +52,20 @@ const MedicalRecordFormPage = () => {
   const [form] = Form.useForm();
   const { patientId, recordId, visitId } = useParams();
   const reduxResult = useSelector(
-    (state) => state.patient.listPatients.contents
+    (state) => state?.patient?.listPatients?.contents
   );
   useEffect(() => {
-    const patientResult = reduxResult.find((item) => item.id == patientId);
+    const patientResult =
+      reduxResult && reduxResult.find((item) => item.id == patientId);
     if (patientResult) {
       form.setFieldValue("patientId", patientResult.name);
     }
   }, [patientId]);
 
   useEffect(() => {
-    visitId &&
-      dispatch(getProceduredByVisitIdThunk({ visitId: visitId })).then(
+    const visitID = visitId ? visitId : visitInfor;
+    visitID &&
+      dispatch(getProceduredByVisitIdThunk({ visitId: visitID })).then(
         (res) => {
           const result = res?.payload?.procedureShowDTOS?.map((item) => {
             return {
@@ -254,7 +256,9 @@ const MedicalRecordFormPage = () => {
         {recordId
           ? visitId
             ? "Tiến trình khám"
-            : "Thêm tiến trình khám"
+            : visitInfor
+            ? "Tiến trình khám"
+            : "Thên tiến trình khám"
           : "Tạo mới bệnh án"}
       </h1>
       <Form
@@ -319,7 +323,12 @@ const MedicalRecordFormPage = () => {
                   },
                 ]}
               >
-                <Input readOnly={role === "Role_Patient"} />
+                <Input
+                  readOnly={
+                    role === "Role_Patient" ||
+                    (role === "Role_Staff" && position !== "dentist")
+                  }
+                />
               </Form.Item>
               <Form.Item
                 className="patient_item note"
@@ -327,7 +336,12 @@ const MedicalRecordFormPage = () => {
                 name="note"
                 rules={[{ required: false, message: "Vui lòng nhập ghi chú" }]}
               >
-                <Input readOnly={role === "Role_Patient"} />
+                <Input
+                  readOnly={
+                    role === "Role_Patient" ||
+                    (role === "Role_Staff" && position !== "dentist")
+                  }
+                />
               </Form.Item>
             </div>
           </div>
@@ -510,7 +524,11 @@ const MedicalRecordFormPage = () => {
                                     onSearch={handleSearch}
                                     allowClear
                                     // options={treatments}
-                                    disabled={role === "Role_Patient"}
+                                    disabled={
+                                      role === "Role_Patient" ||
+                                      (role === "Role_Staff" &&
+                                        position !== "dentist")
+                                    }
                                     optionFilterProp="children"
                                   >
                                     {treatments?.map((treatment) => (
@@ -559,7 +577,11 @@ const MedicalRecordFormPage = () => {
                                   ]}
                                 >
                                   <InputNumber
-                                    readOnly={role === "Role_Patient"}
+                                    readOnly={
+                                      role === "Role_Patient" ||
+                                      (role === "Role_Staff" &&
+                                        position !== "dentist")
+                                    }
                                     onKeyDown={(event) => {
                                       if (
                                         !(
@@ -588,34 +610,46 @@ const MedicalRecordFormPage = () => {
                                     },
                                   ]}
                                 >
-                                  <Input readOnly={role === "Role_Patient"} />
+                                  <Input
+                                    readOnly={
+                                      role === "Role_Patient" ||
+                                      (role === "Role_Staff" &&
+                                        position !== "dentist")
+                                    }
+                                  />
                                 </Form.Item>
                               </div>
 
-                              {index >= 0 && (
-                                <DeleteOutlined
-                                  onClick={() => {
-                                    if (role !== "Role_Patient") {
-                                      visitId
-                                        ? handleRemove(id, field.name)
-                                        : remove(field.name);
-                                    }
-                                  }}
-                                />
-                              )}
-                              {id && (
-                                <SaveOutlined
-                                  onClick={() => {
-                                    if (role !== "Role_Patient") {
-                                      visitId && handleSave(id, field.name);
-                                    }
-                                  }}
-                                />
-                              )}
+                              {role === "Role_Staff" &&
+                                position === "dentist" && (
+                                  <>
+                                    {index >= 0 && (
+                                      <DeleteOutlined
+                                        onClick={() => {
+                                          if (role !== "Role_Patient") {
+                                            visitId
+                                              ? handleRemove(id, field.name)
+                                              : remove(field.name);
+                                          }
+                                        }}
+                                      />
+                                    )}
+                                    {id && (
+                                      <SaveOutlined
+                                        onClick={() => {
+                                          if (role !== "Role_Patient") {
+                                            visitId &&
+                                              handleSave(id, field.name);
+                                          }
+                                        }}
+                                      />
+                                    )}
+                                  </>
+                                )}
                             </Space>
                           );
                         })}
-                      {role !== "Role_Patient" && (
+                      {role === "Role_Staff" && position === "dentist" && (
                         <Form.Item
                           style={{
                             margin: "50px auto",
@@ -645,29 +679,32 @@ const MedicalRecordFormPage = () => {
             </div>
           )}
         </div>
-
         <div className="buttonGroup">
-          <Form.Item className="submitBtn">
-            <Button type="submit" htmlType="submit">
-              Thêm
-            </Button>
-          </Form.Item>
-          <Form.Item className="cancelBtn">
-            <Button
-              type="button"
-              onClick={() =>
-                role !== "Role_Patient"
-                  ? recordId
-                    ? navigate(
-                        `/manage/patient/${patientId}/medical-record/${recordId}/visit`
-                      )
-                    : navigate(`/manage/patient/${patientId}/medical-record`)
-                  : navigate(`/medical-record/${recordId}/visit`)
-              }
-            >
-              Huỷ
-            </Button>
-          </Form.Item>
+          {role === "Role_Staff" && position === "dentist" && (
+            <Form.Item className="submitBtn">
+              <Button type="submit" htmlType="submit">
+                Thêm
+              </Button>
+            </Form.Item>
+          )}
+          {role === "Role_Staff" && position === "dentist" && (
+            <Form.Item className="cancelBtn">
+              <Button
+                type="button"
+                onClick={() =>
+                  role !== "Role_Patient"
+                    ? recordId
+                      ? navigate(
+                          `/manage/patient/${patientId}/medical-record/${recordId}/visit`
+                        )
+                      : navigate(`/manage/patient/${patientId}/medical-record`)
+                    : navigate(`/medical-record/${recordId}/visit`)
+                }
+              >
+                Quay lại
+              </Button>
+            </Form.Item>
+          )}
         </div>
       </Form>
       <ConfirmModalAntd

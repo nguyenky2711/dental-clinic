@@ -158,15 +158,18 @@ const AppointmentInforSearch = ({ handleSubmit, handleChange }) => {
               Tìm kiếm
             </Button>
           </Form.Item>
-          <Form.Item className="treatment-searchForm-btn">
-            <Button
-              type="primary"
-              htmlType="button"
-              onClick={() => navigate("/manage/appointment/create")}
-            >
-              Thêm thông tin lịch khám
-            </Button>
-          </Form.Item>
+          {position === "dentist" && (
+            <Form.Item className="treatment-searchForm-btn">
+              <Button
+                type="primary"
+                htmlType="button"
+                onClick={() => navigate("/manage/appointment/create")}
+              >
+                Thêm thông tin lịch khám
+              </Button>
+            </Form.Item>
+          )}
+
           {/* <Form.Item className="treatment-searchForm-btn">
             <Button
               type="primary"

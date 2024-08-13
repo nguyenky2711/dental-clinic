@@ -37,7 +37,7 @@ function MedicalRecordPage() {
     pageSize: 5,
   });
   const [records, setRecords] = useState();
-  const { token, role, logout } = useContext(AuthContext);
+  const { token, role, logout, position } = useContext(AuthContext);
 
   const columnsMedicalRecord = [
     {
@@ -98,7 +98,7 @@ function MedicalRecordPage() {
               <EditOutlined />
               <p>Xem chi tiết</p>
             </div>
-            {role !== "Role_Patient" && (
+            {role === "Role_Staff" && position === "dentist" && (
               <>
                 {record.status === "Ongoing" ? (
                   <div

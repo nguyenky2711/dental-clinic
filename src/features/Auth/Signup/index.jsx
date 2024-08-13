@@ -21,14 +21,11 @@ import { AuthProvider } from "../../../provider/AuthContext";
 import moment from "moment";
 import { createPatientThunk } from "../../../redux/action/patient";
 const SignUpPage = () => {
-  const x = useContext(AuthProvider);
-  console.log(x);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [form] = Form.useForm();
   const location = useLocation();
   const onFinish = (data) => {
-    console.log(data);
     const patientDTO = {
       name: data.name,
       birthday: moment(new Date(data.birthday)).format("YYYY-MM-DD"),
@@ -53,7 +50,6 @@ const SignUpPage = () => {
         });
         navigate("/login");
       } else {
-        console.log(res);
         if (res?.payload?.response?.data?.message === "DATA EXISTING") {
           toast.error("Tên đăng nhập đã tồn tại", {
             position: "top-right",

@@ -84,10 +84,10 @@ function StaffPage() {
               <EditOutlined />
               <p>Xem chi tiết</p>
             </div>
-            <div className="action-item">
+            {/* <div className="action-item">
               <DeleteOutlined />
               Xoá
-            </div>
+            </div> */}
           </div>
         );
       },

@@ -39,7 +39,6 @@ const ForgotPasswordPage = () => {
     } else {
       if (!sendMail) {
         dispatch(confirmMailThunk({ email: data.email })).then((res) => {
-          console.log(res);
           if (res?.payload?.message === "check your email") {
             toast.success("Hãy kiểm tra mail của bạn", {
               position: "top-right",
@@ -52,7 +51,6 @@ const ForgotPasswordPage = () => {
       }
       if (sendMail) {
         dispatch(confirmResetPasswordOTPThunk(data)).then((res) => {
-          console.log(res);
           if (res?.payload === true) {
             setConfirmTrue(true);
           }

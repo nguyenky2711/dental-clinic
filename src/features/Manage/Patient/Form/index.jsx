@@ -175,7 +175,13 @@ const CreatePatientPage = () => {
               ]}
             >
               <DatePicker
-                disabledDate={(d) => !d || d.isAfter(new Date())}
+                format={"DD/MM/YYYY"}
+                disabledDate={(d) => {
+                  const oneYearAgo = moment()
+                    .subtract(1, "year")
+                    .startOf("day");
+                  return !d || d.isAfter(oneYearAgo);
+                }}
                 placeholder="Chọn ngày sinh"
               />
             </Form.Item>

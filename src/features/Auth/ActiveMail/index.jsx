@@ -20,10 +20,8 @@ const ActiveMailPage = () => {
   const [form] = Form.useForm();
 
   const onFinish = (data) => {
-    console.log(data);
     if (!sendMail) {
       dispatch(sendActiveMailThunk({ email: data.email })).then((res) => {
-        console.log(res);
         if (res?.payload?.message === "check your email") {
           toast.success("Hãy kiểm tra mail của bạn", {
             position: "top-right",
@@ -45,7 +43,6 @@ const ActiveMailPage = () => {
     }
     if (sendMail) {
       dispatch(confirmWithOTPThunk(data)).then((res) => {
-        console.log(res);
         if (res?.payload?.message === "successfully") {
           toast.success("Đã kích hoạt tài khoản thành công", {
             position: "top-right",

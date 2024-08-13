@@ -20,7 +20,6 @@ const UpdateInfPatientPage = () => {
   const [patientResult, setPatientResult] = useState();
   useEffect(() => {
     dispatch(getPatientByTokenThunk()).then((res) => {
-      console.log(res);
       setPatientResult(res?.payload);
     });
   }, []);
@@ -45,7 +44,6 @@ const UpdateInfPatientPage = () => {
     let sendData = { patientId: patientResult.id, patientDTO };
 
     dispatch(updatePatientThunk(sendData)).then((res) => {
-      console.log(res);
       if (res?.payload?.message === "successfully") {
         toast.success("Cập nhật thông tin thành công", {
           position: "top-right",
@@ -131,7 +129,13 @@ const UpdateInfPatientPage = () => {
               ]}
             >
               <DatePicker
-                disabledDate={(d) => !d || d.isAfter(new Date())}
+                format={"DD/MM/YYYY"}
+                disabledDate={(d) => {
+                  const oneYearAgo = moment()
+                    .subtract(1, "year")
+                    .startOf("day");
+                  return !d || d.isAfter(oneYearAgo);
+                }}
                 placeholder="Chọn ngày sinh"
               />
             </Form.Item>

@@ -1,5 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import "./style.scss";
+import SockJS from "sockjs-client";
+import Stomp from "stompjs";
 import { useDispatch } from "react-redux";
 import { AuthContext } from "../../../../provider/AuthContext";
 import {
@@ -14,9 +16,11 @@ import { PlusSquareOutlined } from "@ant-design/icons";
 import ReceptionistQueueFormPage from "./Form";
 import TableAntdCustom from "../../../../components/TableAntd";
 import { getQueueByStaffIdThunk } from "../../../../redux/action/queue";
+import { useLocation } from "react-router-dom";
 
 const ReceptionistQueuePage = () => {
   const dispatch = useDispatch();
+  const location = useLocation();
   const [openFormPage, setOpenFormPage] = useState(false);
   const [selectDoctor, setSelectDoctor] = useState(false);
   const [staffOptions, setStaffOptions] = useState([]); // State lưu trữ danh sách gợi ý
@@ -40,7 +44,7 @@ const ReceptionistQueuePage = () => {
       align: "center",
       width: "10%",
       render: (text) => {
-        return text.birthday;
+        return moment(new Date(text.birthday)).format("DD/MM/YYYY");
       },
     },
     {
@@ -91,6 +95,30 @@ const ReceptionistQueuePage = () => {
       );
     }
   }, [selectDoctor]);
+  useEffect(() => {
+    if (location.pathname === "/manage/queue") {
+      // Initialize SockJS and STOMP client
+      const socket = new SockJS("http://localhost:8085/ws");
+      const stompClient = Stomp.over(socket);
+
+      // Connect to the WebSocket server
+      stompClient.connect({}, (frame) => {
+        console.log("Connected: " + frame);
+
+        // Subscribe to the /topic/queue endpoint
+        stompClient.subscribe("/topic/queue", (message) => {
+          console.log("Received message: " + message.body);
+        });
+      });
+
+      // Cleanup on component unmount
+      return () => {
+        stompClient.disconnect(() => {
+          console.log("Disconnected");
+        });
+      };
+    }
+  }, [location.pathname]);
 
   const handleCancelForm = () => {
     setOpenFormPage(false);

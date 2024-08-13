@@ -111,7 +111,7 @@ const TreatmentPage = () => {
   ];
 
   // Conditionally add the action column if the user is an admin
-  if (role === "Role_Admin") {
+  if (role === "Role_Admin" && selectedService !== "all") {
     columnsTreament.push({
       title: "",
       align: "center",
@@ -455,55 +455,45 @@ const TreatmentPage = () => {
           />
         </Modal>
       </Layout.Sider>
-      {openFormPage ? (
-        <TreatmentFormPage
-          style={{ marginLeft: 300, padding: "24px" }}
-          propsData={{ selectedTreatment, currentService }}
-          action={handleForm}
-        ></TreatmentFormPage>
-      ) : (
-        <Layout style={{ marginLeft: 300, padding: "24px" }}>
-          <div className="staffPage-header">
-            <h1>
-              Danh sách phương thức điều trị{" "}
-              {/* <PlusSquareOutlined onClick={() => setOpenFormPage(true)} /> */}
-              {role === "Role_Admin" && (
-                <PlusSquareOutlined
-                  onClick={() =>
-                    setModalTreatmentParams((preVal) => ({
-                      ...preVal,
-                      open: true,
-                      action: "add",
-                    }))
-                  }
-                />
-              )}
-            </h1>
-          </div>
-          {filteredData &&
-            Object.keys(filteredData).map((key) => {
-              return (
-                <div key={key}>
-                  <h2
-                    className="header-treatment"
-                    style={{ cursor: "pointer" }}
-                  >
-                    <p>{key}</p>
-                  </h2>
-                  {filteredData[key] && (
-                    <TableAntdCustom
-                      list={filteredData[key].items}
-                      pagination={false}
-                      columns={columnsTreament}
-                      className={"staffinfor-table"}
-                      emptyText="Hiện chưa có phương thức điều trị nào"
-                    ></TableAntdCustom>
+      <Layout style={{ marginLeft: 300, padding: "24px" }}>
+        <div className="staffPage-header">
+          <h1>Danh sách phương thức điều trị </h1>
+        </div>
+        {filteredData &&
+          Object.keys(filteredData).map((key) => {
+            return (
+              <div key={key}>
+                <h2 className="header-treatment">
+                  <p>{key}</p>
+                  {role === "Role_Admin" && selectedService !== "all" && (
+                    <a
+                      className="hoverEffect"
+                      onClick={() =>
+                        setModalTreatmentParams((preVal) => ({
+                          ...preVal,
+                          open: true,
+                          action: "add",
+                        }))
+                      }
+                    >
+                      {" "}
+                      Thêm phương thức{" "}
+                    </a>
                   )}
-                </div>
-              );
-            })}
-        </Layout>
-      )}
+                </h2>
+                {filteredData[key] && (
+                  <TableAntdCustom
+                    list={filteredData[key].items}
+                    pagination={false}
+                    columns={columnsTreament}
+                    className={"staffinfor-table"}
+                    emptyText="Hiện chưa có phương thức điều trị nào"
+                  ></TableAntdCustom>
+                )}
+              </div>
+            );
+          })}
+      </Layout>
       <Modal
         open={modalTreatmentParams.open}
         onCancel={handleTreatmentModalCancel}

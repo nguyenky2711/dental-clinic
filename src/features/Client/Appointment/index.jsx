@@ -30,9 +30,11 @@ import "react-toastify/dist/ReactToastify.css";
 import { AuthContext } from "../../../provider/AuthContext";
 import moment from "moment";
 import { filterPatientThunk } from "../../../redux/action/patient";
+import { useNavigate } from "react-router-dom";
 
 const AppointmentPage = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [form] = Form.useForm();
   const { token, role, logout } = useContext(AuthContext);
   // Lấy chuỗi JSON từ sessionStorage
@@ -40,8 +42,8 @@ const AppointmentPage = () => {
 
   // Chuyển đổi chuỗi JSON thành đối tượng
   const doctorDTO = JSON.parse(doctorDTOString);
-
-  let week = moment().add(1, "weeks").startOf("isoWeek").format("WW");
+  let currentWeek = moment().startOf("isoWeek").format("WW");
+  let nextWeek = moment().add(1, "weeks").startOf("isoWeek").format("WW");
   let year = moment().subtract(1, "weeks").startOf("isoWeek").format("YYYY");
 
   const [staffOptions, setStaffOptions] = useState([]); // State lưu trữ danh sách gợi ý
@@ -54,7 +56,7 @@ const AppointmentPage = () => {
   });
   const [paramsPatient, setParamsPatient] = useState({
     keyword: null,
-    pageNumber: 0,
+    pageNumber: 1,
     pageSize: 10,
   });
   const [paramsAppointment, setParamsAppointment] = useState({
@@ -63,6 +65,7 @@ const AppointmentPage = () => {
     date: null,
   });
   const [patientId, setPatientId] = useState(null);
+
   useEffect(() => {
     if (role !== "Role_Staff") {
       dispatch(filterStaffForPatientThunk(paramsStaff)).then((res) => {
@@ -94,48 +97,97 @@ const AppointmentPage = () => {
     }
   }, [paramsStaff, paramsPatient]);
   useEffect(() => {
-    role === "Role_Staff"
-      ? dispatch(showForStaffByWeekThunk({ year, week })).then((res) => {
-          let tempAppointmentList = res?.payload?.filter(
+    if (role === "Role_Staff") {
+      let tempAppointmentList = null;
+      dispatch(showForStaffByWeekThunk({ year, week: currentWeek })).then(
+        (res) => {
+          let currentWeekResult = res?.payload?.filter(
             (item) => new Date(item.workingDTO.date) > new Date()
           );
-          tempAppointmentList.sort(
-            (a, b) => new Date(a.workingDTO.date) - new Date(b.workingDTO.date)
-          );
-          tempAppointmentList = tempAppointmentList.map((item) => {
-            return {
+          currentWeekResult = currentWeekResult
+            .sort(
+              (a, b) =>
+                new Date(a.workingDTO.date) - new Date(b.workingDTO.date)
+            )
+            .map((item) => ({
               value: item.id,
               label: `Ngày: ${moment(new Date(item.workingDTO.date)).format(
                 "DD/MM/YYYY"
-              )} `,
+              )}`,
               workingDTO: item.workingDTO,
-            };
-          });
-          setAppointmentOptions(tempAppointmentList);
-        })
-      : dispatch(showForClientThunk(paramsAppointment)).then((res) => {
-          let tempAppointmentList = res?.payload?.filter(
-            (item) => new Date(item.workingDTO.date) > new Date()
+            }));
+
+          dispatch(showForStaffByWeekThunk({ year, week: nextWeek })).then(
+            (resp) => {
+              let nextWeekResult = resp?.payload?.filter(
+                (item) => new Date(item.workingDTO.date) > new Date()
+              );
+              nextWeekResult = nextWeekResult
+                .sort(
+                  (a, b) =>
+                    new Date(a.workingDTO.date) - new Date(b.workingDTO.date)
+                )
+                .map((item) => ({
+                  value: item.id,
+                  label: `Ngày: ${moment(new Date(item.workingDTO.date)).format(
+                    "DD/MM/YYYY"
+                  )}`,
+                  workingDTO: item.workingDTO,
+                }));
+              tempAppointmentList = [...currentWeekResult, ...nextWeekResult];
+              tempAppointmentList && setAppointmentOptions(tempAppointmentList);
+            }
           );
-          tempAppointmentList.sort(
-            (a, b) => new Date(a.workingDTO.date) - new Date(b.workingDTO.date)
-          );
-          tempAppointmentList = tempAppointmentList.map((item) => {
-            return {
-              value: item.id,
-              label: `Ngày: ${moment(new Date(item.workingDTO.date)).format(
-                "DD/MM/YYYY"
-              )}  - Số người đã đặt lịch: ${item.countPatientScheduled}`,
-              workingDTO: item.workingDTO,
-            };
-          });
-          setAppointmentOptions(tempAppointmentList);
+        }
+      );
+    } else {
+      dispatch(showForClientThunk(paramsAppointment)).then((res) => {
+        let tempAppointmentList = res?.payload?.filter(
+          (item) => new Date(item.workingDTO.date) > new Date()
+        );
+        tempAppointmentList.sort(
+          (a, b) => new Date(a.workingDTO.date) - new Date(b.workingDTO.date)
+        );
+        tempAppointmentList = tempAppointmentList.map((item) => {
+          return {
+            value: item.id,
+            label: `Ngày: ${moment(new Date(item.workingDTO.date)).format(
+              "DD/MM/YYYY"
+            )}  - Số người đã đặt lịch: ${item.countPatientScheduled}`,
+            workingDTO: item.workingDTO,
+          };
         });
+        setAppointmentOptions(tempAppointmentList);
+      });
+    }
   }, [paramsAppointment]);
 
-  const handleSelectTime = (target) => {
-    console.log(target.target.value);
+  const processAppointments = async (week) => {
+    try {
+      const res = await dispatch(showForStaffByWeekThunk({ year, week }));
+      let tempAppointmentList = res?.payload?.filter(
+        (item) => new Date(item.workingDTO.date) > new Date()
+      );
 
+      tempAppointmentList = tempAppointmentList
+        .sort(
+          (a, b) => new Date(a.workingDTO.date) - new Date(b.workingDTO.date)
+        )
+        .map((item) => ({
+          value: item.id,
+          label: `Ngày: ${moment(new Date(item.workingDTO.date)).format(
+            "DD/MM/YYYY"
+          )}`,
+          workingDTO: item.workingDTO,
+        }));
+
+      return tempAppointmentList;
+    } catch (error) {
+      console.error("Error processing appointments:", error);
+      return [];
+    }
+  };
+  const handleSelectTime = (target) => {
     const filAppointments = appoitmentOptions.filter((item) => {
       const periodId = item?.workingDTO?.periodId;
 
@@ -152,7 +204,6 @@ const AppointmentPage = () => {
       return false;
     });
 
-    console.log(filAppointments);
     setFilterAppointmentOptions(filAppointments);
   };
 
@@ -170,7 +221,6 @@ const AppointmentPage = () => {
   }, 300); // Thời gian debounce là 300ms
 
   const handleSelect = (value) => {
-    console.log(value);
     if (role !== "Role_Staff") {
       form.setFieldValue("name", value);
 
@@ -327,6 +377,14 @@ const AppointmentPage = () => {
             <Form.Item className="submitBtn">
               <Button type="submit" htmlType="submit">
                 Đặt lịch
+              </Button>
+            </Form.Item>
+            <Form.Item className="cancleBtn">
+              <Button
+                type="button"
+                onClick={() => navigate("/manage/appointment")}
+              >
+                Quay lại
               </Button>
             </Form.Item>
           </Form>

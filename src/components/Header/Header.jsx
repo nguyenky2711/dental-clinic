@@ -49,6 +49,7 @@ const Header = () => {
         setWelcome(`Xin chào Lễ tân, ${userName}`);
       }
     } else if (role === "Role_Patient") {
+      setWelcome(`Chào bạn`);
     }
   }, [role]);
 
@@ -83,14 +84,17 @@ const Header = () => {
       >
         Đổi mật khẩu
       </Menu.Item>
-      <Menu.Item
-        key="2"
-        icon={<UserOutlined />}
-        className={isActive("/information") ? "active-menu-item" : ""}
-        onClick={() => navigate("/information")}
-      >
-        Thông tin tài khoản
-      </Menu.Item>
+      {role !== "Role_Admin" && (
+        <Menu.Item
+          key="2"
+          icon={<UserOutlined />}
+          className={isActive("/information") ? "active-menu-item" : ""}
+          onClick={() => navigate("/information")}
+        >
+          Thông tin tài khoản
+        </Menu.Item>
+      )}
+
       <Menu.Item key="3" icon={<LogoutOutlined />} onClick={handleLogout}>
         Đăng xuất
       </Menu.Item>

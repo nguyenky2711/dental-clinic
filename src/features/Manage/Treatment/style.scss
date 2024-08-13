@@ -8,6 +8,17 @@
     padding-left: 30px;
     margin: 0;
   }
+  .hoverEffect {
+    font-style: italic;
+    font-size: 15px;
+    cursor: pointer;
+    transition: color 0.3s, text-decoration 0.3s;
+    padding-left: 30px;
+    &:hover {
+      color: #49243e; /* Change the color on hover */
+      text-decoration: underline; /* Add underline on hover */
+    }
+  }
 }
 
 .site-layout-background {

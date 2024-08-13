@@ -19,19 +19,30 @@ import ConfirmModalAntd from "../../../components/ConfirmModalAntd";
 import { AuthContext } from "../../../provider/AuthContext";
 import { toast } from "react-toastify";
 import axios from "axios";
+import { Modal } from "antd";
+import MedicalRecordFormPage from "../MedicalRecord/Create";
+import { debounce } from "lodash";
+import { findInvoiceByVisitIdThunk } from "../../../redux/action/revenue";
 
-const downloadPdf = async (visitId) => {
+const downloadPdf = async (obj, id, token) => {
   try {
     const response = await axios({
-      url: `http://localhost:8085/api/objective/pdf/${visitId}`,
+      url:
+        obj === "visit"
+          ? `http://localhost:8085/api/objective/pdf/${id}`
+          : `http://localhost:8085/api/invoice/export-pdf/${id}`,
       method: "GET",
-      responseType: "blob", // Quan trọng: nhận về dữ liệu dưới dạng blob
+      responseType: "blob",
+      headers: {
+        Authorization: `Bearer ${token}`, // Add the token here
+      },
     });
 
     const url = window.URL.createObjectURL(new Blob([response.data]));
     const a = document.createElement("a");
     a.href = url;
-    a.download = `DonKham#${visitId}.pdf`; // Tên file muốn tải xuống
+    a.download = obj === "visit" ? `DonKham#${id}.pdf` : `HoaDon#${id}.pdf`;
+    // Tên file muốn tải xuống
     document.body.appendChild(a);
     a.click();
     a.remove();
@@ -47,13 +58,14 @@ const VisitPage = () => {
   const navigate = useNavigate();
   const { patientId, recordId } = useParams();
   const [records, setRecords] = useState();
-  const { token, role, logout } = useContext(AuthContext);
+  const { token, role, logout, position } = useContext(AuthContext);
   const [total, setTotal] = useState({
     pages: null,
     items: null,
   });
   const [params, setParams] = useState({
     recordId: recordId,
+    visitId: null,
     pageNumber: 1,
     pageSize: 5,
   });
@@ -97,34 +109,53 @@ const VisitPage = () => {
       align: "center",
       width: "20%",
       render: (_, record) => {
+        console.log(record);
         return (
           <div className="action">
             <div
               className="action-item"
+              style={{ width: "150px" }}
+              // onClick={() =>
+              //   role !== "Role_Patient"
+              //     ? navigate(
+              //         `/manage/patient/${patientId}/medical-record/${recordId}/visit/${record.id}`
+              //       )
+              //     : navigate(`/medical-record/${recordId}/visit/${record.id}`)
+              // }
               onClick={() =>
-                role !== "Role_Patient"
-                  ? navigate(
+                (role === "Role_Staff" && position !== "dentist") ||
+                role === "Role_Patient"
+                  ? openProcModal(record.id)
+                  : navigate(
                       `/manage/patient/${patientId}/medical-record/${recordId}/visit/${record.id}`
                     )
-                  : navigate(`/medical-record/${recordId}/visit/${record.id}`)
               }
             >
               <EditOutlined />
               <p>Xem chi tiết</p>
             </div>
-            {role == "Role_Staff" && (
+            <div
+              className="action-item"
+              style={{ width: "150px" }}
+              onClick={() => handleExportPDF("visit", record.id)}
+            >
+              <FilePdfOutlined />
+              <p>Xuất file đơn khám</p>
+            </div>
+            {record?.invoice?.id && (
               <div
                 className="action-item"
-                onClick={() => handleExportPDF(record.id)}
+                style={{ width: "150px" }}
+                onClick={() => handleExportPDF("invoice", record?.invoice?.id)}
               >
                 <FilePdfOutlined />
-                <p>Xuất file</p>
+                <p>Xuất file hoá đơn</p>
               </div>
             )}
-
-            {role !== "Role_Patient" && (
+            {role === "Role_Staff" && position === "dentist" && (
               <div
                 className="action-item"
+                style={{ width: "150px" }}
                 onClick={() => showModal("delete", record)}
               >
                 <DeleteOutlined />
@@ -142,6 +173,18 @@ const VisitPage = () => {
     title: null,
     content: null,
   });
+  const [procModal, setProcModal] = useState({
+    open: false,
+    visitId: null,
+  });
+
+  const openProcModal = (visitId) => {
+    setProcModal((preVal) => ({
+      ...preVal,
+      open: true,
+      visitId: visitId,
+    }));
+  };
 
   const showModal = (method, val) => {
     setModal((prevVal) => ({
@@ -229,24 +272,53 @@ const VisitPage = () => {
       }));
     }
   };
+  const isDeepEqual = (obj1, obj2) => {
+    return JSON.stringify(obj1) === JSON.stringify(obj2);
+  };
   const handleSearchChange = (values) => {};
-  const handleSubmitSearch = (values) => {};
-  const handleExportPDF = (visitId) => {
-    dispatch(exportVisitToPDFThunk({ visitId: visitId })).then((res) =>
-      downloadPdf(visitId)
-    );
+  const handleSubmitSearch = debounce((values) => {
+    const { pageNumber, pageSize, recordId, ...restData } = params;
+    !isDeepEqual(values, restData) &&
+      setParams((preVal) => ({
+        ...preVal,
+        visitId: values.visitId,
+      }));
+  }, 300);
+  const handleExportPDF = (obj, id) => {
+    if (obj === "visit") {
+      downloadPdf("visit", id, token);
+    } else if (obj === "invoice") {
+      downloadPdf("invoice", id, token);
+    }
   };
 
   useEffect(() => {
-    dispatch(getVisitByRecordIdThunk(params)).then((res) => {
-      const temp = res?.payload;
+    dispatch(getVisitByRecordIdThunk(params)).then(async (res) => {
+      let temp = res?.payload;
       if (temp) {
-        setRecords(temp.contents);
-        setTotal((preVal) => ({
-          ...preVal,
+        // Fetch invoices for all visits
+        const updatedContents = await Promise.all(
+          temp.contents.map(async (item) => {
+            try {
+              const invoiceRes = await dispatch(
+                findInvoiceByVisitIdThunk({ visitId: item.id })
+              );
+              const invoice = invoiceRes?.payload?.id
+                ? invoiceRes?.payload
+                : null;
+              return { ...item, invoice };
+            } catch (error) {
+              return { ...item, invoice: null };
+            }
+          })
+        );
+
+        // Update state with visits and invoices
+        setRecords(updatedContents);
+        setTotal({
           pages: temp.totalPages,
           items: temp.totalItems,
-        }));
+        });
       }
     });
   }, [params]);
@@ -255,10 +327,10 @@ const VisitPage = () => {
     <div>
       <div className="staffPage-header">
         <h1>Chi tiết các lần khám</h1>
-        {role !== "Role_Patient" && (
+        {role === "Role_Staff" && (
           <VisitInforSearch
             handleSearchChange={null}
-            handleSubmitSearch={null}
+            handleSubmitSearch={handleSubmitSearch}
           />
         )}
       </div>
@@ -277,6 +349,14 @@ const VisitPage = () => {
           ></TableAntdCustom>
         </div>
       )}
+      <Modal
+        open={procModal.open}
+        onCancel={() => setProcModal((preVal) => ({ ...preVal, open: false }))}
+        footer={null} // Hide the default footer
+        width={"100vw"}
+      >
+        <MedicalRecordFormPage visitInfor={procModal.visitId} />
+      </Modal>
       <ConfirmModalAntd
         open={modal.visible}
         header={modal.title}

@@ -33,7 +33,7 @@ const revenue = {
         const { visitId, ...restData } = data
         const url = `/api/invoice/objective/${visitId}`;
 
-        return internshipTransport.post(
+        return internshipTransport.get(
             url,
             data,
         );

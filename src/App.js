@@ -30,6 +30,7 @@ import HomePage from './features/HomePage';
 import ForgotPasswordPage from './features/Auth/ForgotPassword';
 import QueuePage from './features/Manage/Queue';
 import ChangeInforPage from './features/Auth/Update/Information';
+import PaymentPage from './features/Manage/Queue/Payment';
 
 
 function App() {
@@ -204,6 +205,14 @@ function App() {
             element={
               <StaffRoute  >
                 <QueuePage />
+              </StaffRoute>
+            }
+          />
+          <Route
+            path="/manage/payment"
+            element={
+              <StaffRoute  >
+                <PaymentPage />
               </StaffRoute>
             }
           />

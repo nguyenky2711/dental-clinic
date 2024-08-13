@@ -27,7 +27,6 @@ const httpHandler = (baseURL) => {
       return response.data;
     },
     function interceptError(error) {
-      console.log(error)
       return (error)
       // switch (error.response.status) {
       //   case 409:

@@ -25,7 +25,6 @@ const ChangePasswordPage = () => {
   const onFinish = (data) => {
     const { confirm, ...restData } = data;
     dispatch(changePassswordThunk(restData)).then((res) => {
-      console.log(res);
       if (
         res?.payload?.response?.data?.message ==
         "ACCESS DENIED - NOT ENOUGH PERMISSION"

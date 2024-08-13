@@ -1,6 +1,6 @@
 import { Button, Form, Input, InputNumber, Radio, Select } from "antd";
 import { Option } from "antd/es/mentions";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useDispatch } from "react-redux";
 import "./style.scss";
 import {
@@ -8,19 +8,23 @@ import {
   createInvoiceThunk,
 } from "../../../../redux/action/revenue";
 import axios from "axios";
+import { AuthContext } from "../../../../provider/AuthContext";
 
-const downloadPdf = async (invoiceId) => {
+const downloadPdf = async (invoiceId, token) => {
   try {
     const response = await axios({
       url: `http://localhost:8085/api/invoice/export-pdf/${invoiceId}`,
       method: "GET",
-      responseType: "blob", // Quan trọng: nhận về dữ liệu dưới dạng blob
+      responseType: "blob",
+      headers: {
+        Authorization: `Bearer ${token}`, // Add the token here
+      },
     });
 
     const url = window.URL.createObjectURL(new Blob([response.data]));
     const a = document.createElement("a");
     a.href = url;
-    a.download = `HoaDon#${invoiceId}.pdf`; // Tên file muốn tải xuống
+    a.download = `HoaDon#${invoiceId}.pdf`;
     document.body.appendChild(a);
     a.click();
     a.remove();
@@ -31,10 +35,33 @@ const downloadPdf = async (invoiceId) => {
   }
 };
 
+// const downloadPdf = async (invoiceId) => {
+//   try {
+//     const response = await axios({
+//       url: `http://localhost:8085/api/invoice/export-pdf/${invoiceId}`,
+//       method: "GET",
+//       responseType: "blob", // Quan trọng: nhận về dữ liệu dưới dạng blob
+//     });
+
+//     const url = window.URL.createObjectURL(new Blob([response.data]));
+//     const a = document.createElement("a");
+//     a.href = url;
+//     a.download = `HoaDon#${invoiceId}.pdf`; // Tên file muốn tải xuống
+//     document.body.appendChild(a);
+//     a.click();
+//     a.remove();
+
+//     window.URL.revokeObjectURL(url);
+//   } catch (error) {
+//     console.error("There was an error!", error);
+//   }
+// };
+
 const PaymentPage = () => {
   const dispatch = useDispatch();
   const [form] = Form.useForm();
   const [selectedOption, setSelectedOption] = useState("pay");
+  const { token, role, logout, position } = useContext(AuthContext);
 
   const handleOptionChange = (e) => {
     setSelectedOption(e.target.value);
@@ -48,7 +75,7 @@ const PaymentPage = () => {
     ).then((res) => {
       console.log(res);
       if (res?.payload?.message === "successfully") {
-        downloadPdf(res?.payload?.id);
+        downloadPdf(res?.payload?.id, token);
         form.resetFields();
       }
     });

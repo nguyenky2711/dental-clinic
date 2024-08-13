@@ -7,6 +7,7 @@ import { filterPatientThunk } from "../../../redux/action/patient";
 import { NavLink, useNavigate } from "react-router-dom";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { AuthContext } from "../../../provider/AuthContext";
+import moment from "moment";
 
 const PatientPage = () => {
   const dispatch = useDispatch();
@@ -34,7 +35,9 @@ const PatientPage = () => {
       width: "10%",
       render: (text) => (
         <>
-          <p>Ngày sinh: {text.birthday}</p>
+          <p>
+            Ngày sinh: {moment(new Date(text.birthday)).format("DD/MM/YYYY")}
+          </p>
           <p>Số điện thoại: {text.phoneNumber}</p>
           <p>Địa chỉ: {text.address}</p>
         </>

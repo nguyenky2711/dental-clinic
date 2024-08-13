@@ -1,11 +1,11 @@
 import React, { useContext, useEffect, useState } from "react";
 import "./style.scss";
+import SockJS from "sockjs-client";
+import Stomp from "stompjs";
 import { useDispatch } from "react-redux";
 import { debounce, values } from "lodash";
 import { AutoComplete, Button, Form } from "antd";
 import moment from "moment";
-import { filterStaffThunk } from "../../../../../redux/action/staff";
-import { AuthContext } from "../../../../../provider/AuthContext";
 import { filterPatientThunk } from "../../../../../redux/action/patient";
 import { addPatientToQueueThunk } from "../../../../../redux/action/queue";
 import { toast } from "react-toastify";
@@ -21,7 +21,7 @@ const ReceptionistQueueFormPage = ({ action = null }) => {
   });
   const [paramsPatient, setParamsPatient] = useState({
     keyword: null,
-    pageNumber: 0,
+    pageNumber: 1,
     pageSize: 10,
   });
   const [paramsQueue, setParamsQueue] = useState({
@@ -61,6 +61,28 @@ const ReceptionistQueueFormPage = ({ action = null }) => {
       setPatientOptions(tempList);
     });
   }, [paramsPatient]);
+  useEffect(() => {
+    // Initialize SockJS and STOMP client
+    const socket = new SockJS("http://localhost:8085/ws");
+    const stompClient = Stomp.over(socket);
+
+    // Connect to the WebSocket server
+    stompClient.connect({}, (frame) => {
+      console.log("Connected: " + frame);
+
+      // Subscribe to the /topic/queue endpoint
+      stompClient.subscribe("/topic/queue", (message) => {
+        console.log("Received message: " + message.body);
+      });
+    });
+
+    // Cleanup on component unmount
+    return () => {
+      stompClient.disconnect(() => {
+        console.log("Disconnected");
+      });
+    };
+  }, []);
 
   // Hàm tìm kiếm với debounce
   const handleSearch = debounce((value, posi) => {

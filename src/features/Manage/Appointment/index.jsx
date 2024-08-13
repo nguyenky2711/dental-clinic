@@ -17,6 +17,7 @@ import { toast } from "react-toastify";
 import AppointmentInforSearch from "./Search";
 import { debounce } from "lodash";
 import { getStaffByTokenThunk } from "../../../redux/action/staff";
+import moment from "moment";
 
 function AppointmentManagePage() {
   const dispatch = useDispatch();
@@ -57,7 +58,12 @@ function AppointmentManagePage() {
       render: (text) => {
         return (
           <>
-            <p>Ngày khám : {text.workingShowDTO.workingDTO.date}</p>
+            <p>
+              Ngày khám :{" "}
+              {moment(new Date(text.workingShowDTO.workingDTO.date)).format(
+                "DD/MM/YYYY"
+              )}
+            </p>
             <p>
               Buổi khám :{" "}
               {text.workingShowDTO.workingDTO.periodId == 1
@@ -123,7 +129,6 @@ function AppointmentManagePage() {
       setStatus(null);
     });
   }, [params]);
-
   useEffect(() => {
     status !== null &&
       dispatch(filterAppointmentThunk(params)).then((res) => {
@@ -139,6 +144,7 @@ function AppointmentManagePage() {
         setStatus(null);
       });
   }, [status]);
+
   const handleAccept = (id) => {
     dispatch(confirmAppointmentThunk({ workingId: id })).then((res) => {
       if (res?.payload?.message === "successfully") {

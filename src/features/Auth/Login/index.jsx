@@ -25,11 +25,8 @@ const LoginPage = () => {
   const [form] = Form.useForm();
 
   const onFinish = (data) => {
-    // console.log(data);
-
     dispatch(loginThunk(data))
       .then((res) => {
-        console.log(res);
         if (
           res?.payload?.message == "Request failed with status code 403" ||
           res?.payload?.message == "Request failed with status code 404"

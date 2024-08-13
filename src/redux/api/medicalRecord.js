@@ -71,13 +71,16 @@ const medicalRecord = {
         let url = `/api/objective/record/${data.recordId}`;
         let params = [];
 
+
         if (data.pageNumber) {
             params.push(`pageNumber=${data.pageNumber - 1}`);
         }
         if (data.pageSize) {
             params.push(`pageSize=${data.pageSize}`);
         }
-
+        if (data.visitId) {
+            params.push(`objectiveId=${data.visitId}`);
+        }
         // Nếu có tham số nào, nối chúng vào URL
         if (params.length > 0) {
             url += '?' + params.join('&');
