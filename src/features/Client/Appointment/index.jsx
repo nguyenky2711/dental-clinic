@@ -41,7 +41,7 @@ const AppointmentPage = () => {
   const doctorDTOString = sessionStorage.getItem("doctorDTO");
 
   // Chuyển đổi chuỗi JSON thành đối tượng
-  const doctorDTO = JSON.parse(doctorDTOString);
+  const doctorDTO = doctorDTOString && JSON.parse(doctorDTOString);
   let currentWeek = moment().startOf("isoWeek").format("WW");
   let nextWeek = moment().add(1, "weeks").startOf("isoWeek").format("WW");
   let year = moment().subtract(1, "weeks").startOf("isoWeek").format("YYYY");
@@ -67,8 +67,10 @@ const AppointmentPage = () => {
   const [patientId, setPatientId] = useState(null);
 
   useEffect(() => {
-    if (!email) {
-      navigate("/active/mail");
+    if (role !== "Role_Staff") {
+      if (!email) {
+        navigate("/active/mail");
+      }
     }
   }, [email]);
   useEffect(() => {

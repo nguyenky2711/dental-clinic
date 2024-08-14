@@ -289,7 +289,7 @@ function MedicalRecordPage() {
             }));
           }
           const doctorDTOString = JSON.stringify(
-            temp.contents?.[temp.contents.length - 1]?.staffDTO
+            temp?.contents?.[temp?.contents?.length - 1]?.staffDTO
           );
           sessionStorage.setItem("doctorDTO", doctorDTOString);
         })
@@ -317,8 +317,10 @@ function MedicalRecordPage() {
         });
   }, [modal]);
   useEffect(() => {
-    if (!email) {
-      navigate("/active/mail");
+    if (role === "Role_Patient") {
+      if (!email) {
+        navigate("/active/mail");
+      }
     }
   }, [email]);
 
