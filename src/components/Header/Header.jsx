@@ -14,7 +14,7 @@ import { useDispatch } from "react-redux";
 import { getStaffByTokenThunk } from "../../redux/action/staff";
 
 const Header = () => {
-  const { role, logout, userName, position } = useContext(AuthContext);
+  const { role, logout, userName, position, email } = useContext(AuthContext);
   const location = useLocation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -58,7 +58,7 @@ const Header = () => {
       <Menu.Item key="0" disabled>
         <span>{welcome}</span>
       </Menu.Item>
-      {role === "Role_Patient" && (
+      {role === "Role_Patient" && email && (
         <>
           <Menu.Item
             key="3"
