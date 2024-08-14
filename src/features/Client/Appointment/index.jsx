@@ -36,7 +36,7 @@ const AppointmentPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [form] = Form.useForm();
-  const { token, role, logout } = useContext(AuthContext);
+  const { token, role, logout, email } = useContext(AuthContext);
   // Lấy chuỗi JSON từ sessionStorage
   const doctorDTOString = sessionStorage.getItem("doctorDTO");
 
@@ -66,6 +66,11 @@ const AppointmentPage = () => {
   });
   const [patientId, setPatientId] = useState(null);
 
+  useEffect(() => {
+    if (!email) {
+      navigate("/active/mail");
+    }
+  }, [email]);
   useEffect(() => {
     if (role !== "Role_Staff") {
       dispatch(filterStaffForPatientThunk(paramsStaff)).then((res) => {

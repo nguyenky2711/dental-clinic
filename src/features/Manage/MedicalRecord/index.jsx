@@ -37,7 +37,7 @@ function MedicalRecordPage() {
     pageSize: 5,
   });
   const [records, setRecords] = useState();
-  const { token, role, logout, position } = useContext(AuthContext);
+  const { token, role, logout, position, email } = useContext(AuthContext);
 
   const columnsMedicalRecord = [
     {
@@ -316,6 +316,11 @@ function MedicalRecordPage() {
           }
         });
   }, [modal]);
+  useEffect(() => {
+    if (!email) {
+      navigate("/active/mail");
+    }
+  }, [email]);
 
   const handleTablePageChange = (page, additionalData) => {
     if (page) {
