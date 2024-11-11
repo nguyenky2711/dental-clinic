@@ -22,6 +22,7 @@
   max-height: 100%; /* Đảm bảo hình ảnh không vượt quá chiều cao của phần tử */
   object-fit: fill; /* Giữ nguyên tỷ lệ khung hình của hình ảnh */
   z-index: 1; /* Đặt hình ảnh nằm dưới nội dung */
+  opacity: 0.2;
 }
 
 .hero-content {
@@ -38,25 +39,95 @@
 .hero-section h1 {
   font-size: 2.5rem;
   margin-bottom: 10px;
+  color: black;
+  font-weight: 600;
 }
 
 .hero-section p {
   font-size: 1.25rem;
   margin-bottom: 20px;
+  color: rgba(0, 0, 0, 0.402);
 }
 
 .hero-section button {
-  border: none;
-  background-color: #49243e;
-  opacity: 0.8;
-  transition: 0.3s;
   cursor: pointer;
-  color: white;
   padding: 10px 20px;
   font-size: 1rem;
-  border-radius: 8px;
+  border-radius: 20px;
+  transition: 0.3s;
+  width: 150px;
+}
+.nav-toggle {
+  border: none;
+  background: #4cc9fe;
+  color: #f5f4b3;
   &:hover {
-    opacity: 1;
+    background: #37afe1;
+    color: #fffecb;
+  }
+}
+.appointment-toggle {
+  border: 1px solid #4cc9fe;
+  background: #4cc9fe;
+  color: #01438d;
+  background: none;
+  &:hover {
+    background: #37afe1;
+    color: #fffecb;
+  }
+}
+
+.short-brief-section-cover {
+  display: flex;
+  padding: 50px 200px;
+  justify-content: space-between;
+  .short-brief-img {
+    flex-basis: 40%;
+    img {
+      width: 100%;
+    }
+  }
+  .short-brief-content {
+    flex-basis: 55%;
+    text-align: left;
+    p {
+      color: rgba(0, 0, 0, 0.402);
+    }
+    .process-list {
+      display: flex;
+      justify-content: space-between;
+      ul {
+        list-style: none;
+        padding-left: 0;
+        flex-basis: 46%;
+
+        li {
+          font-size: 14px;
+          position: relative;
+          padding-left: 30px;
+          padding-bottom: 20px;
+          text-align: left;
+          &::before {
+            content: "✔"; /* You could use a checkmark as a "V" symbol */
+            font-size: 0.9em;
+            color: #37afe1; /* Set the color of the "V" */
+            border: 2px solid #37afe1; /* Circle border color */
+            border-radius: 50%; /* Make the border a circle */
+            width: 15px; /* Adjust circle size */
+            height: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            left: 0;
+          }
+        }
+      }
+      .left-list {
+        // padding-right: 20px;
+        border-right: 1px dashed #37afe1;
+      }
+    }
   }
 }
 

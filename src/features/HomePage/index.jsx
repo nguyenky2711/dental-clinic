@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useRef } from "react";
 import "./style.scss"; // Tạo file CSS tương ứng
 import dentalLogo from "../../../src/dental_logo.jpg";
+import shortBrief from "../../assets/short-brief.png";
 import ShineTeeth from "../../assets/icon/shine_teeth.png";
 import Nieng from "../../assets/icon/nieng.png";
 import Banner from "../../assets/icon/banner.jpg";
@@ -26,22 +27,67 @@ const HomePage = () => {
       <section className="hero-section">
         <img src={Banner} alt="Background Banner" className="hero-bg-img" />
         <div className="hero-content">
-          <h1>Chào mừng đến với Phòng khám Nha khoa của chúng tôi</h1>
+          <h1>
+            <span style={{ color: "#37AFE1" }}>Nha khoa</span>{" "}
+            <span style={{ color: "#F5F4B3" }}>Nụ cười</span> Tự tin trong tay
+            bạn
+          </h1>
           <p>
             Nụ cười của bạn, ưu tiên của chúng tôi. Khám phá các dịch vụ của
             chúng tôi và đặt lịch hẹn ngay hôm nay!
           </p>
-          <button
-            onClick={() =>
-              !token || !role || !userName
-                ? navigate("/login")
-                : navigate("/appointment")
-            }
-          >
-            Đặt Lịch Hẹn
-          </button>
+          <div className="cover-btn" style={{ display: "flex", gap: "30px" }}>
+            <button
+              onClick={() =>
+                !token || !role || !userName
+                  ? navigate("/login")
+                  : navigate("/appointment")
+              }
+              className="nav-toggle"
+            >
+              Đặt Lịch Hẹn
+            </button>
+            <button className="appointment-toggle">Tư vấn bác sĩ</button>
+          </div>
         </div>
       </section>
+      <div className="short-brief-section-cover">
+        <div className="short-brief-img">
+          <img src={shortBrief} alt="shortBrief-pic" />
+        </div>
+        <div className="short-brief-content">
+          <h4>
+            Chào mừng đến với <span style={{ color: "#37AFE1" }}>Nha khoa</span>{" "}
+            <span style={{ color: "#F5F4B3" }}>Nụ cười</span>
+          </h4>
+
+          <h2>Nha khoa hiện đại với sự chăm sóc dịu dàng</h2>
+          <p>
+            {" "}
+            Chúng tôi luôn coi trọng yếu tố nhân văn, áp dụng công nghệ tiên
+            tiến để đảm bảo an toàn và hiệu quả cao. Sức khỏe răng miệng của bạn
+            là sứ mệnh của chúng tôi.
+          </p>
+          <p>
+            Hệ thống trang thiết bị hiện đại, đội ngũ y bác sĩ giàu kinh nghiệm,
+            luôn tận tâm với từng ca điều trị. Chúng tôi cung cấp các dịch vụ
+            nha khoa tổng quát, chỉnh nha, trám răng thẩm mỹ, cấy ghép Implant
+            và các dịch vụ khác.
+          </p>
+          <div className="process-list">
+            <ul className="left-list">
+              <li>Quy trình khép kín, chuẩn quốc tế</li>
+              <li>Thiết bị tối tân, vô trùng tuyệt đối</li>
+              <li>Bác sĩ tận tâm, am hiểu nhu cầu</li>
+            </ul>
+            <ul>
+              <li>Tư vấn kỹ lưỡng và giải pháp hợp lý</li>
+              <li>Chăm sóc sau điều trị miễn phí</li>
+              <li>Lịch hẹn linh hoạt</li>
+            </ul>
+          </div>
+        </div>
+      </div>
 
       <div className="features-section-cover">
         <h1>Các dịch vụ nổi bật</h1>
