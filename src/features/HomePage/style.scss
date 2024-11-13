@@ -1,6 +1,5 @@
 .home-page {
   font-family: Arial, sans-serif;
-  padding: 20px;
   background-color: #f9f9f9;
 }
 
@@ -131,20 +130,148 @@
   }
 }
 
+.statistic-key-section {
+  display: flex;
+  justify-content: space-between;
+  padding: 0px 200px;
+  .divider {
+    width: 1px;
+    background-color: #ccc;
+  }
+  .statistic-item {
+    flex-basis: 30%;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    p {
+    }
+    span {
+      color: #37afe1;
+      font-size: 35px;
+      font-weight: 600;
+      display: inline-block;
+    }
+  }
+}
+
 .features-section {
   display: flex;
   justify-content: space-around;
   flex-wrap: wrap;
   margin: 20px 0;
+  .feature {
+    border-style: solid;
+    border-width: 0px 0px 3px 0px;
+    border-color: #37afe1;
+    box-shadow: 0px 10px 40px -5px rgba(0, 0, 0, 0.15);
+    border-radius: 30px 40px 30px 30px;
+  }
 }
 
-.feature h2 {
+.feature h3 {
   font-size: 1.5rem;
   margin-bottom: 10px;
+  padding-bottom: 10px;
 }
 
 .feature p {
   font-size: 1rem;
+}
+
+.get-service-section {
+  margin: 30px 200px;
+  padding-bottom: 20px;
+  border-bottom: 0.8px solid #4cc9fe;
+  > h1 {
+    text-align: left;
+    font-size: 15px;
+    color: #37afe1;
+  }
+  .get-service-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    h1 {
+      flex-basis: 30%;
+      margin: 5px 0px;
+      text-align: left;
+    }
+    p {
+      flex-basis: 60%;
+      text-align: left;
+      color: rgba(0, 0, 0, 0.402);
+      margin: 0px;
+    }
+  }
+  .get-service-steps {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 20px 0px;
+    .service-step {
+      height: 100px;
+      flex-basis: 20%;
+      padding: 20px;
+      box-shadow: 0px 5px 30px -10px rgba(0, 0, 0, 0.15);
+      h4 {
+        color: #d4d28f;
+        margin: 0px;
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        span {
+          font-size: 30px;
+          opacity: 0.6; // filter: blur(1px);
+        }
+      }
+      p {
+        font-size: 14px;
+        text-align: left;
+        color: #f5f4b3;
+      }
+    }
+  }
+}
+
+.testimonials-section {
+  background-image: url("https://tebewebe.online/brisdental/wp-content/uploads/sites/136/2024/10/Map-a.png");
+  background-position: 50% 75%;
+  background-repeat: no-repeat;
+  background-size: 60% auto;
+  height: 400px;
+  padding: 30px 200px;
+  .testimonials-header {
+    > h4 {
+      text-align: center;
+      font-size: 15px;
+      color: #37afe1;
+    }
+    p {
+      color: rgba(0, 0, 0, 0.402);
+    }
+  }
+  .testimonial-list {
+    display: flex;
+    justify-content: space-between;
+    overflow: hidden;
+    .comment {
+      flex-basis: 28%;
+      text-align: center;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      background-color: white;
+      padding: 20px;
+      border-radius: 20px;
+      text-align: left;
+      //animation
+      transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+      span {
+        color: #37afe1;
+        font-size: 18px;
+        font-weight: 500;
+      }
+    }
+  }
 }
 
 .cta-section {
@@ -225,27 +352,32 @@
 
 .features-section-cover {
   h1 {
-    text-align: left;
-    color: #49243e;
+    text-align: center;
+    font-size: 15px;
+    color: #37afe1;
+  }
+  > p {
+    font-size: 20px;
+    font-weight: 600;
   }
   button {
     border: none;
-    background-color: #49243e;
-    opacity: 0.8;
+    background: #4cc9fe;
+    color: #f5f4b3;
     transition: 0.3s;
     cursor: pointer;
-    color: white;
-    padding: 10px 20px;
-    font-size: 1rem;
-    border-radius: 8px;
+    padding: 20px 40px;
+    font-size: 1.2rem;
+    border-radius: 20px;
     &:hover {
-      opacity: 1;
+      background: #37afe1;
+      color: #fffecb;
     }
   }
 }
 .features-section {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  display: flex;
+  // grid-template-columns: repeat(2, 1fr);
   gap: 20px;
   padding: 20px;
 }
@@ -301,18 +433,19 @@
 
 /* BackgroundWithIcons.css */
 .background-container-ft {
-  background-color: #49243e;
+  background-color: rgb(163, 220, 242);
   color: white;
   margin-top: 30px;
   padding: 30px 120px;
-  border-radius: 12px;
+  border-bottom: 0.4px solid #37afe1;
 
   .ft-header {
     display: flex;
     justify-content: space-between;
     .name {
       display: flex;
-      width: 60%;
+      width: fit-content;
+      border-bottom: 0.4px solid #37afe1;
       img {
         border-radius: 12px;
         width: 200px;
@@ -351,5 +484,38 @@
       padding-bottom: 10px;
       font-weight: 600;
     }
+    .phone-icon {
+      display: inline-block;
+      animation: shake 0.5s ease-in-out infinite; /* Tạo hiệu ứng rung trong 0.5 giây */
+      /* Chỉ rung một lần */
+    }
+  }
+}
+@keyframes shake {
+  0% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-15deg);
+  }
+  50% {
+    transform: rotate(15deg);
+  }
+  75% {
+    transform: rotate(-15deg);
+  }
+  100% {
+    transform: rotate(0deg);
+  }
+}
+
+.copyright {
+  background-color: rgb(163, 220, 242);
+  color: white;
+  padding: 20px 120px;
+  p {
+    margin: 0px;
+    font-size: 12px;
+    text-align: left;
   }
 }

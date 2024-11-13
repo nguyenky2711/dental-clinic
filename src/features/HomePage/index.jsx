@@ -12,6 +12,7 @@ import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../provider/AuthContext";
 import {
   FacebookOutlined,
+  PhoneOutlined,
   SkypeOutlined,
   WhatsAppOutlined,
 } from "@ant-design/icons";
@@ -88,9 +89,25 @@ const HomePage = () => {
           </div>
         </div>
       </div>
-
+      <div className="statistic-key-section">
+        <div className="statistic-item">
+          <span>30+</span>
+          <p>Khu vực phục vụ phòng khám nha khoa</p>
+        </div>
+        <div className="divider"></div>
+        <div className="statistic-item">
+          <span>27K+</span>
+          <p>Khách hàng hài lòng với dịch vụ chăm sóc răng miệng</p>
+        </div>
+        <div className="divider"></div>
+        <div className="statistic-item">
+          <span>20+</span>
+          <p>Bác sĩ chuyên nghiệp trong lĩnh vực nha khoa</p>
+        </div>
+      </div>
       <div className="features-section-cover">
         <h1>Các dịch vụ nổi bật</h1>
+        <p>Dịch vụ nha khoa tận tâm và thoải mái, phù hợp từng cá nhân</p>
         <section className="features-section">
           <div className="feature">
             <div className="icon">
@@ -140,13 +157,95 @@ const HomePage = () => {
           Xem bảng giá chi tiết
         </button>
       </div>
-
+      <div className="get-service-section">
+        <h1>Dễ dàng nhận được dịch vụ</h1>
+        <div className="get-service-header">
+          <h1>Nụ cười hoàn hảo chỉ sau 1 cuộc hẹn</h1>
+          <p>
+            Chăm sóc nhẹ nhàng với các kỹ thuật hiện đại, chúng tôi mang đến
+            dịch vụ nha khoa chuyên nghiệp và an toàn. Đội ngũ chuyên gia của
+            chúng tôi luôn tận tâm và chu đáo trong từng bước, giúp bạn cảm thấy
+            thoải mái và an tâm khi sử dụng dịch vụ.
+          </p>
+        </div>
+        <div className="get-service-steps">
+          <div className="service-step" style={{ backgroundColor: "#A3DCF2" }}>
+            <h4>
+              Tư vấn <span>01</span>
+            </h4>
+            <p>
+              Đội ngũ chuyên gia sẽ lắng nghe và đánh giá nhu cầu của bạn để đề
+              xuất giải pháp phù hợp nhất.
+            </p>
+          </div>
+          <div className="service-step" style={{ backgroundColor: "#5DC2E9" }}>
+            <h4>
+              Chọn gói dịch vụ <span>02</span>
+            </h4>
+            <p>
+              Chúng tôi cung cấp nhiều gói dịch vụ linh hoạt, phù hợp với nhu
+              cầu và điều kiện của mỗi khách hàng.
+            </p>
+          </div>
+          <div className="service-step" style={{ backgroundColor: "#37AFE1" }}>
+            <h4>
+              Chọn ngày hẹn <span>03</span>
+            </h4>
+            <p>
+              Linh hoạt sắp xếp thời gian theo lịch trình của bạn để đảm bảo sự
+              thuận tiện tối đa.
+            </p>
+          </div>
+          <div className="service-step" style={{ backgroundColor: "#2A8DB4" }}>
+            <h4>
+              Nhận dịch vụ <span>04</span>
+            </h4>
+            <p>
+              Trải nghiệm dịch vụ chăm sóc nha khoa chuyên nghiệp, mang đến nụ
+              cười rạng rỡ và tự tin.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div className="testimonials-section">
+        <div className="testimonials-header">
+          <h4>Đánh giá khách hàng</h4>
+          <h1>Kết quả tự nói lên tất cả</h1>
+          <p>
+            "Đem lại sự hài lòng và tin tưởng cho khách hàng qua từng dịch vụ.
+            Đội ngũ chuyên nghiệp luôn sẵn sàng đáp ứng nhu cầu của bạn
+          </p>
+        </div>
+        <div className="testimonial-list">
+          <p className="comment">
+            <span>&#8220;</span> Đội ngũ rất tận tâm và chuyên nghiệp! Tôi cảm
+            thấy an tâm và thoải mái trong suốt quá trình điều trị. Kết quả vượt
+            xa mong đợi, tôi rất hài lòng và sẽ tiếp tục quay lại
+            <span> &#8221; </span>
+          </p>
+          <p className="comment">
+            <span>&#8220;</span> Dịch vụ tuyệt vời và không gian rất sạch sẽ,
+            thoáng mát. Bác sĩ luôn giải thích rõ ràng và chăm sóc chu đáo. Chắc
+            chắn tôi sẽ giới thiệu phòng khám này cho bạn bè và người thân.
+            <span>&#8221;</span>
+          </p>
+          <p className="comment">
+            <span>&#8220;</span> Tôi đã có một trải nghiệm rất tốt tại đây. Quy
+            trình nhanh chóng và hiệu quả, tôi không phải chờ đợi lâu. Chất
+            lượng dịch vụ rất xứng đáng với mức giá, tôi hoàn toàn hài lòng.
+            <span>&#8221;</span>
+          </p>
+        </div>
+      </div>
       <section className="background-container-ft">
         <div className="ft-header">
           <div className="name">
             <img src={dentalLogo} alt="" />
             <div className="content">
-              <h1>VÕ TIẾN CLINIC</h1>
+              <h1>
+                <span style={{ color: "#37AFE1" }}>Nha khoa</span>{" "}
+                <span style={{ color: "#F5F4B3" }}>Nụ cười</span>
+              </h1>
               <h4>Một nụ cười bằng mười thang thuốc bổ</h4>
             </div>
           </div>
@@ -167,17 +266,25 @@ const HomePage = () => {
         </div>
         <div className="ft-content">
           <p>
-            Giờ làm việc:{" "}
+            <span style={{ color: "#37AFE1" }}>Giờ làm việc: </span>
             <span>
               Thứ 2 - Thứ 7: Sáng: 8h - 12h và Chiều: 13h30 - 19h30 | (Chủ nhật
               chỉ làm việc tới 12h)
             </span>
           </p>
           <p>
-            Thông tin liên hệ: <span>0123456789 | votienvippro@gmail.com</span>
+            <span style={{ color: "#37AFE1" }}>Thông tin liên hệ: </span>{" "}
+            <span>
+              {" "}
+              0123456789 <PhoneOutlined className="phone-icon" /> |
+              nhakhoanucuoi@gmail.com
+            </span>
           </p>
         </div>
       </section>
+      <div className="copyright">
+        <p>Copyright © 2024. </p>
+      </div>
     </div>
   );
 };

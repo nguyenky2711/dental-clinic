@@ -102,7 +102,7 @@ const Header = () => {
   );
 
   return (
-    <header className="header" style={!role && { display: "none" }}>
+    <header className="header" style={role ? {} : { display: "none" }}>
       <div className="logo">
         <Link to="/">
           <img src={dentalLogo} alt="Dental Logo" />
