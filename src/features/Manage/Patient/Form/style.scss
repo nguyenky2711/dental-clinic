@@ -1,81 +1,130 @@
-.container {
-  // padding: 15px 50px;
-  // display: flex;
-  // justify-content: center;
-  .register_container {
-    width: 35%;
-    margin: 0px auto;
-    box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
-    height: max-content;
-    border-radius: 10px;
-    align-items: center;
-    background-color: #fff;
-    padding: 30px 50px;
-    margin-top: 100px;
-
-    .register-header {
-      font-weight: 700;
-      font-size: 22px;
-      text-align: center;
-      margin-bottom: 35px;
-    }
-    .form_register {
-      display: flex;
-      justify-content: center;
-
-      > form {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        .ant-input-affix-wrapper {
-          width: 300px;
-        }
-        button {
-          width: 100%;
-          margin: 0px auto;
-          background: #49243e;
-          border: none;
-          color: white;
-          height: 40px;
-          font-size: 16px;
-        }
-      }
-    }
-    .student_item {
-      .ant-picker {
-        width: 300px;
-      }
-    }
-    .ant-form-item-row {
-      display: flex;
-      flex-direction: column;
-
-      .ant-form-item-label {
-        text-align: left;
+.form-container {
+  &.patient {
+    .form-cover {
+      width: 70%;
+      .form-header {
         font-weight: 700;
-        label {
-          a {
-            color: black;
-            font-size: 13px;
-            text-decoration: underline;
-            font-style: italic;
+        font-size: 22px;
+        text-align: center;
+        margin-bottom: 35px;
+        position: relative;
+        img {
+          position: absolute;
+          left: 0;
+          top: -20px;
+          height: 60px;
+          width: 60px;
+          box-shadow: 2px 4px 8px rgba(0, 0, 0, 0.4);
+          border-radius: 10px;
+          display: inline-block;
+        }
+      }
+      .form-body {
+        display: flex;
+        justify-content: center;
+
+        > form {
+          display: flex;
+          flex-wrap: wrap;
+          flex-direction: row;
+          justify-content: space-between;
+          .form-part {
+            flex-basis: 40%;
+          }
+          .form-btn-cover {
+            flex-basis: 100%;
+            justify-content: end;
+            gap: 30px;
           }
         }
       }
-      .ant-form-item-control {
-        flex: 1;
+      .ant-form-item-row {
+        display: flex;
+        flex-direction: column;
+
+        .ant-form-item-label {
+          text-align: left;
+          font-weight: 700;
+          label {
+            a {
+              color: black;
+              font-size: 13px;
+              text-decoration: underline;
+              font-style: italic;
+            }
+          }
+        }
+        .ant-form-item-control {
+          flex: 1;
+        }
+      }
+
+      .ant-form-item-required {
+        &::before {
+          right: 1px;
+          top: 3px;
+          font-size: 11px !important;
+          position: absolute;
+        }
+        &::after {
+          right: -8px;
+        }
       }
     }
-
-    .ant-form-item-required {
-      &::before {
-        right: 1px;
-        top: 3px;
-        font-size: 11px !important;
-        position: absolute;
+  }
+}
+@media (min-width: 1024px) {
+  .form-container {
+    &.patient {
+      .form-cover {
+        width: 70%;
+        .form-body {
+          > form {
+            .form-part {
+              flex-basis: 40%;
+            }
+            .form-btn-cover {
+              flex-basis: 100%;
+              justify-content: end;
+              gap: 30px;
+            }
+            .ant-input-affix-wrapper {
+              width: 300px;
+            }
+          }
+        }
+        .student_item {
+          .ant-picker {
+            width: 300px;
+          }
+        }
       }
-      &::after {
-        right: -8px;
+    }
+  }
+}
+@media (max-width: 1024px) {
+  .form-container {
+    &.patient {
+      .form-cover {
+        width: 80%;
+        .form-body {
+          > form {
+            flex-direction: row;
+            .form-part {
+              flex-basis: 43%;
+            }
+            .form-btn-cover {
+              flex-basis: 100%;
+              justify-content: end;
+              gap: 30px;
+            }
+          }
+        }
+        .student_item {
+          .ant-picker {
+            width: 100%;
+          }
+        }
       }
     }
   }

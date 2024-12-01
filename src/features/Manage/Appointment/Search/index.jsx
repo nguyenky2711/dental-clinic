@@ -85,14 +85,14 @@ const AppointmentInforSearch = ({ handleSubmit, handleChange }) => {
     <>
       <Form
         name="normal_search"
-        className="treatment-searchForm"
+        className="search-form"
         onFinish={onFinish}
         form={form}
       >
         <div className="keyWord_search-container">
           {position !== "dentist" && (
             <Form.Item
-              className="staff_item name"
+              className="search-form-input"
               name="staffId"
               style={{ flexBasis: "30%" }}
             >
@@ -129,7 +129,7 @@ const AppointmentInforSearch = ({ handleSubmit, handleChange }) => {
 
           <Form.Item
             name="isConfirm"
-            className="staff_item select"
+            className="search-form-select"
             style={{ flexBasis: "20%" }}
           >
             <Select
@@ -153,13 +153,13 @@ const AppointmentInforSearch = ({ handleSubmit, handleChange }) => {
               allowClear
             />
           </Form.Item>
-          <Form.Item className="treatment-searchForm-btn">
+          <Form.Item className="search-form-btn submit-btn">
             <Button type="primary" htmlType="submit">
               Tìm kiếm
             </Button>
           </Form.Item>
           {position === "dentist" && (
-            <Form.Item className="treatment-searchForm-btn">
+            <Form.Item className="search-form-btn add-btn">
               <Button
                 type="primary"
                 htmlType="button"

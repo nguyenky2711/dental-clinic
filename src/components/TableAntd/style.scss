@@ -6,15 +6,15 @@
       .ant-table-content {
         .ant-table-thead {
           .ant-table-cell {
-            background-color: #704264;
-            color: #dbafa0;
+            background: #37afe1;
+            color: #fffecb;
             font-weight: 700;
             text-align: center;
-            border: 1px solid #49243e;
+            border: 1px solid #4cc9fe;
             border-bottom: none;
             border-right: none;
             &:last-child {
-              border-right: 1px solid #49243e;
+              border-right: 1px solid #4cc9fe;
             }
           }
         }
@@ -23,11 +23,11 @@
             .ant-table-cell {
               word-wrap: break-word;
               word-break: break-word;
-              border: 1px solid #49243e;
+              border: 1px solid #4cc9fe;
               border-bottom: none;
               border-right: none;
               &:last-child {
-                border-right: 1px solid #49243e;
+                border-right: 1px solid #4cc9fe;
               }
               ul,
               ol {
@@ -43,13 +43,13 @@
             }
             &:last-child {
               .ant-table-cell {
-                border-bottom: 1px solid #49243e;
+                border-bottom: 1px solid #4cc9fe;
               }
             }
           }
           .ant-table-placeholder {
             .ant-table-cell {
-              border: 1px solid #49243e;
+              border: 1px solid #4cc9fe;
             }
           }
         }
@@ -63,11 +63,44 @@
     margin-top: 20px;
     .ant-pagination {
       .ant-pagination-item-active {
-        border-color: #dbafa0;
+        border-color: #4cc9fe;
         a {
-          color: #dbafa0;
+          color: #4cc9fe;
         }
       }
+    }
+  }
+  .action {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  @media (max-width: 500px) {
+    .action-item {
+      width: 30px;
+    }
+  }
+  @media (min-width: 500px) {
+    .action-item {
+      width: 120px;
+    }
+  }
+
+  .action-item {
+    height: 30px;
+    margin: 0px auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 10px;
+    gap: 10px;
+    border-radius: 10px;
+    border: 0.8px solid #37afe1;
+    padding: 18px 0px;
+    &:hover {
+      background: #4cc9fe;
+      color: #f5f4b3;
     }
   }
 }

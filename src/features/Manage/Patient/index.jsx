@@ -11,86 +11,236 @@ import moment from "moment";
 import { debounce } from "lodash";
 
 const PatientPage = () => {
+  const screenWidth = window.innerWidth;
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
   const [patients, setPatients] = useState([]);
   const [totalPages, setTotalPages] = useState();
   const [totalItems, setTotalItems] = useState();
-  const { token, role, logout } = useContext(AuthContext);
   const [params, setParams] = useState({
     keyword: null,
     pageNumber: 1,
     pageSize: 10,
   });
+
+  const { token, role, logout } = useContext(AuthContext);
+
   const columnsPatient = [
-    {
-      title: "Họ và tên",
-      key: "name",
-      width: "15%",
-      render: (text) => text.name,
-    },
-    {
-      title: "Thông tin cơ bản",
-      key: "infor",
-      align: "center",
-      width: "10%",
-      render: (text) => (
-        <>
-          <p>
-            Ngày sinh: {moment(new Date(text.birthday)).format("DD/MM/YYYY")}
-          </p>
-          <p>Số điện thoại: {text.phoneNumber}</p>
-          <p>Địa chỉ: {text.address}</p>
-        </>
-      ),
-    },
-    {
-      title: "Tiền sử bệnh án",
-      key: "medicalHistory",
-      width: "20%",
-      render: (text) => text.medicalHistory,
-    },
-    ...(role !== "Role_Admin"
+    ...(screenWidth <= 768
       ? [
           {
-            title: "Bệnh án",
+            title: "Thông tin người bệnh",
+            key: "name",
+            width: "40%",
+            render: (text) => (
+              <>
+                <p style={{ fontSize: "16px", fontWeight: "500" }}>
+                  {text.name}
+                </p>
+                <p>
+                  Ngày sinh:{" "}
+                  {moment(new Date(text.birthday)).format("DD/MM/YYYY")}
+                </p>
+                <p>Số điện thoại: {text.phoneNumber}</p>
+              </>
+            ),
+          },
+          ...(role !== "Role_Admin"
+            ? [
+                {
+                  title: "Bệnh án",
+                  align: "center",
+                  width: "25%",
+                  render: (_, record) => (
+                    <div className="action">
+                      <div
+                        className="action-item"
+                        onClick={() =>
+                          navigate(
+                            `/manage/patient/${record.id}/medical-record`
+                          )
+                        }
+                      >
+                        Xem bệnh án
+                      </div>
+                    </div>
+                  ),
+                },
+              ]
+            : []),
+          {
+            title: "",
             align: "center",
-            width: "10%",
+            width: "25%",
             render: (_, record) => (
               <div className="action">
                 <div
                   className="action-item"
-                  onClick={() =>
-                    navigate(`/manage/patient/${record.id}/medical-record`)
-                  }
+                  onClick={() => navigate(`/manage/patient/${record.id}`)}
                 >
-                  Xem bệnh án
+                  <EditOutlined />
+                  <p>Xem chi tiết</p>
+                </div>
+                {/* <div className="action-item">
+                  <DeleteOutlined />
+                  Xoá
+                </div> */}
+              </div>
+            ),
+          },
+        ]
+      : []),
+    ...(screenWidth > 768 && screenWidth <= 1024
+      ? [
+          {
+            title: "Thông tin người bệnh",
+            key: "name",
+            width: "40%",
+            render: (text) => (
+              <>
+                <p style={{ fontSize: "16px", fontWeight: "500" }}>
+                  {text.name}
+                </p>
+                <p>
+                  Ngày sinh:{" "}
+                  {moment(new Date(text.birthday)).format("DD/MM/YYYY")}
+                </p>
+                <p>Số điện thoại: {text.phoneNumber}</p>
+              </>
+            ),
+          },
+
+          {
+            title: "Tiền sử bệnh án",
+            key: "medicalHistory",
+            width: "20%",
+            render: (text) => text.medicalHistory,
+          },
+          ...(role !== "Role_Admin"
+            ? [
+                {
+                  title: "Bệnh án",
+                  align: "center",
+                  width: "10%",
+                  render: (_, record) => (
+                    <div className="action">
+                      <div
+                        className="action-item"
+                        onClick={() =>
+                          navigate(
+                            `/manage/patient/${record.id}/medical-record`
+                          )
+                        }
+                      >
+                        Xem bệnh án
+                      </div>
+                    </div>
+                  ),
+                },
+              ]
+            : []),
+          {
+            title: "",
+            align: "center",
+            width: "5%",
+            render: (_, record) => (
+              <div className="action">
+                <div
+                  className="action-item"
+                  onClick={() => navigate(`/manage/patient/${record.id}`)}
+                >
+                  <EditOutlined />
+                  <p>Xem chi tiết</p>
                 </div>
               </div>
             ),
           },
         ]
       : []),
-    {
-      title: "",
-      align: "center",
-      width: "5%",
-      render: (_, record) => (
-        <div className="action">
-          <div
-            className="action-item"
-            onClick={() => navigate(`/manage/patient/${record.id}`)}
-          >
-            <EditOutlined />
-            <p>Xem chi tiết</p>
-          </div>
-          {/* <div className="action-item">
-            <DeleteOutlined />
-            Xoá
-          </div> */}
-        </div>
-      ),
-    },
+    ...(screenWidth > 1024
+      ? [
+          {
+            title: "Họ tên",
+            key: "name",
+            width: "20%",
+            render: (text) => (
+              <>
+                <p style={{ fontSize: "16px", fontWeight: "500" }}>
+                  {text.name}
+                </p>
+                <p>
+                  Ngày sinh:{" "}
+                  {moment(new Date(text.birthday)).format("DD/MM/YYYY")}
+                </p>
+                <p>Số điện thoại: {text.phoneNumber}</p>
+              </>
+            ),
+          },
+          {
+            title: "Thông tin cơ bản",
+            key: "infor",
+            align: "center",
+            width: "20%",
+            render: (text) => (
+              <>
+                <p>
+                  Ngày sinh:{" "}
+                  {moment(new Date(text.birthday)).format("DD/MM/YYYY")}
+                </p>
+                <p>Số điện thoại: {text.phoneNumber}</p>
+                <p>Địa chỉ: {text.address}</p>
+              </>
+            ),
+          },
+          {
+            title: "Tiền sử bệnh án",
+            key: "medicalHistory",
+            width: "20%",
+            render: (text) => text.medicalHistory,
+          },
+          ...(role !== "Role_Admin"
+            ? [
+                {
+                  title: "Bệnh án",
+                  align: "center",
+                  width: "10%",
+                  render: (_, record) => (
+                    <div className="action">
+                      <div
+                        className="action-item"
+                        onClick={() =>
+                          navigate(
+                            `/manage/patient/${record.id}/medical-record`
+                          )
+                        }
+                      >
+                        Xem bệnh án
+                      </div>
+                    </div>
+                  ),
+                },
+              ]
+            : []),
+          {
+            title: "",
+            align: "center",
+            width: "5%",
+            render: (_, record) => (
+              <div className="action">
+                <div
+                  className="action-item"
+                  onClick={() => navigate(`/manage/patient/${record.id}`)}
+                >
+                  <EditOutlined />
+                  <p>Xem chi tiết</p>
+                </div>
+              </div>
+            ),
+          },
+        ]
+      : []),
   ];
 
   useEffect(() => {
@@ -136,7 +286,7 @@ const PatientPage = () => {
   }, 300); // Thời gian debounce là 300ms
 
   return (
-    <div>
+    <div className="manage-page-container patient">
       <div className="staffPage-header">
         <h1>Danh sách bệnh nhân</h1>
         <PatientInforSearch

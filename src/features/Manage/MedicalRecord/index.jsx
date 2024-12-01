@@ -24,9 +24,12 @@ import ConfirmModalAntd from "../../../components/ConfirmModalAntd";
 import { AuthContext } from "../../../provider/AuthContext";
 
 function MedicalRecordPage() {
+  const screenWidth = window.innerWidth;
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { patientId } = useParams();
+
   const [total, setTotal] = useState({
     pages: null,
     items: null,
@@ -38,31 +41,56 @@ function MedicalRecordPage() {
   });
   const [records, setRecords] = useState();
   const { token, role, logout, position, email } = useContext(AuthContext);
-
+  console.log(screenWidth);
   const columnsMedicalRecord = [
-    {
-      title: "Ngày khám",
-      key: "name",
-      width: "10%",
-      render: (text) => {
-        return moment(new Date(text.examinationDate)).format("DD/MM/YYYY");
-      },
-    },
+    ...(screenWidth <= 769
+      ? [
+          {
+            title: "Thông tin khám",
+            key: "name",
+            width: "20%",
+            render: (text) => (
+              <>
+                <p>
+                  Ngày khám:
+                  <br />
+                  {moment(new Date(text.examinationDate)).format("DD/MM/YYYY")}
+                </p>
+                <p>
+                  Bác sĩ:
+                  <br /> {text.staffDTO.name}
+                </p>
+              </>
+            ),
+          },
+        ]
+      : [
+          {
+            title: "Ngày khám",
+            key: "name",
+            width: "10%",
+            render: (text) => {
+              return moment(new Date(text.examinationDate)).format(
+                "DD/MM/YYYY"
+              );
+            },
+          },
+          {
+            title: "Bác sĩ khám",
+            key: "phone",
+            align: "center",
+            width: "10%",
+            render: (text) => {
+              return text.staffDTO.name;
+            },
+          },
+        ]),
     {
       title: "Chẩn đoán sơ bộ",
       key: "email",
-      width: "40%",
+      width: screenWidth <= 769 ? "20%" : "40%",
       render: (text) => {
         return text.diagnosis;
-      },
-    },
-    {
-      title: "Bác sĩ khám",
-      key: "phone",
-      align: "center",
-      width: "15%",
-      render: (text) => {
-        return text.staffDTO.name;
       },
     },
     {
@@ -81,7 +109,7 @@ function MedicalRecordPage() {
     {
       title: "",
       align: "center",
-      width: "20%",
+      width: screenWidth < 500 ? "10%" : "20%",
       render: (_, record) => {
         return (
           <div className="action">
@@ -96,7 +124,9 @@ function MedicalRecordPage() {
               }
             >
               <EditOutlined />
-              <p>Xem chi tiết</p>
+              <p style={screenWidth < 500 ? { display: "none" } : {}}>
+                Xem chi tiết
+              </p>
             </div>
             {role === "Role_Staff" && position === "dentist" && (
               <>
@@ -106,7 +136,9 @@ function MedicalRecordPage() {
                     onClick={() => showModal("put", record)}
                   >
                     <CheckOutlined />
-                    Hoàn thành
+                    <p style={screenWidth < 500 ? { display: "none" } : {}}>
+                      Hoàn thành
+                    </p>
                   </div>
                 ) : (
                   <div
@@ -114,7 +146,9 @@ function MedicalRecordPage() {
                     onClick={() => showModal("put", record)}
                   >
                     <RedoOutlined />
-                    Mở lại
+                    <p style={screenWidth < 500 ? { display: "none" } : {}}>
+                      Mở lại
+                    </p>
                   </div>
                 )}
                 <div
@@ -122,7 +156,9 @@ function MedicalRecordPage() {
                   onClick={() => showModal("delete", record)}
                 >
                   <DeleteOutlined />
-                  Xoá bệnh án
+                  <p style={screenWidth < 500 ? { display: "none" } : {}}>
+                    Xoá bệnh án
+                  </p>
                 </div>
               </>
             )}
@@ -276,6 +312,7 @@ function MedicalRecordPage() {
       method: null,
     }));
   };
+
   useEffect(() => {
     role === "Role_Patient"
       ? dispatch(getRecordByTokenThunk()).then((res) => {
@@ -335,7 +372,7 @@ function MedicalRecordPage() {
   const handleSearchChange = (values) => {};
   const handleSubmitSearch = (values) => {};
   return (
-    <div>
+    <div className="manage-page-container medical_record">
       <div className="staffPage-header">
         <h1>Sổ bệnh án</h1>
         {role !== "Role_Patient" && (

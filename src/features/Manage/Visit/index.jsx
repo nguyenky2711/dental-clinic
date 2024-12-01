@@ -69,40 +69,57 @@ const VisitPage = () => {
     pageNumber: 1,
     pageSize: 5,
   });
+  const screenWidth = window.innerWidth;
 
   const columnsMedicalRecord = [
-    // {
-    //   title: "Lần khám",
-    //   key: "stt",
-    //   align: "center",
-    //   width: "8%",
-    //   render: (text, record, index) => {
-    //     return (params.pageNumber - 1) * params.pageSize + index + 1;
-    //   },
-    // },
-    {
-      title: "Ngày khám",
-      key: "name",
-      width: "10%",
-      render: (text) => {
-        return moment(new Date(text.examinationDate)).format("DD/MM/YYYY");
-      },
-    },
-    {
-      title: "Chẩn đoán chi tiết",
-      width: "30%",
-      render: (text) => {
-        return text.diagnosis;
-      },
-    },
-    {
-      title: "Ghi chú",
-      align: "center",
-      width: "25%",
-      render: (text) => {
-        return text.note;
-      },
-    },
+    ...(screenWidth < 768
+      ? [
+          {
+            title: "Thông tin khám",
+            key: "name",
+            width: "40%",
+            render: (text) => (
+              <>
+                <p>
+                  Ngày khám:
+                  <br />
+                  {moment(new Date(text.examinationDate)).format("DD/MM/YYYY")}
+                </p>
+                <p>
+                  Chẩn đoán chi tiết:
+                  <br /> {text.diagnosis}
+                </p>
+              </>
+            ),
+          },
+        ]
+      : [
+          {
+            title: "Ngày khám",
+            key: "name",
+            width: "15%",
+            render: (text) => {
+              return moment(new Date(text.examinationDate)).format(
+                "DD/MM/YYYY"
+              );
+            },
+          },
+          {
+            title: "Chẩn đoán chi tiết",
+            width: "30%",
+            render: (text) => {
+              return text.diagnosis;
+            },
+          },
+          {
+            title: "Ghi chú",
+            align: "left",
+            width: "22%",
+            render: (text) => {
+              return text.note;
+            },
+          },
+        ]),
 
     {
       title: "",
@@ -115,13 +132,6 @@ const VisitPage = () => {
             <div
               className="action-item"
               style={{ width: "150px" }}
-              // onClick={() =>
-              //   role !== "Role_Patient"
-              //     ? navigate(
-              //         `/manage/patient/${patientId}/medical-record/${recordId}/visit/${record.id}`
-              //       )
-              //     : navigate(`/medical-record/${recordId}/visit/${record.id}`)
-              // }
               onClick={() => {
                 if (
                   (role === "Role_Staff" && position !== "dentist") ||
@@ -341,7 +351,7 @@ const VisitPage = () => {
   }, [params]);
 
   return (
-    <div>
+    <div className="manage-page-container visit">
       <div className="staffPage-header">
         <h1>Chi tiết các lần khám</h1>
         {role === "Role_Staff" && (

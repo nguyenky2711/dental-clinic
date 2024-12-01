@@ -32,12 +32,12 @@ const StaffinforSearch = ({ handleSubmit, handleChange }) => {
     <>
       <Form
         name="normal_search"
-        className="employee-searchForm"
+        className="search-form"
         onFinish={onFinish}
         form={form}
       >
         <div className="keyWord_search-container">
-          <Form.Item name="keyword" className="employee-searchForm-input">
+          <Form.Item name="keyword" className="search-form-input">
             <Input
               prefix={<SearchOutlined className="site-form-item-icon" />}
               placeholder="Tìm kiếm theo tên, sdt"
@@ -52,7 +52,7 @@ const StaffinforSearch = ({ handleSubmit, handleChange }) => {
               }
             />
           </Form.Item>
-          <Form.Item name="positionId" className="employee-searchForm-select">
+          <Form.Item name="positionId" className="search-form-select">
             <Select
               suffixIcon={<ContactsOutlined className="site-form-item-icon" />}
               placeholder="Chọn vị trí"
@@ -79,12 +79,12 @@ const StaffinforSearch = ({ handleSubmit, handleChange }) => {
               }
             />
           </Form.Item>
-          <Form.Item className="employee-searchForm-btn">
+          <Form.Item className="search-form-btn submit-btn">
             <Button type="primary" htmlType="submit">
               Tìm kiếm
             </Button>
           </Form.Item>
-          <Form.Item className="employee-searchForm-btn">
+          <Form.Item className="search-form-btn add-btn">
             <Button
               type="primary"
               htmlType="button"

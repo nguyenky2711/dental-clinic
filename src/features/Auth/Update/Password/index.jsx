@@ -45,10 +45,10 @@ const ChangePasswordPage = () => {
     });
   };
   return (
-    <div className="container">
-      <div className="changePw_container">
-        <div className="changePw_header">Đổi mật khẩu</div>
-        <div className="form_changePw">
+    <div className="form-container">
+      <div className="form-cover">
+        <div className="form-header">Đổi mật khẩu</div>
+        <div className="form-body">
           <Form
             name="dynamic_form_nest_item"
             form={form}
@@ -146,12 +146,22 @@ const ChangePasswordPage = () => {
             >
               <Input.Password />
             </Form.Item>
-
-            <Form.Item className="submitBtn">
-              <Button type="submit" htmlType="submit">
-                Xác nhận
-              </Button>
-            </Form.Item>
+            <div className="form-btn-cover">
+              <Form.Item>
+                <Button
+                  className="cancleBtn"
+                  type="button"
+                  onClick={() => navigate(-1)}
+                >
+                  Huỷ
+                </Button>
+              </Form.Item>
+              <Form.Item>
+                <Button className="submitBtn" type="submit" htmlType="submit">
+                  Xác nhận
+                </Button>
+              </Form.Item>
+            </div>
           </Form>
         </div>
       </div>

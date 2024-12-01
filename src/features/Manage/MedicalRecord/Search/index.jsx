@@ -1,6 +1,4 @@
-import { Select, Input, Form, DatePicker, Dropdown, Space, Button } from "antd";
-import React, { useState, useEffect } from "react";
-
+import { Form, Button } from "antd";
 import "./styles.scss";
 import { useNavigate, useParams } from "react-router-dom";
 const MedicalRecordInforSearch = ({ handleSubmit, handleChange }) => {
@@ -14,11 +12,11 @@ const MedicalRecordInforSearch = ({ handleSubmit, handleChange }) => {
     <>
       <Form
         name="normal_search"
-        className="medical_record-searchForm"
+        className="search-form medical_record"
         onFinish={onFinish}
         form={form}
       >
-        <Form.Item className="medical_record-searchForm-btn">
+        <Form.Item className="search-form-btn submit-btn">
           <Button
             type="primary"
             htmlType="button"

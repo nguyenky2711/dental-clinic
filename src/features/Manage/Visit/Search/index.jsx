@@ -25,12 +25,12 @@ const VisitInforSearch = ({ handleSubmitSearch, handleSearchChange }) => {
     <>
       <Form
         name="normal_search"
-        className="employee-searchForm"
+        className="search-form visit"
         onFinish={onFinish}
         form={form}
       >
         <div className="keyWord_search-container">
-          <Form.Item name="visitId" className="employee-searchForm-input">
+          <Form.Item name="visitId" className="search-form-input">
             <Input
               prefix={<SearchOutlined className="site-form-item-icon" />}
               placeholder="Tìm kiếm mã khám"
@@ -44,7 +44,7 @@ const VisitInforSearch = ({ handleSubmitSearch, handleSearchChange }) => {
             />
           </Form.Item>
 
-          <Form.Item className="employee-searchForm-btn">
+          <Form.Item className="search-form-btn submit-btn">
             <Button type="primary" htmlType="submit">
               Tìm kiếm
             </Button>

@@ -120,7 +120,7 @@ function StaffPage() {
   }, 300); // Thời gian debounce là 300ms
 
   return (
-    <div>
+    <div className="">
       <div className="staffPage-header">
         <h1>Danh sách nhân viên</h1>
         <StaffinforSearch

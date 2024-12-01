@@ -4,9 +4,10 @@ import {
   DeleteOutlined,
   EditOutlined,
   PlusOutlined,
-  PlusSquareOutlined,
+  UnorderedListOutlined,
 } from "@ant-design/icons";
 import "./style.scss";
+import TreatmentLogo from "../../../assets/treatment_9342860.png";
 import TableAntdCustom from "../../../components/TableAntd";
 import { useDispatch } from "react-redux";
 import {
@@ -50,7 +51,7 @@ const TreatmentPage = () => {
   const [treatmentData, setTreatmentData] = useState({});
   const [selectedService, setSelectedService] = useState("all");
   const [selectedTreatment, setSelectedTreatment] = useState();
-  const [openFormPage, setOpenFormPage] = useState(false);
+  const [optionsOn, setOptionsOn] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState({
     service: false,
     treatment: false,
@@ -385,18 +386,36 @@ const TreatmentPage = () => {
     }));
   };
 
+  const handleToggleOptions = () => {
+    setOptionsOn(!optionsOn);
+  };
+
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Layout.Sider
-        width={300}
+        width={optionsOn ? 350 : 50}
         className="site-layout-background"
-        style={{ height: "100vh", position: "fixed", overflow: "auto" }}
+        style={{
+          height: "100vh",
+          position: "fixed",
+          overflow: "auto",
+        }}
       >
+        <div>
+          <UnorderedListOutlined
+            onClick={handleToggleOptions}
+            style={{ color: !optionsOn && "#F5F4B3" }}
+          />
+        </div>
         <Menu
           mode="inline"
           defaultSelectedKeys={["all"]}
           onClick={handleSelect}
-          style={{ height: "100%", borderRight: 0 }}
+          style={{
+            height: "100%",
+            borderRight: 0,
+            display: !optionsOn ? "none" : "block",
+          }}
         >
           <Menu.Item key="all">Tất cả</Menu.Item>
           {Object.keys(treatmentData).map((serviceName) => (
@@ -455,8 +474,9 @@ const TreatmentPage = () => {
           />
         </Modal>
       </Layout.Sider>
-      <Layout style={{ marginLeft: 300, padding: "24px" }}>
+      <Layout style={{ marginLeft: optionsOn ? 350 : 50, padding: "24px" }}>
         <div className="staffPage-header">
+          <img src={TreatmentLogo} alt="" />
           <h1>Danh sách phương thức điều trị </h1>
         </div>
         {filteredData &&

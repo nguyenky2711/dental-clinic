@@ -1,25 +1,27 @@
-.container {
-  // padding: 15px 50px;
-  // display: flex;
-  // justify-content: center;
-  .register_container {
+// .form-cover {
+
+// }
+.form-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: calc(100vh - 100px);
+  .form-cover {
     width: 35%;
-    margin: 0px auto;
     box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.2), 0 5px 5px 0 rgba(0, 0, 0, 0.24);
     height: max-content;
     border-radius: 10px;
     align-items: center;
     background-color: #fff;
-    padding: 30px 50px;
-    margin-top: 100px;
+    padding: 20px 50px;
 
-    .register-header {
+    .form-header {
       font-weight: 700;
       font-size: 22px;
       text-align: center;
       margin-bottom: 35px;
     }
-    .form_register {
+    .form-body {
       display: flex;
       justify-content: center;
 
@@ -27,65 +29,45 @@
         display: flex;
         flex-direction: column;
         gap: 10px;
-        .ant-input-affix-wrapper {
-          width: 300px;
-        }
-        .cancleBtn {
-          background-color: white !important;
-          border: 1px solid #49243e;
-          color: #49243e;
-          opacity: 0.7;
-          transition: 0.3s;
-          &:hover {
-            opacity: 1;
-          }
-        }
-        button {
-          width: 100%;
-          margin: 0px auto;
-          background: #49243e;
-          border: none;
-          color: white;
-          height: 40px;
-          font-size: 16px;
-        }
+        // .ant-input-affix-wrapper {
+        //   width: 400px;
+        // }
+        // .student_item {
+        //   .ant-picker {
+        //     width: 400px;
+        //   }
+        // }
       }
     }
-    .student_item {
-      .ant-picker {
-        width: 300px;
-      }
-    }
-    .ant-form-item-row {
+
+    .form-btn-cover {
       display: flex;
-      flex-direction: column;
-
-      .ant-form-item-label {
-        text-align: left;
-        font-weight: 700;
-        label {
-          a {
-            color: black;
-            font-size: 13px;
-            text-decoration: underline;
-            font-style: italic;
-          }
+      justify-content: space-between;
+      button {
+        width: 100%;
+        margin: 0px auto;
+        border: none;
+        height: 40px;
+        font-size: 16px;
+      }
+      .cancleBtn {
+        border: 1px solid #37afe1;
+        color: #37afe1;
+        opacity: 0.7;
+        transition: 0.3s;
+        &:hover {
+          background: #4cc9fe;
+          color: #f5f4b3;
         }
       }
-      .ant-form-item-control {
-        flex: 1;
-      }
-    }
-
-    .ant-form-item-required {
-      &::before {
-        right: 1px;
-        top: 3px;
-        font-size: 11px !important;
-        position: absolute;
-      }
-      &::after {
-        right: -8px;
+      .submitBtn {
+        background: #37afe1;
+        color: #fffecb;
+        width: 120px;
+        &:hover {
+          background: #4cc9fe;
+          color: #f5f4b3;
+        }
       }
     }
   }

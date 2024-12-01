@@ -1,23 +1,11 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-// import { registerThunk } from "../../../store/action/auth";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./style.scss";
-import {
-  Button,
-  Checkbox,
-  Col,
-  Row,
-  Form,
-  Input,
-  InputNumber,
-  Select,
-  DatePicker,
-} from "antd";
-import moment from "moment";
-import dayjs from "dayjs";
+import StaffLogo from "../../../../assets/teamwork_10821354.png";
+import { Button, Form, Input, Select } from "antd";
 import {
   createStaffThunk,
   updateStaffThunk,
@@ -32,6 +20,7 @@ const StaffFormPage = () => {
   const staffResult = useSelector((state) => {
     return state.staff.listStaffs.contents.find((item) => item.id == staffId);
   });
+
   useEffect(() => {
     if (staffResult) {
       form.setFieldValue("name", staffResult.name);
@@ -46,6 +35,7 @@ const StaffFormPage = () => {
       form.setFieldValue("positionId", staffResult.positionDTO.id);
     }
   }, [staffResult]);
+
   const onFinish = (data) => {
     const staffDTO = {
       name: data.name,
@@ -71,7 +61,6 @@ const StaffFormPage = () => {
         positionId,
       };
     }
-    console.log(sendData);
     dispatch(
       staffResult ? updateStaffThunk(sendData) : createStaffThunk(sendData)
     ).then((res) => {
@@ -109,13 +98,17 @@ const StaffFormPage = () => {
       }
     });
   };
+
   return (
-    <div className="container">
-      <div className="register_container">
-        <div className="register-header">
-          {staffResult ? "Thông tin nhân viên" : "Thêm thông tin nhân viên"}
+    <div className="form-container">
+      <div className="form-cover">
+        <div className="form-header">
+          <img src={StaffLogo} alt="" />
+          <p>
+            {staffResult ? "Thông tin nhân viên" : "Thêm thông tin nhân viên"}
+          </p>
         </div>
-        <div className="form_register">
+        <div className="form-body">
           <Form
             name="dynamic_form_nest_item"
             form={form}
@@ -273,20 +266,22 @@ const StaffFormPage = () => {
               </Form.Item>
             )}
 
-            <Form.Item className="submitBtn">
-              <Button type="submit" htmlType="submit">
-                {staffResult ? "Cập nhật" : "Thêm"}
-              </Button>
-            </Form.Item>
-            <Form.Item>
-              <Button
-                className="cancleBtn"
-                type="button"
-                onClick={() => navigate(`/manage/staff`)}
-              >
-                Huỷ
-              </Button>
-            </Form.Item>
+            <div className="form-btn-cover">
+              <Form.Item>
+                <Button
+                  className="cancleBtn"
+                  type="button"
+                  onClick={() => navigate(`/manage/staff`)}
+                >
+                  Huỷ
+                </Button>
+              </Form.Item>
+              <Form.Item>
+                <Button className="submitBtn" type="submit" htmlType="submit">
+                  {staffResult ? "Cập nhật" : "Thêm"}
+                </Button>
+              </Form.Item>
+            </div>
           </Form>
         </div>
       </div>

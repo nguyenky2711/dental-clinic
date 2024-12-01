@@ -1,17 +1,11 @@
 // @use "../../../../../../src/assets/styles/" as *;
 
 @media only screen and (min-width: 320px) {
-  .medical_record-searchForm {
-    .medical_record-searchForm-btn {
-      button {
-        font-size: 18px;
-        height: 40px;
-        opacity: 0.7;
-        transition: 0.3s;
-        background-color: #704264 !important;
-        &:hover {
-          opacity: 1;
-        }
+  .search-form {
+    &.visit {
+      .keyWord_search-container {
+        gap: 20px;
+        justify-content: start;
       }
     }
   }

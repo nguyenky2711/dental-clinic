@@ -89,4 +89,25 @@
 }
 .staffPage-header {
   position: relative;
+  img {
+    position: absolute;
+    height: 60px;
+    width: 60px;
+    left: 0;
+    box-shadow: 2px 4px 8px rgba(0, 0, 0, 0.4);
+    border-radius: 10px;
+  }
+}
+
+.ant-layout-sider-children {
+  display: flex;
+  div {
+    background-color: #4cc9fe;
+    width: 50px;
+    span {
+      text-align: center;
+      margin-top: 10px;
+      font-size: 24px;
+    }
+  }
 }
