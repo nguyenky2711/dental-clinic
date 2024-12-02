@@ -119,7 +119,7 @@ const Header = () => {
   return (
     <header
       className={`header-cover ${openHeader ? "on" : "off"}`}
-      style={role ? {} : { display: "none" }}
+      // style={role ? {} : { display: "none" }}
     >
       <div className="header-toggle">
         <div className="header-toggle-btn">
@@ -166,7 +166,10 @@ const Header = () => {
               <img src={dentalLogo} alt="Dental Logo" />
             </Link>
           </div>
-          <div className="header-middle">
+          <div
+            className="header-middle"
+            style={role ? {} : { display: "none" }}
+          >
             {role === "Role_Admin" && (
               <>
                 <Link
