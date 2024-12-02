@@ -116,10 +116,15 @@ const Header = () => {
       </Menu.Item>
     </Menu>
   );
+  console.log(location.pathname);
   return (
     <header
       className={`header-cover ${openHeader ? "on" : "off"}`}
-      // style={role ? {} : { display: "none" }}
+      style={
+        location.pathname !== "/login" && location.pathname !== "/signup"
+          ? {}
+          : { display: "none" }
+      }
     >
       <div className="header-toggle">
         <div className="header-toggle-btn">
